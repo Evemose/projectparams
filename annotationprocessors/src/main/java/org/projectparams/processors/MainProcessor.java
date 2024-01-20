@@ -1,15 +1,9 @@
 package org.projectparams.processors;
 
 import com.google.auto.service.AutoService;
-import com.sun.source.tree.MethodTree;
-import com.sun.source.util.TreePathScanner;
-import com.sun.source.util.TreeScanner;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.processing.JavacFiler;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
-import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.tree.TreeMaker;
-import com.sun.tools.javac.util.Names;
 import org.projectparams.processors.ast.utils.ElementUtils;
 import org.projectparams.processors.utils.ProcessingUtils;
 import org.projectparams.processors.utils.ReflectionUtils;
@@ -22,12 +16,14 @@ import javax.tools.Diagnostic;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static com.sun.tools.javac.tree.JCTree.JCCompilationUnit;
-import static com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 
 
 // TODO: i guess this will need a migration from com.sun.tools.javac to jdk.compiler when works

@@ -74,7 +74,7 @@ public class ReflectionUtils {
         return field;
     }
 
-    public static Method getMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) throws NoSuchMethodException {
+    public static Method getMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
         Method method = null;
         var originalClass = clazz;
         while (clazz != null) {

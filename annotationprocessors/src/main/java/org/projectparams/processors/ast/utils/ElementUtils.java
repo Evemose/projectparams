@@ -1,10 +1,9 @@
 package org.projectparams.processors.ast.utils;
 
-import javax.lang.model.element.Element;
-
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.JCTree.JCCompilationUnit;
 
+import javax.lang.model.element.Element;
 import java.util.Optional;
 
 public class ElementUtils {
