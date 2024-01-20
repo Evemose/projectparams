@@ -4,29 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="split project into modules">
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/MainProcessor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/ast/utils/ElementUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/classloading/Agent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/classloading/ShadowClassLoader.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/methodcalls/MethodCallSignature.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/methodcalls/callscanners/DefaultMethodCallsScanner.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/methodcalls/callscanners/MethodCallsScanner.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/methodcalls/callsignaturemodifiers/DefaultMethodCallModifier.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/exceptions/ProcessingEnvironmentException.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/utils/NameUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/utils/ProcessingUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/utils/ReflectionUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/params/src/main/java/org/projectparams/annotations/Priority.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/ArgumentInfo.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/DefaultMethodCallModifier.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/MethodCallInfo.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/MethodCallModifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/methodcalls/callsignaturemodifiers/MethodCallModifier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/defaultvalue/DefaultValueProcessor.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/params/src/main/java/org/projectparams/annotations/DefaultValue.java" beforeDir="false" afterPath="$PROJECT_DIR$/params/src/main/java/org/projectparams/annotations/DefaultValue.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Abobus.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Abobus.java" afterDir="false" />
+    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="guess i am finally on the right track. Implemented framework of annotation processor">
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/files/Compiler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/files/FileObjectWrapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/files/InterceptingFileObject.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/MainProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/MainProcessor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/classloading/Agent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/classloading/ShadowClassLoader.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/MethodCallArgumentsSupplier.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/methodcalls/MethodCallSignature.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/methodcalls/callscanners/DefaultMethodCallsScanner.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/methodcalls/callscanners/MethodCallsScanner.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/methodcalls/callsignaturemodifiers/DefaultMethodCallModifier.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/methodcalls/callsignaturemodifiers/MethodCallModifier.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,9 +75,9 @@
       <list>
         <option value="Record" />
         <option value="Kotlin Script" />
-        <option value="Interface" />
         <option value="AnnotationType" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -140,7 +131,7 @@
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;ml.llm.LLMProjectConfigurable&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -277,6 +268,8 @@
     <attachedChunks>
       <set>
         <option value="jdk-1.8.0_392-temurin-1.8.0_392-f644763e9732-ff751085" />
+        <option value="jdk-11.0.22-temurin-11.0.22-f644763e9732-193cb75d" />
+        <option value="jdk-17.0.10-temurin-17.0.10-f644763e9732-8a10ee56" />
         <option value="jdk-21.0.1-openjdk-21.0.1-f644763e9732-f98dd351" />
         <option value="jdk-21.0.2-openjdk-21.0.2-f644763e9732-c0c073db" />
       </set>
@@ -308,7 +301,9 @@
       <workItem from="1705593235209" duration="9366000" />
       <workItem from="1705632048752" duration="15000" />
       <workItem from="1705632811552" duration="8789000" />
-      <workItem from="1705681567430" duration="10259000" />
+      <workItem from="1705681567430" duration="18025000" />
+      <workItem from="1705713967684" duration="3857000" />
+      <workItem from="1705723792384" duration="1456000" />
     </task>
     <task id="LOCAL-00001" summary="split project into modules">
       <option name="closed" value="true" />
@@ -318,7 +313,23 @@
       <option name="project" value="LOCAL" />
       <updated>1705451640171</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="guess i am finally on the right track. Implemented framework of annotation processor">
+      <option name="closed" value="true" />
+      <created>1705704395026</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1705704395026</updated>
+    </task>
+    <task id="LOCAL-00003" summary="guess i am finally on the right track. Implemented framework of annotation processor">
+      <option name="closed" value="true" />
+      <created>1705704415966</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1705704415966</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -326,7 +337,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="split project into modules" />
-    <option name="LAST_COMMIT_MESSAGE" value="split project into modules" />
+    <MESSAGE value="guess i am finally on the right track. Implemented framework of annotation processor" />
+    <option name="LAST_COMMIT_MESSAGE" value="guess i am finally on the right track. Implemented framework of annotation processor" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
