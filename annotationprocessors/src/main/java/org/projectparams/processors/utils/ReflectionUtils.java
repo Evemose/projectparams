@@ -2,7 +2,6 @@ package org.projectparams.processors.utils;
 
 import sun.misc.Unsafe;
 
-import java.io.OutputStream;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -21,9 +20,8 @@ public class ReflectionUtils {
 
     /** get silly little offset for doing silly bad things **/
     private static Optional<Long> becomeSilly() {
-        Long g;
         try {
-            g = getSillyFieldOffset();
+            var g = getSillyFieldOffset();
             return Optional.of(g);
         } catch (Throwable ignored) {
             return Optional.empty();
@@ -122,35 +120,6 @@ public class ReflectionUtils {
     static class SillyFake {
         boolean override;
         Object accessCheckCache;
-    }
-
-//    currently unused
-//    private static long getFieldOffset(Class<?> clazz, String fieldName) {
-//        return WHO_CARES_IF_ITS_UNSAFE.objectFieldOffset(getField(clazz, fieldName));
-//    }
-
-    private static long getFirstFieldOffset() {
-        return WHO_CARES_IF_ITS_UNSAFE.objectFieldOffset(getField(Parent.class, "first"));
-    }
-
-
-//    currently unused
-//    public static void setVolatile(Object object, String fieldName, boolean value) {
-//        var offset = getFieldOffset(object.getClass(), fieldName);
-//        WHO_CARES_IF_ITS_UNSAFE.putBooleanVolatile(object, offset, value);
-//    }
-
-    public static void setFirstFieldVolatile(Object object, boolean value) {
-        WHO_CARES_IF_ITS_UNSAFE.putBooleanVolatile(object, getFirstFieldOffset(), value);
-    }
-
-    @SuppressWarnings("unused")
-    private static class Parent {
-        boolean first;
-        static final Object staticObj = OutputStream.class;
-        volatile Object second;
-        private static volatile boolean staticSecond;
-        private static volatile boolean staticThird;
     }
 }
 

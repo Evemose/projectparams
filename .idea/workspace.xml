@@ -4,20 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="guess i am finally on the right track. Implemented framework of annotation processor">
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/files/Compiler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/files/FileObjectWrapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/files/InterceptingFileObject.java" afterDir="false" />
+    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="not sure if files package is needed at all by now. Seems like it only serves purpose of post-compiler transformations">
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/TestTreeScanner.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/utils/Parent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/MainProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/MainProcessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/classloading/Agent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/classloading/ShadowClassLoader.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/MethodCallArgumentsSupplier.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/methodcalls/MethodCallSignature.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/methodcalls/callscanners/DefaultMethodCallsScanner.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/methodcalls/callscanners/MethodCallsScanner.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/methodcalls/callsignaturemodifiers/DefaultMethodCallModifier.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/commons/methodcalls/callsignaturemodifiers/MethodCallModifier.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/utils/ProcessingUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/utils/ProcessingUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/utils/ReflectionUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/utils/ReflectionUtils.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,8 +70,8 @@
         <option value="Record" />
         <option value="Kotlin Script" />
         <option value="AnnotationType" />
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -140,6 +134,7 @@
       <recent name="C:\projectparams" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\projectparams\annotationprocessors\src\main\java" />
       <recent name="C:\projectparams\params\src\main\java\org\projectparams" />
       <recent name="C:\projectparams\params\src\main" />
       <recent name="C:\projectparams\params\src" />
@@ -257,6 +252,7 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Main" />
         <item itemvalue="Gradle.Tests in 'projectparams.annotationprocessors'" />
         <item itemvalue="Application.org.projectparams.processors.Main" />
         <item itemvalue="Gradle.projectparams [build]" />
@@ -303,7 +299,9 @@
       <workItem from="1705632811552" duration="8789000" />
       <workItem from="1705681567430" duration="18025000" />
       <workItem from="1705713967684" duration="3857000" />
-      <workItem from="1705723792384" duration="1456000" />
+      <workItem from="1705723792384" duration="5880000" />
+      <workItem from="1705730198385" duration="55000" />
+      <workItem from="1705771969706" duration="2753000" />
     </task>
     <task id="LOCAL-00001" summary="split project into modules">
       <option name="closed" value="true" />
@@ -329,16 +327,36 @@
       <option name="project" value="LOCAL" />
       <updated>1705704415966</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="not sure if files package is needed at all by now. Seems like it only serves purpose of post-compiler transformations">
+      <option name="closed" value="true" />
+      <created>1705725700538</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1705725700538</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="split project into modules" />
     <MESSAGE value="guess i am finally on the right track. Implemented framework of annotation processor" />
-    <option name="LAST_COMMIT_MESSAGE" value="guess i am finally on the right track. Implemented framework of annotation processor" />
+    <MESSAGE value="not sure if files package is needed at all by now. Seems like it only serves purpose of post-compiler transformations" />
+    <option name="LAST_COMMIT_MESSAGE" value="not sure if files package is needed at all by now. Seems like it only serves purpose of post-compiler transformations" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

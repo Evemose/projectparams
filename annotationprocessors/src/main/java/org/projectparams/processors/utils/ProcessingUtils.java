@@ -2,12 +2,15 @@ package org.projectparams.processors.utils;
 
 import com.sun.tools.javac.processing.JavacFiler;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
+import org.projectparams.processors.MainProcessor;
 import org.projectparams.processors.exceptions.ProcessingEnvironmentException;
 
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.tools.Diagnostic;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
-@SuppressWarnings("deprecation")
 public class ProcessingUtils {
     private ProcessingUtils() {
         throw new UnsupportedOperationException();
@@ -15,7 +18,9 @@ public class ProcessingUtils {
 
     public static JavacProcessingEnvironment getJavacProcessingEnvironment(Object procEnv)
             throws ProcessingEnvironmentException {
-        addOpensInModule();
+        if (procEnv instanceof ProcessingEnvironment processingEnv) {
+            addOpensInModule(processingEnv);
+        }
         if (procEnv instanceof JavacProcessingEnvironment jProcessingEnv) {
             return jProcessingEnv;
         }
@@ -31,7 +36,9 @@ public class ProcessingUtils {
                 new ProcessingEnvironmentException("Could not get JavacFiler"));
         return getJavacFiler(delegate);
     }
-    public static void addOpensInModule() {
+
+    /** this method opens required packages in jdk.compiler module to the current module */
+    public static void addOpensInModule(ProcessingEnvironment processingEnv) {
         Class<?> moduleClass;
         try {
             moduleClass = Class.forName("java.lang.Module");
@@ -42,31 +49,33 @@ public class ProcessingUtils {
 
         var jdkCompilerModule = getJdkCompilerModule();
         var ownModule = getOwnModule();
-        var requiredPackages = new String[]{
-                "com.sun.tools.javac.code",
-                "com.sun.tools.javac.comp",
-                "com.sun.tools.javac.file",
-                "com.sun.tools.javac.main",
+        var requiredPackages = List.of(
                 "com.sun.tools.javac.model",
-                "com.sun.tools.javac.parser",
                 "com.sun.tools.javac.processing",
                 "com.sun.tools.javac.tree",
-                "com.sun.tools.javac.util",
-                "com.sun.tools.javac.jvm",
-        };
-
+                "com.sun.tools.javac.util"
+        );
         try {
             // add required for project opens to jdk.compiler module
             var m = moduleClass.getDeclaredMethod("implAddOpens", String.class, moduleClass);
-            ReflectionUtils.setFirstFieldVolatile(ownModule, true);
-            for (var p : requiredPackages) m.invoke(jdkCompilerModule, p, ownModule);
-        } catch (Exception ignore) {}
+            m.setAccessible(true);
+            requiredPackages.forEach(p -> {
+                try {
+                    m.invoke(jdkCompilerModule, p, ownModule);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (Exception e) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                    "Could not add opens to jdk.compiler module " + e.getMessage());
+        }
     }
 
     private static Module getOwnModule() {
         try {
             var m = ReflectionUtils.getMethod(Class.class, "getModule");
-            return (Module) m.invoke(ProcessingUtils.class);
+            return (Module) m.invoke(MainProcessor.class);
         } catch (Exception e) {
             return null;
         }

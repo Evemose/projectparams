@@ -1,10 +1,16 @@
 package org.projectparams.processors;
 
+import com.google.auto.service.AutoService;
+import com.sun.source.tree.MethodTree;
+import com.sun.source.util.TreePathScanner;
+import com.sun.source.util.TreeScanner;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.processing.JavacFiler;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
+import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.TreeMaker;
+import com.sun.tools.javac.util.Names;
 import org.projectparams.processors.ast.utils.ElementUtils;
-import org.projectparams.processors.exceptions.ProcessingEnvironmentException;
 import org.projectparams.processors.utils.ProcessingUtils;
 import org.projectparams.processors.utils.ReflectionUtils;
 
@@ -13,7 +19,6 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
-import javax.tools.JavaFileManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -21,15 +26,16 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import static com.sun.tools.javac.tree.JCTree.*;
+import static com.sun.tools.javac.tree.JCTree.JCCompilationUnit;
+import static com.sun.tools.javac.tree.JCTree.JCMethodDecl;
 
 
 // TODO: i guess this will need a migration from com.sun.tools.javac to jdk.compiler when works
 @SupportedAnnotationTypes("*")
-@SupportedSourceVersion(SourceVersion.RELEASE_11)
-class MainProcessor extends AbstractProcessor {
+@SupportedSourceVersion(SourceVersion.RELEASE_21)
+@AutoService(Processor.class)
+public class MainProcessor extends AbstractProcessor {
     private JavacProcessingEnvironment javacProcessingEnv;
-    private ProcessingEnvironment processingEnv;
 
     // TODO: remove related code if not needed in future
     private JavacFiler javacFiler;
@@ -38,39 +44,41 @@ class MainProcessor extends AbstractProcessor {
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
-        super.init(processingEnv);
         try {
+            super.init(processingEnv);
             this.javacProcessingEnv = ProcessingUtils.getJavacProcessingEnvironment(processingEnv);
-        } catch (ProcessingEnvironmentException e) {
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
-        }
-        this.processingEnv = processingEnv;
-        try {
             this.javacFiler = ProcessingUtils.getJavacFiler(processingEnv.getFiler());
-        } catch (ProcessingEnvironmentException e) {
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, e.getMessage());
+            this.trees = Trees.instance(javacProcessingEnv);
+        } catch (Throwable t) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                    t.getMessage() + "\n" + Arrays.toString(t.getStackTrace()).replaceAll(",", "\n"));
         }
-        this.trees = Trees.instance(javacProcessingEnv);
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        if (roundEnv.processingOver()) return false;
+        try {
+            if (roundEnv.processingOver()) return false;
 
-        var compilationUnits = roundEnv.getRootElements().stream()
-                .mapMulti((Element element, Consumer<JCCompilationUnit> consumer) ->
-                        ElementUtils.getCompilationUnit(trees, element).ifPresent(consumer))
-                .filter(Predicate.not(processedUnits::contains))
-                .toList();
+            var compilationUnits = roundEnv.getRootElements().stream()
+                    .mapMulti((Element element, Consumer<JCCompilationUnit> consumer) ->
+                            ElementUtils.getCompilationUnit(trees, element).ifPresent(consumer))
+                    .filter(Predicate.not(processedUnits::contains))
+                    .toList();
 
-        if (compilationUnits.isEmpty()) return false;
+            if (compilationUnits.isEmpty()) return false;
 
-        // TODO: add processing logic here
-        // compilationUnits.forEach();
+            // TODO: add processing logic here
+            // compilationUnits.forEach();
 
-        processedUnits.addAll(compilationUnits);
+            processedUnits.addAll(compilationUnits);
 
-        return false;
+            return false;
+        } catch (Throwable t) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                    t.getMessage() + "\n" + Arrays.toString(t.getStackTrace()).replaceAll(",", "\n"));
+            return false;
+        }
     }
 
 
@@ -140,13 +148,5 @@ class MainProcessor extends AbstractProcessor {
                 classLoader.clearAssertionStatus();
             }
         };
-    }
-
-    private void setupFileManagerInterception() {
-        preventClassLoaderFromClosing();
-
-        // hope this won`t throw exception cause in lombok its accessed via reflection
-        var originalFiler = javacProcessingEnv.getContext().get(JavaFileManager.class);
-
     }
 }
