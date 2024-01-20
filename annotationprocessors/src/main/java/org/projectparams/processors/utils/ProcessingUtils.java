@@ -1,6 +1,5 @@
 package org.projectparams.processors.utils;
 
-import com.sun.tools.javac.processing.JavacFiler;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import org.projectparams.processors.MainProcessor;
 import org.projectparams.processors.exceptions.ProcessingEnvironmentException;
@@ -27,14 +26,6 @@ public class ProcessingUtils {
         var delegate = tryGetDelegate(procEnv, "processingEnv").orElseThrow(() ->
                 new ProcessingEnvironmentException("Could not get JavacProcessingEnvironment"));
         return getJavacProcessingEnvironment(delegate);
-    }
-
-    public static JavacFiler getJavacFiler(Object filer) throws ProcessingEnvironmentException {
-        if (filer instanceof JavacFiler) return (JavacFiler) filer;
-
-        var delegate = tryGetDelegate(filer, "filer").orElseThrow(() ->
-                new ProcessingEnvironmentException("Could not get JavacFiler"));
-        return getJavacFiler(delegate);
     }
 
     /** this method opens required packages in jdk.compiler module to the current module */

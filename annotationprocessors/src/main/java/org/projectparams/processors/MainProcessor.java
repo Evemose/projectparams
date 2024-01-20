@@ -2,7 +2,6 @@ package org.projectparams.processors;
 
 import com.google.auto.service.AutoService;
 import com.sun.source.util.Trees;
-import com.sun.tools.javac.processing.JavacFiler;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import org.projectparams.processors.ast.utils.ElementUtils;
 import org.projectparams.processors.utils.ProcessingUtils;
@@ -32,9 +31,6 @@ import static com.sun.tools.javac.tree.JCTree.JCCompilationUnit;
 @AutoService(Processor.class)
 public class MainProcessor extends AbstractProcessor {
     private JavacProcessingEnvironment javacProcessingEnv;
-
-    // TODO: remove related code if not needed in future
-    private JavacFiler javacFiler;
     private Trees trees;
     private final Set<JCCompilationUnit> processedUnits = new HashSet<>();
 
@@ -43,7 +39,6 @@ public class MainProcessor extends AbstractProcessor {
         try {
             super.init(processingEnv);
             this.javacProcessingEnv = ProcessingUtils.getJavacProcessingEnvironment(processingEnv);
-            this.javacFiler = ProcessingUtils.getJavacFiler(processingEnv.getFiler());
             this.trees = Trees.instance(javacProcessingEnv);
         } catch (Throwable t) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
