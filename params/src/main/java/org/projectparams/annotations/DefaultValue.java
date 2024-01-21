@@ -9,5 +9,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Priority(1)
 public @interface DefaultValue {
-    String value();
+    String value() default "superSecretDefaultValuePlaceholder";
 }

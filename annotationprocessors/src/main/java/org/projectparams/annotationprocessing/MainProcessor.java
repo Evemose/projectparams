@@ -2,6 +2,7 @@ package org.projectparams.annotationprocessing;
 
 import com.google.auto.service.AutoService;
 import com.sun.source.util.Trees;
+import com.sun.tools.javac.code.Symtab;
 import com.sun.tools.javac.comp.Attr;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -39,6 +40,7 @@ public class MainProcessor extends AbstractProcessor {
     private Element rootPackage;
     private TreeMaker treeMaker;
     private Names names;
+    private Symtab symtab;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -48,7 +50,8 @@ public class MainProcessor extends AbstractProcessor {
             this.trees = Trees.instance(javacProcessingEnv);
             this.treeMaker = TreeMaker.instance(javacProcessingEnv.getContext());
             this.names = Names.instance(javacProcessingEnv.getContext());
-            TypeUtils.init(trees, javacProcessingEnv.getTypeUtils(), names, processingEnv.getElementUtils());
+            this.symtab = Symtab.instance(javacProcessingEnv.getContext());
+            TypeUtils.init(trees, javacProcessingEnv.getTypeUtils(), names, processingEnv.getElementUtils(), treeMaker, symtab);
         } catch (Throwable t) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
                     t.getMessage() + "\n" + Arrays.toString(t.getStackTrace()).replaceAll(",", "\n"));

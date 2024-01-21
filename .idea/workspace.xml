@@ -4,24 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="some cleanup before implementing processing logic">
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/ast/TypeUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/AbstractAnnotationProcessor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/AnnotationProcessor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/GlobalAnnotationProcessor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueProcessor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/MethodInfo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/managers/DefaultProcessorsManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/managers/ProcessorsManager.java" afterDir="false" />
+    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="i began to change invocations params, but it doesn`t work with var keyword for now.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/MainProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/MainProcessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/ast/utils/ElementUtils.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/exceptions/ProcessingEnvironmentException.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/exceptions/ProcessingEnvironmentException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/utils/NameUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/utils/NameUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/utils/ProcessingUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/utils/ProcessingUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/processors/utils/ReflectionUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/utils/ReflectionUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/test/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/MainProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/MainProcessor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/ast/TypeUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/ast/TypeUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueProcessor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/MethodInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/MethodInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/utils/NameUtils.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/params/src/main/java/org/projectparams/annotations/DefaultValue.java" beforeDir="false" afterPath="$PROJECT_DIR$/params/src/main/java/org/projectparams/annotations/DefaultValue.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Abobus.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Abobus.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" afterDir="false" />
     </list>
@@ -330,7 +320,15 @@
       <workItem from="1705774941555" duration="21926000" />
       <workItem from="1705798776359" duration="7336000" />
       <workItem from="1705806210446" duration="2487000" />
-      <workItem from="1705810306167" duration="6290000" />
+      <workItem from="1705810306167" duration="7597000" />
+      <workItem from="1705819079317" duration="1703000" />
+      <workItem from="1705848842740" duration="591000" />
+      <workItem from="1705851666326" duration="3830000" />
+      <workItem from="1705856559290" duration="48000" />
+      <workItem from="1705856700078" duration="287000" />
+      <workItem from="1705857856275" duration="193000" />
+      <workItem from="1705858180546" duration="442000" />
+      <workItem from="1705858754116" duration="8463000" />
     </task>
     <task id="LOCAL-00001" summary="split project into modules">
       <option name="closed" value="true" />
@@ -388,7 +386,23 @@
       <option name="project" value="LOCAL" />
       <updated>1705778693033</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="i began to change invocations params, but it doesn`t work with var keyword for now.">
+      <option name="closed" value="true" />
+      <created>1705817920748</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1705817920748</updated>
+    </task>
+    <task id="LOCAL-00009" summary="i began to change invocations params, but it doesn`t work with var keyword for now.">
+      <option name="closed" value="true" />
+      <created>1705817926728</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1705817926728</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -411,7 +425,8 @@
     <MESSAGE value="not sure if files package is needed at all by now. Seems like it only serves purpose of post-compiler transformations" />
     <MESSAGE value="i managed to get it working" />
     <MESSAGE value="some cleanup before implementing processing logic" />
-    <option name="LAST_COMMIT_MESSAGE" value="some cleanup before implementing processing logic" />
+    <MESSAGE value="i began to change invocations params, but it doesn`t work with var keyword for now." />
+    <option name="LAST_COMMIT_MESSAGE" value="i began to change invocations params, but it doesn`t work with var keyword for now." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

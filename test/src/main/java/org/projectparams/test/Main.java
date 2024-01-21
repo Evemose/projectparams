@@ -4,6 +4,7 @@ public class Main {
     public static void main(String[] args) {
         var abobus = new Abobus();
         var bibus = abobus.bibus();
-        System.out.println(bibus);
+        var bibus2 = "";
+        System.out.println(" " + bibus);
     }
 }
