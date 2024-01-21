@@ -1,15 +1,21 @@
-package org.projectparams.processors;
+package org.projectparams.annotationprocessing;
 
 import com.google.auto.service.AutoService;
 import com.sun.source.util.Trees;
+import com.sun.tools.javac.comp.Attr;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
-import org.projectparams.processors.ast.utils.ElementUtils;
-import org.projectparams.processors.utils.ProcessingUtils;
-import org.projectparams.processors.utils.ReflectionUtils;
+import com.sun.tools.javac.tree.TreeMaker;
+import com.sun.tools.javac.util.Names;
+import org.projectparams.annotationprocessing.ast.TypeUtils;
+import org.projectparams.annotationprocessing.processors.managers.DefaultProcessorsManager;
+import org.projectparams.annotationprocessing.processors.managers.ProcessorsManager;
+import org.projectparams.annotationprocessing.utils.ProcessingUtils;
+import org.projectparams.annotationprocessing.utils.ReflectionUtils;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 import java.io.IOException;
@@ -17,12 +23,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-
-import static com.sun.tools.javac.tree.JCTree.JCCompilationUnit;
 
 
 // TODO: i guess this will need a migration from com.sun.tools.javac to jdk.compiler when works
@@ -32,7 +33,12 @@ import static com.sun.tools.javac.tree.JCTree.JCCompilationUnit;
 public class MainProcessor extends AbstractProcessor {
     private JavacProcessingEnvironment javacProcessingEnv;
     private Trees trees;
-    private final Set<JCCompilationUnit> processedUnits = new HashSet<>();
+    // Initialized in first round processing
+    private ProcessorsManager processorsManager;
+    // Initialized in first round of processing
+    private Element rootPackage;
+    private TreeMaker treeMaker;
+    private Names names;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -40,6 +46,9 @@ public class MainProcessor extends AbstractProcessor {
             super.init(processingEnv);
             this.javacProcessingEnv = ProcessingUtils.getJavacProcessingEnvironment(processingEnv);
             this.trees = Trees.instance(javacProcessingEnv);
+            this.treeMaker = TreeMaker.instance(javacProcessingEnv.getContext());
+            this.names = Names.instance(javacProcessingEnv.getContext());
+            TypeUtils.init(trees, javacProcessingEnv.getTypeUtils(), names, processingEnv.getElementUtils());
         } catch (Throwable t) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
                     t.getMessage() + "\n" + Arrays.toString(t.getStackTrace()).replaceAll(",", "\n"));
@@ -50,26 +59,18 @@ public class MainProcessor extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         try {
             if (roundEnv.processingOver()) return false;
-
-            var compilationUnits = roundEnv.getRootElements().stream()
-                    .mapMulti((Element element, Consumer<JCCompilationUnit> consumer) ->
-                            ElementUtils.getCompilationUnit(trees, element).ifPresent(consumer))
-                    .filter(Predicate.not(processedUnits::contains))
-                    .toList();
-
-            if (compilationUnits.isEmpty()) return false;
-
-            // TODO: add processing logic here
-            // compilationUnits.forEach();
-
-            processedUnits.addAll(compilationUnits);
-
-            return false;
+            if (rootPackage == null) {
+                rootPackage = ProcessingUtils.getRootPackage(roundEnv);
+                this.processorsManager =
+                        new DefaultProcessorsManager(trees, treeMaker, names,
+                                (PackageElement) rootPackage, processingEnv.getMessager());
+            }
+            processorsManager.process(roundEnv);
         } catch (Throwable t) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
                     t.getMessage() + "\n" + Arrays.toString(t.getStackTrace()).replaceAll(",", "\n"));
-            return false;
         }
+        return false;
     }
 
 

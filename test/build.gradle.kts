@@ -29,3 +29,7 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-Adebug=true")
+}

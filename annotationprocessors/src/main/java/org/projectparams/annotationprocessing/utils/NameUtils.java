@@ -1,4 +1,4 @@
-package org.projectparams.processors.utils;
+package org.projectparams.annotationprocessing.utils;
 
 public class NameUtils {
     private NameUtils() {

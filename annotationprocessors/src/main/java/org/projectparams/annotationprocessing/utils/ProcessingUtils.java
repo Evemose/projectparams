@@ -1,10 +1,13 @@
-package org.projectparams.processors.utils;
+package org.projectparams.annotationprocessing.utils;
 
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
-import org.projectparams.processors.MainProcessor;
-import org.projectparams.processors.exceptions.ProcessingEnvironmentException;
+import org.projectparams.annotationprocessing.MainProcessor;
+import org.projectparams.annotationprocessing.exceptions.ProcessingEnvironmentException;
 
 import javax.annotation.processing.ProcessingEnvironment;
+import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
 import javax.tools.Diagnostic;
 import java.util.Arrays;
 import java.util.List;
@@ -44,7 +47,9 @@ public class ProcessingUtils {
                 "com.sun.tools.javac.model",
                 "com.sun.tools.javac.processing",
                 "com.sun.tools.javac.tree",
-                "com.sun.tools.javac.util"
+                "com.sun.tools.javac.util",
+                "com.sun.tools.javac.code",
+                "com.sun.tools.javac.comp"
         );
         try {
             // add required for project opens to jdk.compiler module
@@ -104,6 +109,18 @@ public class ProcessingUtils {
         }
 
         return Optional.empty();
+    }
+
+    public static Element getRootPackage(RoundEnvironment roundEnv) {
+        var rootElementsOpt = roundEnv.getRootElements().stream().findAny();
+        if (rootElementsOpt.isEmpty()) {
+            throw new RuntimeException("Could not find root package");
+        }
+        var rootElement = rootElementsOpt.get();
+        while (!rootElement.getEnclosingElement().getKind().equals(ElementKind.MODULE)) {
+            rootElement = rootElement.getEnclosingElement();
+        }
+        return rootElement;
     }
 
 }
