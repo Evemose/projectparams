@@ -1,7 +1,7 @@
 package org.projectparams.test;
 import org.projectparams.annotations.DefaultValue;
 public class Abobus {
-    public int bibus(@DefaultValue("1") int abobus) {
-        return abobus;
+    public String bibus(@DefaultValue("true") boolean abobus) {
+        return abobus ? "abobus" : "bibus";
     }
 }

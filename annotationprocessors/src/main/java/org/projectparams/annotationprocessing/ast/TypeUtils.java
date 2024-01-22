@@ -49,6 +49,10 @@ public class TypeUtils {
         };
     }
 
+    public boolean isAssignable(String source, String target) {
+        return types.isAssignable(getTypeByName(source), getTypeByName(target));
+    }
+
     public static String getBoxedTypeName(String name) {
         return switch (name) {
             case "int" -> "java.lang.Integer";
