@@ -58,11 +58,7 @@ public class MethodInvocableTree implements InvocableTree {
     @Override
     public void setReturnType(Type type) {
         var asJC = (JCTree.JCMethodInvocation) wrapped;
-        asJC.type = new Type.MethodType(
-                asJC.meth.type.getParameterTypes(),
-                type,
-                asJC.meth.type.getThrownTypes(),
-                asJC.meth.type.tsym);
+        asJC.type = type;
     }
 
     @Override
@@ -93,7 +89,7 @@ public class MethodInvocableTree implements InvocableTree {
 
     @Override
     public Type getReturnType() {
-        return ((JCTree.JCMethodInvocation) wrapped).type.getReturnType();
+        return ((JCTree.JCMethodInvocation) wrapped).type;
     }
 
     @Override

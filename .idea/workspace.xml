@@ -4,14 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="refactored method modifications to work with wrappers instead of with trees directly, implemented method wrapper, removed MethodInvocationArgumentTypeFixer.java due to discovered redundancy, but somewhy methods now match even when shouldn`t, its intermediate commit before fix">
+    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="fixed issue with type inference by moving cleanup invocation to the end of methods modification process. Still have to discover why some methods matched earlier then should">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/invocabletree/InvocableTree.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/invocabletree/InvocableTree.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/invocabletree/MethodInvocableTree.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/invocabletree/MethodInvocableTree.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors/CleanupVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors/CleanupVisitor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueProcessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/MethodInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/MethodInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/visitors/MethodCallModifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/visitors/MethodCallModifier.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/TypeUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/TypeUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Abobus.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Abobus.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -362,7 +359,7 @@
       <workItem from="1705970232571" duration="7429000" />
       <workItem from="1705978205788" duration="3982000" />
       <workItem from="1705989217557" duration="4234000" />
-      <workItem from="1706033670545" duration="8464000" />
+      <workItem from="1706033670545" duration="10372000" />
     </task>
     <task id="LOCAL-00001" summary="split project into modules">
       <option name="closed" value="true" />
@@ -500,7 +497,23 @@
       <option name="project" value="LOCAL" />
       <updated>1706040858978</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="fixed issue with type inference by moving cleanup invocation to the end of methods modification process. Still have to discover why some methods matched earlier then should">
+      <option name="closed" value="true" />
+      <created>1706042445192</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1706042445192</updated>
+    </task>
+    <task id="LOCAL-00019" summary="fixed issue with type inference by moving cleanup invocation to the end of methods modification process. Still have to discover why some methods matched earlier then should">
+      <option name="closed" value="true" />
+      <created>1706042471565</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1706042471565</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -517,7 +530,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="origin/master" />
+                        <option value="constructor-defaults" />
                       </list>
                     </value>
                   </entry>
@@ -543,7 +556,8 @@
     <MESSAGE value="implemented multiple args support" />
     <MESSAGE value="seems like I don`t need to fix method signatures after I fixed arg" />
     <MESSAGE value="refactored method modifications to work with wrappers instead of with trees directly, implemented method wrapper, removed MethodInvocationArgumentTypeFixer.java due to discovered redundancy, but somewhy methods now match even when shouldn`t, its intermediate commit before fix" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactored method modifications to work with wrappers instead of with trees directly, implemented method wrapper, removed MethodInvocationArgumentTypeFixer.java due to discovered redundancy, but somewhy methods now match even when shouldn`t, its intermediate commit before fix" />
+    <MESSAGE value="fixed issue with type inference by moving cleanup invocation to the end of methods modification process. Still have to discover why some methods matched earlier then should" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed issue with type inference by moving cleanup invocation to the end of methods modification process. Still have to discover why some methods matched earlier then should" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

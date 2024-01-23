@@ -72,6 +72,12 @@ public class TypeUtils {
         String ownerQualifiedName;
         if (invocation.getMethodSelect() instanceof MemberSelectTree memberSelectTree) {
             ownerQualifiedName = getOwnerNameFromMemberSelect(memberSelectTree, path);
+//            var split = invocation.getMethodSelect().toString().split("\\.");
+//            var methodName = split[split.length - 1];
+//            if (methodName.equals("doubleBibus") && memberSelectTree.getExpression().toString().equals("Abobus.abobus(abobus.doubleBibus(new Main()))")) {
+//                throw new RuntimeException("ownerQualifiedName: " + ownerQualifiedName + ", identifier: "
+//                        + memberSelectTree.getExpression().toString() + ", invocation: " + invocation);
+//            }
         } else if (invocation.getMethodSelect() instanceof IdentifierTree identifierTree) {
             ownerQualifiedName = getOwnerNameFromIdentifier(identifierTree, path);
         } else {
