@@ -6,6 +6,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
+import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
 import org.projectparams.annotationprocessing.exceptions.UnsupportedSignatureException;
 import org.projectparams.annotationprocessing.processors.defaultvalue.MethodInfo;
 
@@ -19,7 +20,7 @@ public class DefaultArgumentSupplier implements ArgumentSupplier {
     }
 
     @Override
-    public List<JCTree.JCExpression> getModifiedArguments(MethodInvocationTree invocation, MethodInfo methodInfo)
+    public List<JCTree.JCExpression> getModifiedArguments(InvocableTree invocation, MethodInfo methodInfo)
             throws UnsupportedSignatureException {
         var args = new ArrayList<>(invocation.getArguments().stream().map(arg -> (JCTree.JCExpression) arg).toList());
         for (var i = invocation.getArguments().size(); i < methodInfo.parameterTypeQualifiedNames().length; i++) {

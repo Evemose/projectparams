@@ -13,13 +13,11 @@ public interface InvocableTree extends ExpressionTree {
     String getOwnerTypeQualifiedName();
     List<? extends ExpressionTree> getArguments();
     void setArguments(ExpressionTree ...arguments);
-    void updateArgumentType(ExpressionTree argTree);
     void setTargetType(Type type);
     void setReturnType(Type type);
-    void setTargetType(String typeQualifiedName);
     void setType(MethodInfo methodInfo);
     void setThrownTypes(Type ...thrownTypes);
-    void setThrownTypes(String ...thrownTypes);
+    void setThrownTypes(String ...thrownTypeNames);
     ExpressionTree getWrapped();
     Type getWrappedType();
     Type getReturnType();

@@ -3,6 +3,7 @@ package org.projectparams.annotationprocessing.processors.defaultvalue;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.TreeMaker;
+import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
 import org.projectparams.annotationprocessing.astcommons.visitors.CleanupVisitor;
 import org.projectparams.annotationprocessing.processors.GlobalAnnotationProcessor;
 import org.projectparams.annotationprocessing.processors.defaultvalue.argumentsuppliers.DefaultArgumentSupplier;
@@ -33,8 +34,8 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
                         Set::addAll);
         messager.printMessage(Diagnostic.Kind.NOTE, "Methods to process: " + methods);
         var argumentSupplier = new DefaultArgumentSupplier(treeMaker);
-        var fixedMethodsInIteration = Collections.newSetFromMap(new IdentityHashMap<MethodInvocationTree, Boolean>(methods.size()));
-        var allFixedMethods = Collections.newSetFromMap(new IdentityHashMap<MethodInvocationTree, Boolean>(methods.size()));
+        var fixedMethodsInIteration = new HashSet<InvocableTree>();
+        var allFixedMethods = new HashSet<InvocableTree>();
         do {
             allFixedMethods.addAll(fixedMethodsInIteration);
             fixedMethodsInIteration.clear();

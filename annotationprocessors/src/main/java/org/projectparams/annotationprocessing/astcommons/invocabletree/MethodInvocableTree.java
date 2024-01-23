@@ -1,6 +1,8 @@
 package org.projectparams.annotationprocessing.astcommons.invocabletree;
 
 import com.sun.source.tree.*;
+import com.sun.source.util.TreePath;
+import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
@@ -11,11 +13,13 @@ import java.util.List;
 
 public class MethodInvocableTree implements InvocableTree {
     private final MethodInvocationTree wrapped;
+    private final TreePath pathToMethod;
 
-    public MethodInvocableTree(MethodInvocationTree methodInvocationTree) {
+    public MethodInvocableTree(MethodInvocationTree methodInvocationTree, TreePath pathToMethod) {
         this.wrapped = methodInvocationTree;
-        var asJC = (JCTree.JCMethodInvocation) wrapped;
+        this.pathToMethod = pathToMethod;
 
+        var asJC = (JCTree.JCMethodInvocation) wrapped;
         // initialize dummy type for method invocation
         if (asJC.meth.type == null) {
             asJC.meth.type = new Type.MethodType(
@@ -36,14 +40,7 @@ public class MethodInvocableTree implements InvocableTree {
 
     @Override
     public String getOwnerTypeQualifiedName() {
-        if (wrapped.getMethodSelect() instanceof MemberSelectTree memberSelect) {
-            return memberSelect.getExpression().toString();
-        } else if (wrapped.getMethodSelect() instanceof IdentifierTree identifier) {
-            return null;
-        } else {
-            throw new IllegalArgumentException("Unsupported method select type: "
-                    + wrapped.getMethodSelect().getClass().getCanonicalName());
-        }
+        return TypeUtils.getOwnerTypeName(wrapped, pathToMethod);
     }
 
     @Override
@@ -55,23 +52,6 @@ public class MethodInvocableTree implements InvocableTree {
     public void setArguments(ExpressionTree ...arguments) {
         var asJC = (JCTree.JCMethodInvocation) wrapped;
         asJC.args = com.sun.tools.javac.util.List.from(Arrays.stream(arguments).map(arg -> (JCTree.JCExpression) arg).toList());
-        updateArgumentsTypes(arguments);
-    }
-
-    private void updateArgumentsTypes(ExpressionTree... arguments) {
-        for (var argument : arguments) {
-            updateArgumentType(argument);
-        }
-    }
-
-    @Override
-    public void updateArgumentType(ExpressionTree argTree) {
-        var asJC = (JCTree.JCMethodInvocation) wrapped;
-        for (var arg : asJC.args) {
-            if (arg == argTree) {
-
-            }
-        }
     }
 
     @Override
@@ -95,11 +75,6 @@ public class MethodInvocableTree implements InvocableTree {
     }
 
     @Override
-    public void setTargetType(String typeQualifiedName) {
-        setTargetType(TypeUtils.getTypeByName(typeQualifiedName));
-    }
-
-    @Override
     public void setType(MethodInfo methodInfo) {
         var asJC = (JCTree.JCMethodInvocation) wrapped;
         asJC.meth.type = new Type.MethodType(
@@ -116,8 +91,8 @@ public class MethodInvocableTree implements InvocableTree {
     }
 
     @Override
-    public void setThrownTypes(String... thrownTypes) {
-        Arrays.stream(thrownTypes).map(TypeUtils::getTypeByName)
+    public void setThrownTypes(String... thrownTypeNames) {
+        Arrays.stream(thrownTypeNames).map(TypeUtils::getTypeByName)
                 .forEach(this::setThrownTypes);
     }
 
@@ -144,5 +119,22 @@ public class MethodInvocableTree implements InvocableTree {
     @Override
     public <R, D> R accept(TreeVisitor<R, D> visitor, D data) {
         return wrapped.accept(visitor, data);
+    }
+
+    @Override
+    public String toString() {
+        return wrapped.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MethodInvocableTree that)) return false;
+        return wrapped.equals(that.wrapped);
+    }
+
+    @Override
+    public int hashCode() {
+        return wrapped.hashCode();
     }
 }

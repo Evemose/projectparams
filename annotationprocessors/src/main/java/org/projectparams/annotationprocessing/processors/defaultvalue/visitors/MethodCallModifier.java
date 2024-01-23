@@ -8,6 +8,8 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.List;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
+import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
+import org.projectparams.annotationprocessing.astcommons.invocabletree.MethodInvocableTree;
 import org.projectparams.annotationprocessing.astcommons.visitors.ParentDependentVisitor;
 import org.projectparams.annotationprocessing.exceptions.UnsupportedSignatureException;
 import org.projectparams.annotationprocessing.processors.defaultvalue.MethodInfo;
@@ -17,62 +19,61 @@ import javax.annotation.processing.Messager;
 import javax.tools.Diagnostic;
 import java.util.Set;
 
-public class MethodCallModifier extends ParentDependentVisitor<Void, MethodInfo, MethodInvocationTree> {
-    private final Set<MethodInvocationTree> fixedMethodsInIteration;
-    private final Set<MethodInvocationTree> allFixedMethods;
+public class MethodCallModifier extends ParentDependentVisitor<Void, MethodInfo, InvocableTree> {
+    private final Set<InvocableTree> fixedMethodsInIteration;
+    private final Set<InvocableTree> allFixedMethods;
     private final ArgumentSupplier argumentSupplier;
 
-    public MethodCallModifier(Set<MethodInvocationTree> fixedMethodsInIteration,
-                              MethodInvocationTree parent,
+    public MethodCallModifier(Set<InvocableTree> fixedMethodsInIteration,
+                              InvocableTree parent,
                               Trees trees,
                               ArgumentSupplier argumentSupplier,
-                              Messager messager, Set<MethodInvocationTree> allFixedMethods) {
+                              Messager messager, Set<InvocableTree> allFixedMethods) {
         super(trees, messager,  parent);
         this.fixedMethodsInIteration = fixedMethodsInIteration;
         this.allFixedMethods = allFixedMethods;
         this.argumentSupplier = argumentSupplier;
-        this.parent = parent;
     }
-    private void modifyMethodArgs(MethodInfo methodInfo,
-                                         JCTree.JCMethodInvocation call,
+    private void modifyMethodArgs(InvocableTree call,
                                          List<JCTree.JCExpression> args) {
-        call.args = args;
-        call.meth.type = new Type.MethodType(
-                List.from(args.stream().map(arg -> arg.type).toList()),
-                TypeUtils.getTypeByName(methodInfo.returnTypeQualifiedName()),
-                List.nil(),
-                TypeUtils.getTypeByName(methodInfo.ownerQualifiedName()).asElement());
-        call.type = call.meth.type.getReturnType();
+        call.setArguments(args.toArray(new JCTree.JCExpression[0]));
     }
 
     @Override
     public Void visitMethodInvocation(MethodInvocationTree that, MethodInfo methodInfo) {
-        messager.printMessage(Diagnostic.Kind.NOTE, "Processing method invocation: " + that);
-        if (!allFixedMethods.contains(that) &&
-                methodInfo.matches(that, trees, getCurrentPath())) {
-            messager.printMessage(Diagnostic.Kind.NOTE, "Processing matched method: " + that);
-            var call = (JCTree.JCMethodInvocation) that;
+        var needToPassLower = visitInvocable(new MethodInvocableTree(that, getCurrentPath()), methodInfo);
+        if (needToPassLower) {
+            return super.visitMethodInvocation(that, methodInfo);
+        }
+        return null;
+    }
+
+    private boolean visitInvocable(InvocableTree invocation, MethodInfo methodInfo) {
+        messager.printMessage(Diagnostic.Kind.NOTE, "Processing method invocation: " + invocation);
+        if (!allFixedMethods.contains(invocation) &&
+                methodInfo.matches(invocation, trees, getCurrentPath())) {
+            messager.printMessage(Diagnostic.Kind.NOTE, "Processing matched method: " + invocation);
             List<JCTree.JCExpression> args;
             try {
-                args = argumentSupplier.getModifiedArguments(call, methodInfo);
+                args = argumentSupplier.getModifiedArguments(invocation, methodInfo);
             } catch (UnsupportedSignatureException e) {
                 messager.printMessage(Diagnostic.Kind.ERROR, e.getMessage());
                 throw new RuntimeException(e);
             }
-            modifyMethodArgs(methodInfo, call, args);
-            fixedMethodsInIteration.add(that);
-            messager.printMessage(Diagnostic.Kind.NOTE, "Fixed method invocation: " + that);
+            modifyMethodArgs(invocation, args);
+            fixedMethodsInIteration.add(invocation);
+            messager.printMessage(Diagnostic.Kind.NOTE, "Fixed method invocation: " + invocation);
             // if method invocation is fixed, it implies that all its arguments are fixed too,
             // otherwise it would be argument types mismatch with method signature
             // and method invocation would not be matched
-            return null;
-        } else if (that != parent) {
-            new MethodCallModifier(fixedMethodsInIteration, that, trees, argumentSupplier, messager, allFixedMethods)
-                    .scan(new TreePath(getCurrentPath(), that), methodInfo);
-            // read comment above to understand why we return null here
-            return null;
+            return false;
+        } else if (!invocation.equals(parent)) {
+            new MethodCallModifier(fixedMethodsInIteration, invocation, trees, argumentSupplier, messager, allFixedMethods)
+                    .scan(new TreePath(getCurrentPath(), invocation), methodInfo);
+            // read comment above to understand why we return false here
+            return false;
         }
-        return super.visitMethodInvocation(that, methodInfo);
+        return true;
     }
 
     // TODO: implement default values for constructors

@@ -8,6 +8,7 @@ import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
+import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
 
 import javax.annotation.processing.Messager;
 import javax.lang.model.type.TypeKind;
@@ -15,10 +16,10 @@ import javax.tools.Diagnostic;
 import java.util.Set;
 
 public class CleanupVisitor extends AbstractVisitor<Void, Void> {
-    private final Set<MethodInvocationTree> fixedMethodsInIteration;
+    private final Set<InvocableTree> fixedMethodsInIteration;
     private final TreeMaker treeMaker;
 
-    public CleanupVisitor(Set<MethodInvocationTree> fixedMethodsInIteration, Trees trees, Messager messager, TreeMaker treeMaker) {
+    public CleanupVisitor(Set<InvocableTree> fixedMethodsInIteration, Trees trees, Messager messager, TreeMaker treeMaker) {
         super(trees, messager);
         this.fixedMethodsInIteration = fixedMethodsInIteration;
         this.treeMaker = treeMaker;
@@ -33,7 +34,8 @@ public class CleanupVisitor extends AbstractVisitor<Void, Void> {
             var initializer = variableTree.getInitializer();
             if (initializer != null &&
                     initializer.getKind() == Tree.Kind.METHOD_INVOCATION
-                    && fixedMethodsInIteration.contains((MethodInvocationTree) initializer)) {
+                    && fixedMethodsInIteration.stream()
+                    .anyMatch(invocable -> invocable.getWrapped() == initializer)) {
                 messager.printMessage(Diagnostic.Kind.NOTE, "Error var initializer: " + variableTree.getInitializer());
                 var asJC = (JCTree.JCVariableDecl) variableTree;
                 asJC.vartype = treeMaker.Type(((JCTree.JCMethodInvocation) initializer).meth.type.getReturnType());
@@ -42,17 +44,5 @@ public class CleanupVisitor extends AbstractVisitor<Void, Void> {
             }
         }
         return super.visitVariable(variableTree, ignored);
-    }
-
-    /**
-     * Fix types of method invocations that either invoked by return value
-     * of method fixed in this iteration or have a fixed method result as an argument.
-     * Delegates fix to {@link MethodInvocationArgumentTypeFixer}.
-     */
-    @Override
-    public Void visitMethodInvocation(MethodInvocationTree that, Void ignored) {
-        new MethodInvocationArgumentTypeFixer(fixedMethodsInIteration, that, trees, messager)
-                .scan(new TreePath(getCurrentPath(), that), null);
-        return null;
     }
 }

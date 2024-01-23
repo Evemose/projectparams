@@ -8,6 +8,7 @@ import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
+import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
 import org.projectparams.annotations.DefaultValue;
 
 import javax.lang.model.element.ExecutableElement;
@@ -60,49 +61,13 @@ public record MethodInfo(String name,
                 );
     }
 
-    public boolean matches(MethodInvocationTree methodTree, Trees trees, TreePath path) {
-        var split = methodTree.getMethodSelect().toString().split("\\.");
-        var methodName = split[split.length - 1];
-        String ownerQualifiedName = null;
-        if (methodTree.getMethodSelect() instanceof MemberSelectTree memberSelectTree) {
-            ownerQualifiedName = getOwnerNameFromMemberSelect(trees, path, memberSelectTree);
-        } else if (methodTree.getMethodSelect() instanceof IdentifierTree identifierTree) {
-            ownerQualifiedName = getOwnerNameFromIdentifier(trees, path, identifierTree);
-        }
+    public boolean matches(InvocableTree invocation, Trees trees, TreePath path) {
+        var methodName = invocation.getSelfName();
+        String ownerQualifiedName = invocation.getOwnerTypeQualifiedName();
         return (ownerQualifiedName == null || ownerQualifiedName.equals(this.ownerQualifiedName))
                 && methodName.equals(name)
-                && doesExistingArgsMatch(methodTree.getArguments());
+                && doesExistingArgsMatch(invocation.getArguments());
         // for now not considering return type
-        //&& returnTypeQualifiedName.equals(TypeUtils.getReturnType(methodTree, path).toString());
-    }
-
-    // TODO: add support for IdentifierTree
-    @SuppressWarnings("unused")
-    private String getOwnerNameFromIdentifier(Trees trees, TreePath path, IdentifierTree identifierTree) {
-        return null;
-    }
-
-    private static String getOwnerNameFromMemberSelect(Trees trees, TreePath path, MemberSelectTree memberSelectTree) {
-        var expression = memberSelectTree.getExpression();
-        var ownerTree = trees.getTree(trees.getElement(new TreePath(path, expression)));
-        String ownerQualifiedName = null;
-        if (ownerTree != null) {
-            if (ownerTree instanceof JCTree.JCVariableDecl varDecl) {
-                var ownerType = varDecl.type;
-                if (ownerType != null) {
-                    ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
-                }
-            } else if (ownerTree instanceof JCTree.JCMethodDecl methodDecl) {
-                var ownerType = methodDecl.getReturnType();
-                if (ownerType != null) {
-                    ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.type.toString());
-                }
-            } else {
-                // TODO: remove placeholder when IdentifierTree is supported
-                ownerQualifiedName = "";
-            }
-        }
-        return ownerQualifiedName;
     }
 
     // TODO: fix
