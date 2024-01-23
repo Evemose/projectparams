@@ -61,7 +61,7 @@ public record MethodInfo(String name,
                 );
     }
 
-    public boolean matches(InvocableTree invocation, Trees trees, TreePath path) {
+    public boolean matches(InvocableTree invocation) {
         var methodName = invocation.getSelfName();
         String ownerQualifiedName = invocation.getOwnerTypeQualifiedName();
         return (ownerQualifiedName == null || ownerQualifiedName.equals(this.ownerQualifiedName))

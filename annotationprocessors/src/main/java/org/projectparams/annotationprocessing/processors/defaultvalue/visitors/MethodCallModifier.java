@@ -4,10 +4,8 @@ import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.NewClassTree;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
-import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.List;
-import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.MethodInvocableTree;
 import org.projectparams.annotationprocessing.astcommons.visitors.ParentDependentVisitor;
@@ -34,16 +32,19 @@ public class MethodCallModifier extends ParentDependentVisitor<Void, MethodInfo,
         this.allFixedMethods = allFixedMethods;
         this.argumentSupplier = argumentSupplier;
     }
-    private void modifyMethodArgs(InvocableTree call,
-                                         List<JCTree.JCExpression> args) {
+
+    private void fixMethod(MethodInfo methodInfo,
+                           InvocableTree call,
+                           List<JCTree.JCExpression> args) {
         call.setArguments(args.toArray(new JCTree.JCExpression[0]));
+        call.setReturnType(methodInfo.returnTypeQualifiedName());
     }
 
     @Override
-    public Void visitMethodInvocation(MethodInvocationTree that, MethodInfo methodInfo) {
-        var needToPassLower = visitInvocable(new MethodInvocableTree(that, getCurrentPath()), methodInfo);
+    public Void visitMethodInvocation(MethodInvocationTree invocation, MethodInfo methodInfo) {
+        var needToPassLower = visitInvocable(new MethodInvocableTree(invocation, getCurrentPath()), methodInfo);
         if (needToPassLower) {
-            return super.visitMethodInvocation(that, methodInfo);
+            return super.visitMethodInvocation(invocation, methodInfo);
         }
         return null;
     }
@@ -51,7 +52,7 @@ public class MethodCallModifier extends ParentDependentVisitor<Void, MethodInfo,
     private boolean visitInvocable(InvocableTree invocation, MethodInfo methodInfo) {
         messager.printMessage(Diagnostic.Kind.NOTE, "Processing method invocation: " + invocation);
         if (!allFixedMethods.contains(invocation) &&
-                methodInfo.matches(invocation, trees, getCurrentPath())) {
+                methodInfo.matches(invocation)) {
             messager.printMessage(Diagnostic.Kind.NOTE, "Processing matched method: " + invocation);
             List<JCTree.JCExpression> args;
             try {
@@ -60,7 +61,7 @@ public class MethodCallModifier extends ParentDependentVisitor<Void, MethodInfo,
                 messager.printMessage(Diagnostic.Kind.ERROR, e.getMessage());
                 throw new RuntimeException(e);
             }
-            modifyMethodArgs(invocation, args);
+            fixMethod(methodInfo, invocation, args);
             fixedMethodsInIteration.add(invocation);
             messager.printMessage(Diagnostic.Kind.NOTE, "Fixed method invocation: " + invocation);
             // if method invocation is fixed, it implies that all its arguments are fixed too,

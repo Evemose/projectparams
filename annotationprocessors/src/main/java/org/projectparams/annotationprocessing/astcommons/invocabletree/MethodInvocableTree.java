@@ -54,15 +54,6 @@ public class MethodInvocableTree implements InvocableTree {
         asJC.args = com.sun.tools.javac.util.List.from(Arrays.stream(arguments).map(arg -> (JCTree.JCExpression) arg).toList());
     }
 
-    @Override
-    public void setTargetType(Type type) {
-        var asJC = (JCTree.JCMethodInvocation) wrapped;
-        asJC.meth.type = new Type.MethodType(
-                asJC.meth.type.getParameterTypes(),
-                asJC.meth.type.getReturnType(),
-                asJC.meth.type.getThrownTypes(),
-                type.asElement());
-    }
 
     @Override
     public void setReturnType(Type type) {
@@ -75,14 +66,8 @@ public class MethodInvocableTree implements InvocableTree {
     }
 
     @Override
-    public void setType(MethodInfo methodInfo) {
-        var asJC = (JCTree.JCMethodInvocation) wrapped;
-        asJC.meth.type = new Type.MethodType(
-                Arrays.stream(methodInfo.parameterTypeQualifiedNames()).map(TypeUtils::getTypeByName)
-                        .collect(com.sun.tools.javac.util.List.collector()),
-                TypeUtils.getTypeByName(methodInfo.returnTypeQualifiedName()),
-                com.sun.tools.javac.util.List.nil(),
-                TypeUtils.getTypeByName(methodInfo.ownerQualifiedName()).asElement());
+    public void setReturnType(String type) {
+        setReturnType(TypeUtils.getTypeByName(type));
     }
 
     @Override
@@ -108,7 +93,7 @@ public class MethodInvocableTree implements InvocableTree {
 
     @Override
     public Type getReturnType() {
-        return ((JCTree.JCMethodInvocation) wrapped).type;
+        return ((JCTree.JCMethodInvocation) wrapped).type.getReturnType();
     }
 
     @Override

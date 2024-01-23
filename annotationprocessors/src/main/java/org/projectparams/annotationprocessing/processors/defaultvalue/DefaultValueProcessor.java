@@ -52,14 +52,12 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
                         messager,
                         allFixedMethods);
                 packageTree.accept(modifier, methodInfo);
-                if (fixedMethodsInIteration.size() > fixedMethodsSize) {
-                    messager.printMessage(Diagnostic.Kind.NOTE, "Fixed method: " + methodInfo);
-                    messager.printMessage(Diagnostic.Kind.NOTE, "Fixing elements related to: " + fixedMethodsInIteration);
-                    var cleanupVisitor = new CleanupVisitor(fixedMethodsInIteration, trees, messager, treeMaker);
-                    packageTree.accept(cleanupVisitor, null);
-                }
             });
         } while (!fixedMethodsInIteration.isEmpty());
+
+        messager.printMessage(Diagnostic.Kind.NOTE, "Fixing variable declarations related to: " + allFixedMethods);
+        var cleanupVisitor = new CleanupVisitor(allFixedMethods, trees, messager, treeMaker);
+        packageTree.accept(cleanupVisitor, null);
     }
 
     @Override
