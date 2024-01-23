@@ -5,7 +5,6 @@ import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.Symtab;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.TreeMaker;
-import com.sun.tools.javac.util.Names;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.processors.managers.DefaultProcessorsManager;
 import org.projectparams.annotationprocessing.processors.managers.ProcessorsManager;
