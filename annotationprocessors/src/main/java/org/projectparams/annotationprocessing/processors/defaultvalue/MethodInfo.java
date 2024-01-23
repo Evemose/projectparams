@@ -4,7 +4,7 @@ import com.sun.source.tree.*;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.JCTree;
-import org.projectparams.annotationprocessing.ast.TypeUtils;
+import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotations.DefaultValue;
 
 import javax.lang.model.element.ExecutableElement;

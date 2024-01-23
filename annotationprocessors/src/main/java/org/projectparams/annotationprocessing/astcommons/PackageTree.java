@@ -1,18 +1,13 @@
-package org.projectparams.annotationprocessing.ast;
+package org.projectparams.annotationprocessing.astcommons;
 
-import com.sun.source.tree.TreeVisitor;
 import com.sun.source.util.TreePathScanner;
 import com.sun.source.util.Trees;
-import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.tree.TreeScanner;
 
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class PackageTree {
     private final List<TypeElement> classes;

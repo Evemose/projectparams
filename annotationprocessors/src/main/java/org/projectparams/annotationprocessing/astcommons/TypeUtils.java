@@ -1,4 +1,4 @@
-package org.projectparams.annotationprocessing.ast;
+package org.projectparams.annotationprocessing.astcommons;
 
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.util.TreePath;
@@ -9,7 +9,6 @@ import com.sun.tools.javac.model.JavacTypes;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Names;
 
-import javax.lang.model.element.Element;
 import javax.lang.model.type.ExecutableType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
