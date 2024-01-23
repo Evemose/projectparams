@@ -31,7 +31,9 @@ public class ProcessingUtils {
         return getJavacProcessingEnvironment(delegate);
     }
 
-    /** this method opens required packages in jdk.compiler module to the current module */
+    /**
+     * this method opens required packages in jdk.compiler module to the current module
+     */
     public static void addOpensInModule(ProcessingEnvironment processingEnv) {
         Class<?> moduleClass;
         try {
@@ -79,7 +81,7 @@ public class ProcessingUtils {
 
     @SuppressWarnings("all")
     private static Module getJdkCompilerModule() {
-		return ModuleLayer.boot().findModule("jdk.compiler").get();
+        return ModuleLayer.boot().findModule("jdk.compiler").get();
     }
 
 

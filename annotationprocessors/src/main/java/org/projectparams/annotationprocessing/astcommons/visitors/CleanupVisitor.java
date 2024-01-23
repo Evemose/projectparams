@@ -3,12 +3,10 @@ package org.projectparams.annotationprocessing.astcommons.visitors;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreePath;
-import com.sun.source.util.TreePathScanner;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
-import org.projectparams.annotationprocessing.processors.defaultvalue.MethodInfo;
 
 import javax.annotation.processing.Messager;
 import javax.lang.model.type.TypeKind;

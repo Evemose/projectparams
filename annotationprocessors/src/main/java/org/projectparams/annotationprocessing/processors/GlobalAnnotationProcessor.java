@@ -10,6 +10,7 @@ import java.lang.annotation.Annotation;
 
 /**
  * Annotation processor that processes all compilation units in the project.
+ *
  * @param <T> Annotation that this processor processes.
  */
 public abstract class GlobalAnnotationProcessor<T extends Annotation> extends AbstractAnnotationProcessor<T> {

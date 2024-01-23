@@ -1,6 +1,8 @@
 package org.projectparams.annotationprocessing.processors.defaultvalue;
 
-import com.sun.source.tree.*;
+import com.sun.source.tree.ExpressionTree;
+import com.sun.source.tree.MemberSelectTree;
+import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.JCTree;
@@ -21,6 +23,7 @@ public record MethodInfo(String name,
                          Map<Integer, Object> paramIndexToDefaultValue) {
 
     public static final String NULL = "superSecretDefaultValuePlaceholder";
+
     public static MethodInfo from(ExecutableElement method) {
         return new MethodInfo(method.getSimpleName().toString(),
                 method.getEnclosingElement().toString(),
@@ -80,10 +83,10 @@ public record MethodInfo(String name,
         }
         // TODO: add support for IdentifierTree
         return doesExistingArgsMatch(methodTree.getArguments())
-                    && methodName.equals(name)
-                    && (ownerQualifiedName == null || ownerQualifiedName.equals(this.ownerQualifiedName));
-                    // for now not considering return type
-                    //&& returnTypeQualifiedName.equals(TypeUtils.getReturnType(methodTree, path).toString());
+                && methodName.equals(name)
+                && (ownerQualifiedName == null || ownerQualifiedName.equals(this.ownerQualifiedName));
+        // for now not considering return type
+        //&& returnTypeQualifiedName.equals(TypeUtils.getReturnType(methodTree, path).toString());
     }
 
     // TODO: fix

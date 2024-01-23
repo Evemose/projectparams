@@ -82,7 +82,7 @@ public class MainProcessor extends AbstractProcessor {
      * The reason for wrapping it in an anonymous proxy is to ensure that the new ClassLoader is not a default instance
      * but an anonymous implementation.
      *
-     * @throws RuntimeException     if an exception occurs during the execution of the method
+     * @throws RuntimeException if an exception occurs during the execution of the method
      */
     @SuppressWarnings("all")
     private void preventClassLoaderFromClosing() {

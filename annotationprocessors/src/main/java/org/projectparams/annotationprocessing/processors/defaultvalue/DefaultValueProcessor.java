@@ -1,6 +1,6 @@
 package org.projectparams.annotationprocessing.processors.defaultvalue;
 
-import com.sun.source.tree.*;
+import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.TreeMaker;
 import org.projectparams.annotationprocessing.astcommons.visitors.CleanupVisitor;
@@ -13,7 +13,9 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.PackageElement;
 import javax.tools.Diagnostic;
-import java.util.*;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Set;
 
 public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValue> {
 

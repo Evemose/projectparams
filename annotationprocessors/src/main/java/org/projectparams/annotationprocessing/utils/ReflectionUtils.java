@@ -11,14 +11,24 @@ import java.util.Optional;
 // TODO: maybe migrate from Unsafe when project is working if possible
 @SuppressWarnings("deprecation")
 public class ReflectionUtils {
-    /** hehe unsafe lol **/
+    /**
+     * hehe unsafe lol
+     **/
     private static final Unsafe WHO_CARES_IF_ITS_UNSAFE = becomeUnsafe();
 
-    /** silly little offset for doing silly bad things. Empty if we got caught **/
+    /**
+     * silly little offset for doing silly bad things. Empty if we got caught
+     **/
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private static final Optional<Long> SILLY_OFFSET = becomeSilly();
 
-    /** get silly little offset for doing silly bad things **/
+    private ReflectionUtils() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * get silly little offset for doing silly bad things
+     **/
     private static Optional<Long> becomeSilly() {
         try {
             var g = getSillyFieldOffset();
@@ -28,7 +38,9 @@ public class ReflectionUtils {
         }
     }
 
-    /** Silly override field will help us do silly bad things **/
+    /**
+     * Silly override field will help us do silly bad things
+     **/
     @SuppressWarnings("deprecation")
     private static long getSillyFieldOffset() throws Throwable {
         Field overrideField = null;
@@ -49,10 +61,6 @@ public class ReflectionUtils {
         } catch (Throwable t) {
             throw saved;
         }
-    }
-
-    private ReflectionUtils() {
-        throw new UnsupportedOperationException();
     }
 
     public static Field getField(Class<?> clazz, String fieldName) {
@@ -110,7 +118,9 @@ public class ReflectionUtils {
         );
     }
 
-    /** Who cares if it`s unsafe? **/
+    /**
+     * Who cares if it`s unsafe?
+     **/
     private static Unsafe becomeUnsafe() {
         var unsafe = getStaticFieldValue(Unsafe.class, "theUnsafe");
         return unsafe.map(Unsafe.class::cast).orElseThrow();

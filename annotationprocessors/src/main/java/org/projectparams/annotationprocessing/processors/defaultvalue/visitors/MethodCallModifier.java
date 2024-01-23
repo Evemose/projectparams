@@ -33,6 +33,35 @@ public class MethodCallModifier extends ParentDependentVisitor<Void, MethodInfo,
         this.parent = parent;
     }
 
+    private static void updateOwner(MethodInfo methodInfo, JCTree.JCMethodInvocation call) {
+        call.meth.type = new Type.MethodType(
+                List.from(call.args.stream().map(arg -> arg.type).toList()),
+                TypeUtils.getTypeByName(methodInfo.returnTypeQualifiedName()),
+                List.nil(),
+                TypeUtils.getTypeByName(methodInfo.ownerQualifiedName()).asElement());
+    }
+
+    private static void modifyMethodArgs(MethodInfo methodInfo, JCTree.JCMethodInvocation call, JCTree.JCLiteral literal) {
+        call.args = call.args.append(literal);
+        call.meth.type = new Type.MethodType(
+                List.from(Arrays.stream(methodInfo
+                                .parameterTypeQualifiedNames())
+                        .map(TypeUtils::getTypeByName).toList()),
+                TypeUtils.getTypeByName(methodInfo.returnTypeQualifiedName()),
+                List.nil(),
+                TypeUtils.getTypeByName(methodInfo.ownerQualifiedName()).asElement());
+    }
+
+    private static TypeTag getTypeTagOfParam(MethodInfo methodInfo) {
+        TypeTag tag;
+        if (methodInfo.paramIndexToDefaultValue().get(0).equals(MethodInfo.NULL)) {
+            tag = TypeTag.BOT;
+        } else {
+            tag = TypeUtils.getTypeByName(methodInfo.parameterTypeQualifiedNames()[0]).getTag();
+        }
+        return tag;
+    }
+
     @Override
     public Void visitMethodInvocation(MethodInvocationTree that, MethodInfo methodInfo) {
         if (!allFixedMethods.contains(that) &&
@@ -71,39 +100,10 @@ public class MethodCallModifier extends ParentDependentVisitor<Void, MethodInfo,
         return super.visitNewClass(that, methodInfo);
     }
 
-    private static void updateOwner(MethodInfo methodInfo, JCTree.JCMethodInvocation call) {
-        call.meth.type = new Type.MethodType(
-                List.from(call.args.stream().map(arg -> arg.type).toList()),
-                TypeUtils.getTypeByName(methodInfo.returnTypeQualifiedName()),
-                List.nil(),
-                TypeUtils.getTypeByName(methodInfo.ownerQualifiedName()).asElement());
-    }
-
-    private static void modifyMethodArgs(MethodInfo methodInfo, JCTree.JCMethodInvocation call, JCTree.JCLiteral literal) {
-        call.args = call.args.append(literal);
-        call.meth.type = new Type.MethodType(
-                List.from(Arrays.stream(methodInfo
-                                .parameterTypeQualifiedNames())
-                        .map(TypeUtils::getTypeByName).toList()),
-                TypeUtils.getTypeByName(methodInfo.returnTypeQualifiedName()),
-                List.nil(),
-                TypeUtils.getTypeByName(methodInfo.ownerQualifiedName()).asElement());
-    }
-
     private JCTree.JCLiteral getParamValue(MethodInfo methodInfo) {
         TypeTag tag = getTypeTagOfParam(methodInfo);
         return treeMaker.Literal(
                 tag,
                 methodInfo.paramIndexToDefaultValue().get(0));
-    }
-
-    private static TypeTag getTypeTagOfParam(MethodInfo methodInfo) {
-        TypeTag tag;
-        if (methodInfo.paramIndexToDefaultValue().get(0).equals(MethodInfo.NULL)) {
-            tag = TypeTag.BOT;
-        } else {
-            tag = TypeUtils.getTypeByName(methodInfo.parameterTypeQualifiedNames()[0]).getTag();
-        }
-        return tag;
     }
 }

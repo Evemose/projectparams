@@ -37,7 +37,7 @@ public class TypeUtils {
     }
 
     public static Type getTypeByName(String name) {
-        return (Type) switch (name){
+        return (Type) switch (name) {
             case "int" -> symtab.intType;
             case "long" -> symtab.longType;
             case "float" -> symtab.floatType;
@@ -47,10 +47,6 @@ public class TypeUtils {
             case "superSecretDefaultValuePlaceholder" -> symtab.botType;
             default -> types.getDeclaredType(elements.getTypeElement(name));
         };
-    }
-
-    public boolean isAssignable(String source, String target) {
-        return types.isAssignable(getTypeByName(source), getTypeByName(target));
     }
 
     public static String getBoxedTypeName(String name) {
@@ -70,5 +66,9 @@ public class TypeUtils {
             return TypeKind.ERROR;
         }
         return trees.getTypeMirror(path).getKind();
+    }
+
+    public boolean isAssignable(String source, String target) {
+        return types.isAssignable(getTypeByName(source), getTypeByName(target));
     }
 }

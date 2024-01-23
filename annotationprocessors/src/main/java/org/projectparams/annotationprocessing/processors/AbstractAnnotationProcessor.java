@@ -2,10 +2,8 @@ package org.projectparams.annotationprocessing.processors;
 
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.TreeMaker;
-import com.sun.tools.javac.util.Names;
 
 import javax.annotation.processing.Messager;
-import javax.annotation.processing.ProcessingEnvironment;
 import java.lang.annotation.Annotation;
 
 public abstract class AbstractAnnotationProcessor<T extends Annotation> implements AnnotationProcessor<T> {
