@@ -15,7 +15,11 @@ public class Abobus {
         return true;
     }
 
-    public static Abobus abobus(@DefaultValue("3.4") float abobus, @DefaultValue("true") boolean abobus2) {
+    public static Abobus abobus(@DefaultValue("3.4") float abobus, @DefaultValue("true") boolean abobus2, @DefaultValue("4") int abobus3) {
         return new Abobus(abobus);
+    }
+
+    public static boolean akakus(@DefaultValue("4") long abobus) {
+        return true;
     }
 }

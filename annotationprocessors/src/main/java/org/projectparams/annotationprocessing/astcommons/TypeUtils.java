@@ -74,7 +74,7 @@ public class TypeUtils {
             ownerQualifiedName = getOwnerNameFromMemberSelect(memberSelectTree, path);
 //            var split = invocation.getMethodSelect().toString().split("\\.");
 //            var methodName = split[split.length - 1];
-//            if (methodName.equals("doubleBibus") && memberSelectTree.getExpression().toString().equals("Abobus.abobus(abobus.doubleBibus(new Main()))")) {
+//            if (invocation.toString().equals("Abobus.abobus().bibus()")) {
 //                throw new RuntimeException("ownerQualifiedName: " + ownerQualifiedName + ", identifier: "
 //                        + memberSelectTree.getExpression().toString() + ", invocation: " + invocation);
 //            }
@@ -103,13 +103,23 @@ public class TypeUtils {
                 if (ownerType != null) {
                     ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
                 }
-            } else if (ownerTree instanceof JCTree.JCMethodDecl methodDecl) {
-                var ownerType = methodDecl.getReturnType();
+            } else if (ownerTree instanceof JCTree.JCClassDecl staticRef) {
+                var ownerType = staticRef.sym.type;
                 if (ownerType != null) {
-                    ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.type.toString());
+                    ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
                 }
             } else {
                 // TODO: remove placeholder when IdentifierTree is supported
+                ownerQualifiedName = "";
+            }
+        } else {
+            // in case owner is return type of fixed method, we won`t be able to access its tree
+            // so retrieve type from method invocation manually
+            if (expression instanceof JCTree.JCMethodInvocation methodInvocation) {
+                if (methodInvocation.type != null) {
+                    ownerQualifiedName = TypeUtils.getBoxedTypeName(methodInvocation.type.toString());
+                }
+            } else {
                 ownerQualifiedName = "";
             }
         }

@@ -7,7 +7,7 @@ public class Sucus extends Abobus {
         super(abobus);
     }
     @Override
-    public float bibus(@DefaultValue("4.5") float abobus) {
+    public float bibus(@DefaultValue("5") float abobus) {
         return abobus;
     }
 
