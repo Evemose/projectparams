@@ -1,17 +1,12 @@
 package org.projectparams.annotationprocessing.astcommons;
 
-import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.Symtab;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.model.JavacTypes;
-import com.sun.tools.javac.tree.TreeMaker;
-import com.sun.tools.javac.util.Names;
 
-import javax.lang.model.type.ExecutableType;
 import javax.lang.model.type.TypeKind;
-import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 
 public class TypeUtils {

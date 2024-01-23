@@ -2,7 +2,6 @@ package org.projectparams.annotationprocessing.processors.managers;
 
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.TreeMaker;
-import com.sun.tools.javac.util.Names;
 import org.projectparams.annotationprocessing.processors.AnnotationProcessor;
 import org.projectparams.annotationprocessing.processors.defaultvalue.DefaultValueProcessor;
 
