@@ -33,7 +33,7 @@ public class MethodCallModifier extends ParentDependentVisitor<Void, MethodInfo,
         this.argumentSupplier = argumentSupplier;
         this.parent = parent;
     }
-    private static void modifyMethodArgs(MethodInfo methodInfo,
+    private void modifyMethodArgs(MethodInfo methodInfo,
                                          JCTree.JCMethodInvocation call,
                                          List<JCTree.JCExpression> args) {
         call.args = args;
@@ -42,6 +42,7 @@ public class MethodCallModifier extends ParentDependentVisitor<Void, MethodInfo,
                 TypeUtils.getTypeByName(methodInfo.returnTypeQualifiedName()),
                 List.nil(),
                 TypeUtils.getTypeByName(methodInfo.ownerQualifiedName()).asElement());
+        call.type = call.meth.type.getReturnType();
     }
 
     @Override
@@ -59,7 +60,6 @@ public class MethodCallModifier extends ParentDependentVisitor<Void, MethodInfo,
                 throw new RuntimeException(e);
             }
             modifyMethodArgs(methodInfo, call, args);
-            messager.printMessage(Diagnostic.Kind.NOTE, "New method args: " + call.args);
             fixedMethodsInIteration.add(that);
             messager.printMessage(Diagnostic.Kind.NOTE, "Fixed method invocation: " + that);
             // if method invocation is fixed, it implies that all its arguments are fixed too,
@@ -78,6 +78,8 @@ public class MethodCallModifier extends ParentDependentVisitor<Void, MethodInfo,
     // TODO: implement default values for constructors
     @Override
     public Void visitNewClass(NewClassTree that, MethodInfo methodInfo) {
+//        var adapted = new NewClassToMethodInvocationTreeAdapter(that);
+//        parent = adapted;
         return super.visitNewClass(that, methodInfo);
     }
 }

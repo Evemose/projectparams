@@ -27,7 +27,7 @@ public class MethodInvocationArgumentTypeFixer extends AbstractVisitor<Void, Voi
 //        messager.printMessage(Diagnostic.Kind.NOTE, "Visiting method invocation: " + invocation + " for parent: "
 //                + parentMethodInvocation + " has been fixed: " + fixedMethodsInIteration.contains(invocation));
         if (fixedMethodsInIteration.contains(invocation)) {
-            fixParentSignature(invocation);
+            //fixParentSignature(invocation);
         } else {
             passFixLower(invocation);
         }
@@ -35,7 +35,6 @@ public class MethodInvocationArgumentTypeFixer extends AbstractVisitor<Void, Voi
     }
 
     private void passFixLower(MethodInvocationTree invocation) {
-        passFixToArgs(invocation);
         passFixToTarget(invocation);
     }
 
@@ -46,34 +45,13 @@ public class MethodInvocationArgumentTypeFixer extends AbstractVisitor<Void, Voi
         }
     }
 
-    private void passFixToArgs(MethodInvocationTree invocation) {
-        invocation.getArguments().forEach(arg -> {
-            var argPath = new TreePath(getCurrentPath(), arg);
-//            messager.printMessage(Diagnostic.Kind.NOTE, "Visiting method invocation arg: " + arg
-//                    + " with type: " + ((JCTree.JCExpression) arg).type);
-            new MethodInvocationArgumentTypeFixer(fixedMethodsInIteration, invocation, trees, messager)
-                    .scan(argPath, null);
-        });
-    }
-
     private void fixParentSignature(MethodInvocationTree invocation) {
         var parentAsJC = (JCTree.JCMethodInvocation) parentMethodInvocation;
         var parentMethodSelect = parentMethodInvocation.getMethodSelect();
         if (parentMethodSelect instanceof MemberSelectTree memberSelectTree
                 && memberSelectTree.getExpression() == invocation) {
             fixParentTarget((JCTree.JCMethodInvocation) invocation, parentAsJC);
-        } else {
-            fixParentCorrespondingArg(invocation, parentAsJC);
         }
-    }
-
-    private void fixParentCorrespondingArg(MethodInvocationTree invocation, JCTree.JCMethodInvocation parentAsJC) {
-        //messager.printMessage(Diagnostic.Kind.NOTE, "Trying to fix method invocation (cleanup): " + parentMethodInvocation);
-        parentAsJC.args.stream().filter(arg -> arg.equals(invocation))
-                .findFirst().ifPresent(arg -> {
-                    arg.type = ((JCTree.JCMethodInvocation) invocation).meth.type.getReturnType();
-                    //messager.printMessage(Diagnostic.Kind.NOTE, "Corrected arg type: " + arg.type);
-                });
     }
 
     private void fixParentTarget(JCTree.JCMethodInvocation invocation, JCTree.JCMethodInvocation parentAsJC) {

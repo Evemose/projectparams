@@ -15,6 +15,7 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.PackageElement;
 import javax.tools.Diagnostic;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Set;
 
