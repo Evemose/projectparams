@@ -38,8 +38,6 @@ public class MainProcessor extends AbstractProcessor {
     // Initialized in first round of processing
     private Element rootPackage;
     private TreeMaker treeMaker;
-    private Names names;
-
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         try {
@@ -47,8 +45,9 @@ public class MainProcessor extends AbstractProcessor {
             this.javacProcessingEnv = ProcessingUtils.getJavacProcessingEnvironment(processingEnv);
             this.trees = Trees.instance(javacProcessingEnv);
             this.treeMaker = TreeMaker.instance(javacProcessingEnv.getContext());
-            this.names = Names.instance(javacProcessingEnv.getContext());
-            TypeUtils.init(trees, javacProcessingEnv.getTypeUtils(), processingEnv.getElementUtils(), Symtab.instance(javacProcessingEnv.getContext()));
+            TypeUtils.init(trees, javacProcessingEnv.getTypeUtils(),
+                    processingEnv.getElementUtils(),
+                    Symtab.instance(javacProcessingEnv.getContext()));
         } catch (Throwable t) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
                     t.getMessage() + "\n" + Arrays.toString(t.getStackTrace()).replaceAll(",", "\n"));
