@@ -43,7 +43,7 @@ public class CleanupVisitor extends AbstractVisitor<Void, Void> {
     /**
      * Fix types of method invocations that either invoked by return value
      * of method fixed in this iteration or have a fixed method result as an argument.
-     * Delegates to {@link MethodInvocationArgumentTypeFixer} to fix types of arguments.
+     * Delegates fix to {@link MethodInvocationArgumentTypeFixer}.
      */
     @Override
     public Void visitMethodInvocation(MethodInvocationTree that, Void ignored) {

@@ -2,9 +2,7 @@ package org.projectparams.annotationprocessing.processors.defaultvalue.visitors;
 
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.NewClassTree;
-import com.sun.source.tree.Tree;
 import com.sun.source.util.TreePath;
-import com.sun.source.util.TreePathScanner;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.TypeTag;
@@ -12,9 +10,7 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
-import org.projectparams.annotationprocessing.astcommons.visitors.AbstractVisitor;
 import org.projectparams.annotationprocessing.astcommons.visitors.ParentDependentVisitor;
-import org.projectparams.annotationprocessing.processors.defaultvalue.DefaultValueProcessor;
 import org.projectparams.annotationprocessing.processors.defaultvalue.MethodInfo;
 
 import javax.annotation.processing.Messager;
@@ -24,20 +20,23 @@ import java.util.Set;
 
 public class MethodCallModifier extends ParentDependentVisitor<Void, MethodInfo, MethodInvocationTree> {
     private final Set<MethodInvocationTree> fixedMethodsInIteration;
+    private final Set<MethodInvocationTree> allFixedMethods;
 
     public MethodCallModifier(Set<MethodInvocationTree> fixedMethodsInIteration,
                               MethodInvocationTree parent,
                               Trees trees,
                               TreeMaker treeMaker,
-                              Messager messager) {
+                              Messager messager, Set<MethodInvocationTree> allFixedMethods) {
         super(trees, messager, treeMaker, parent);
         this.fixedMethodsInIteration = fixedMethodsInIteration;
+        this.allFixedMethods = allFixedMethods;
         this.parent = parent;
     }
 
     @Override
     public Void visitMethodInvocation(MethodInvocationTree that, MethodInfo methodInfo) {
-        if (methodInfo.matches(that, trees, getCurrentPath())) {
+        if (!allFixedMethods.contains(that) &&
+                methodInfo.matches(that, trees, getCurrentPath())) {
             messager.printMessage(Diagnostic.Kind.NOTE, "Processing matched method: " + that);
             var call = (JCTree.JCMethodInvocation) that;
             if (call.args.isEmpty()) {
@@ -57,7 +56,7 @@ public class MethodCallModifier extends ParentDependentVisitor<Void, MethodInfo,
             // and method invocation would not be matched
             return null;
         } else if (that != parent) {
-            new MethodCallModifier(fixedMethodsInIteration, that, trees, treeMaker, messager)
+            new MethodCallModifier(fixedMethodsInIteration, that, trees, treeMaker, messager, allFixedMethods)
                     .scan(new TreePath(getCurrentPath(), that), methodInfo);
             // read comment above to understand why we return null here
             return null;
