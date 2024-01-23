@@ -6,7 +6,7 @@ import com.sun.tools.javac.tree.TreeMaker;
 
 import javax.annotation.processing.Messager;
 
-public class AbstractVisitor<R, P> extends TreePathScanner<R, P> {
+public abstract class AbstractVisitor<R, P> extends TreePathScanner<R, P> {
     protected final Trees trees;
     protected final Messager messager;
     protected final TreeMaker treeMaker;
