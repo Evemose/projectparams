@@ -46,7 +46,6 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
                 var fixedMethodsSize = fixedMethodsInIteration.size();
                 // modify
                 var modifier = new MethodCallModifier(fixedMethodsInIteration,
-                        null,
                         trees,
                         argumentSupplier,
                         messager,
