@@ -62,7 +62,7 @@ public class MainProcessor extends AbstractProcessor {
             if (rootPackage == null) {
                 rootPackage = ProcessingUtils.getRootPackage(roundEnv);
                 this.processorsManager =
-                        new DefaultProcessorsManager(trees, treeMaker, names,
+                        new DefaultProcessorsManager(trees, treeMaker,
                                 (PackageElement) rootPackage, processingEnv.getMessager());
             }
             processorsManager.process(roundEnv);
