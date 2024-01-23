@@ -33,7 +33,6 @@ public record MethodInfo(String name,
                 getDefaultValuesMap(method));
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     private static Map<Integer, Object> getDefaultValuesMap(ExecutableElement method) {
         return IntStream.range(0, method.getParameters().size())
                 .filter(index -> method.getParameters().get(index).getAnnotation(DefaultValue.class) != null)
@@ -101,29 +100,10 @@ public record MethodInfo(String name,
         return doesExistingArgsMatch(currentArgs);
     }
 
-    private boolean doesExistingArgsMatch(ExecutableElement method) {
-        var currentArgs = method.getParameters();
-        return doesExistingArgsMatch(currentArgs.stream().map(arg -> TypeUtils.getBoxedTypeName(arg.asType().toString()))
-                .toArray(String[]::new));
-    }
-
     private boolean doesExistingArgsMatch(String[] argTypeNames) {
         return Arrays.equals(
                 Arrays.stream(Arrays.copyOf(parameterTypeQualifiedNames, argTypeNames.length))
                         .map(TypeUtils::getBoxedTypeName).toArray(String[]::new),
                 argTypeNames);
-    }
-
-    private boolean doesReturnTypeMatch(ExecutableElement method) {
-        return method.getReturnType().toString().equals(returnTypeQualifiedName);
-    }
-
-    // required to detect overloaded methods
-    public MethodInfo withNullOwnerAndDefault() {
-        return new MethodInfo(name,
-                null,
-                returnTypeQualifiedName,
-                parameterTypeQualifiedNames,
-                null);
     }
 }

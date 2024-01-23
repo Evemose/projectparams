@@ -24,7 +24,7 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
     }
 
     @Override
-    public void process(Set<Element> elements) throws Exception {
+    public void process(Set<Element> elements) {
         var methods = elements.stream().map(Element::getEnclosingElement)
                 .collect(() -> Collections.newSetFromMap(new IdentityHashMap<ExecutableElement, Boolean>()),
                         (set, element) -> set.add((ExecutableElement) element),

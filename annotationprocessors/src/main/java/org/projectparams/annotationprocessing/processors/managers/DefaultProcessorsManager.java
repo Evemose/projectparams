@@ -24,10 +24,8 @@ public class DefaultProcessorsManager implements ProcessorsManager {
      */
     private final Set<Element> processedUnits = Collections.newSetFromMap(new IdentityHashMap<>());
     private final Set<AnnotationProcessor<?>> processors;
-    private final Trees trees;
 
-    public DefaultProcessorsManager(Trees trees, TreeMaker treeMaker, Names names, PackageElement rootPackage, Messager messager) {
-        this.trees = trees;
+    public DefaultProcessorsManager(Trees trees, TreeMaker treeMaker, PackageElement rootPackage, Messager messager) {
         this.processors = Set.of(
                 new DefaultValueProcessor(trees, treeMaker, rootPackage, messager)
         );

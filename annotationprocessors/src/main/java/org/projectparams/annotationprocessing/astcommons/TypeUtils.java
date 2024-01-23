@@ -17,23 +17,15 @@ import javax.lang.model.util.Elements;
 public class TypeUtils {
     private static Trees trees;
     private static JavacTypes types;
-    private static Names names;
     private static Elements elements;
-    private static TreeMaker treeMaker;
     private static Symtab symtab;
 
     // initialized in org.projectparams.annotationprocessing.MainProcessor
-    public static void init(Trees trees, JavacTypes types, Names names, Elements elements, TreeMaker treeMaker, Symtab symtab) {
+    public static void init(Trees trees, JavacTypes types, Elements elements, Symtab symtab) {
         TypeUtils.trees = trees;
         TypeUtils.types = types;
-        TypeUtils.names = names;
         TypeUtils.elements = elements;
-        TypeUtils.treeMaker = treeMaker;
         TypeUtils.symtab = symtab;
-    }
-
-    public static TypeMirror getReturnType(MethodInvocationTree methodInvocation, TreePath closestEnclosingElementPath) {
-        return ((ExecutableType) trees.getTypeMirror(new TreePath(closestEnclosingElementPath, methodInvocation))).getReturnType();
     }
 
     public static Type getTypeByName(String name) {
@@ -66,9 +58,5 @@ public class TypeUtils {
             return TypeKind.ERROR;
         }
         return trees.getTypeMirror(path).getKind();
-    }
-
-    public boolean isAssignable(String source, String target) {
-        return types.isAssignable(getTypeByName(source), getTypeByName(target));
     }
 }
