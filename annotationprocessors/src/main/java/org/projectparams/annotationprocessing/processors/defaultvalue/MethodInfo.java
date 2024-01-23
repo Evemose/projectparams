@@ -1,6 +1,7 @@
 package org.projectparams.annotationprocessing.processors.defaultvalue;
 
 import com.sun.source.tree.ExpressionTree;
+import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.util.TreePath;
@@ -64,28 +65,44 @@ public record MethodInfo(String name,
         var methodName = split[split.length - 1];
         String ownerQualifiedName = null;
         if (methodTree.getMethodSelect() instanceof MemberSelectTree memberSelectTree) {
-            var expression = memberSelectTree.getExpression();
-            var ownerTree = trees.getTree(trees.getElement(new TreePath(path, expression)));
-            if (ownerTree != null) {
-                if (ownerTree instanceof JCTree.JCVariableDecl varDecl) {
-                    var ownerType = varDecl.type;
-                    if (ownerType != null) {
-                        ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
-                    }
-                } else if (ownerTree instanceof JCTree.JCMethodDecl methodDecl) {
-                    var ownerType = methodDecl.getReturnType();
-                    if (ownerType != null) {
-                        ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.type.toString());
-                    }
-                }
-            }
+            ownerQualifiedName = getOwnerNameFromMemberSelect(trees, path, memberSelectTree);
+        } else if (methodTree.getMethodSelect() instanceof IdentifierTree identifierTree) {
+            ownerQualifiedName = getOwnerNameFromIdentifier(trees, path, identifierTree);
         }
-        // TODO: add support for IdentifierTree
-        return doesExistingArgsMatch(methodTree.getArguments())
+        return (ownerQualifiedName == null || ownerQualifiedName.equals(this.ownerQualifiedName))
                 && methodName.equals(name)
-                && (ownerQualifiedName == null || ownerQualifiedName.equals(this.ownerQualifiedName));
+                && doesExistingArgsMatch(methodTree.getArguments());
         // for now not considering return type
         //&& returnTypeQualifiedName.equals(TypeUtils.getReturnType(methodTree, path).toString());
+    }
+
+    // TODO: add support for IdentifierTree
+    @SuppressWarnings("unused")
+    private String getOwnerNameFromIdentifier(Trees trees, TreePath path, IdentifierTree identifierTree) {
+        return null;
+    }
+
+    private static String getOwnerNameFromMemberSelect(Trees trees, TreePath path, MemberSelectTree memberSelectTree) {
+        var expression = memberSelectTree.getExpression();
+        var ownerTree = trees.getTree(trees.getElement(new TreePath(path, expression)));
+        String ownerQualifiedName = null;
+        if (ownerTree != null) {
+            if (ownerTree instanceof JCTree.JCVariableDecl varDecl) {
+                var ownerType = varDecl.type;
+                if (ownerType != null) {
+                    ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
+                }
+            } else if (ownerTree instanceof JCTree.JCMethodDecl methodDecl) {
+                var ownerType = methodDecl.getReturnType();
+                if (ownerType != null) {
+                    ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.type.toString());
+                }
+            } else {
+                // TODO: remove placeholder when IdentifierTree is supported
+                ownerQualifiedName = "";
+            }
+        }
+        return ownerQualifiedName;
     }
 
     // TODO: fix
@@ -105,5 +122,10 @@ public record MethodInfo(String name,
                 Arrays.stream(Arrays.copyOf(parameterTypeQualifiedNames, argTypeNames.length))
                         .map(TypeUtils::getBoxedTypeName).toArray(String[]::new),
                 argTypeNames);
+    }
+
+    public String toString() {
+        return ownerQualifiedName + "." + name + "(" + Arrays.toString(parameterTypeQualifiedNames)
+                .replaceAll("[\\[\\]]", "") + ")";
     }
 }

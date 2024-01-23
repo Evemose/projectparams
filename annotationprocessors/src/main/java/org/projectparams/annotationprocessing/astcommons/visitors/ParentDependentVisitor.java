@@ -2,7 +2,6 @@ package org.projectparams.annotationprocessing.astcommons.visitors;
 
 import com.sun.source.tree.Tree;
 import com.sun.source.util.Trees;
-import com.sun.tools.javac.tree.TreeMaker;
 
 import javax.annotation.processing.Messager;
 
@@ -17,8 +16,8 @@ import javax.annotation.processing.Messager;
 public abstract class ParentDependentVisitor<R, P, T extends Tree> extends AbstractVisitor<R, P> {
     protected T parent;
 
-    public ParentDependentVisitor(Trees trees, Messager messager, TreeMaker treeMaker, T parent) {
-        super(trees, messager, treeMaker);
+    public ParentDependentVisitor(Trees trees, Messager messager, T parent) {
+        super(trees, messager);
         this.parent = parent;
     }
 }

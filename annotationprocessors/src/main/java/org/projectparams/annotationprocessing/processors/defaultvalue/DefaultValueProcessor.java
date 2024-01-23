@@ -5,6 +5,7 @@ import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.TreeMaker;
 import org.projectparams.annotationprocessing.astcommons.visitors.CleanupVisitor;
 import org.projectparams.annotationprocessing.processors.GlobalAnnotationProcessor;
+import org.projectparams.annotationprocessing.processors.defaultvalue.argumentsuppliers.DefaultArgumentSupplier;
 import org.projectparams.annotationprocessing.processors.defaultvalue.visitors.MethodCallModifier;
 import org.projectparams.annotations.DefaultValue;
 
@@ -30,6 +31,7 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
                         (set, element) -> set.add((ExecutableElement) element),
                         Set::addAll);
         messager.printMessage(Diagnostic.Kind.NOTE, "Methods to process: " + methods);
+        var argumentSupplier = new DefaultArgumentSupplier(treeMaker);
         var fixedMethodsInIteration = Collections.newSetFromMap(new IdentityHashMap<MethodInvocationTree, Boolean>(methods.size()));
         var allFixedMethods = Collections.newSetFromMap(new IdentityHashMap<MethodInvocationTree, Boolean>(methods.size()));
         do {
@@ -39,14 +41,21 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
                 var methodInfo = MethodInfo.from(method);
                 messager.printMessage(Diagnostic.Kind.NOTE, "Method info: " + methodInfo);
 
+                var fixedMethodsSize = fixedMethodsInIteration.size();
                 // modify
-                var modifier = new MethodCallModifier(fixedMethodsInIteration, null, trees, treeMaker, messager, allFixedMethods);
+                var modifier = new MethodCallModifier(fixedMethodsInIteration,
+                        null,
+                        trees,
+                        argumentSupplier,
+                        messager,
+                        allFixedMethods);
                 packageTree.accept(modifier, methodInfo);
-
-                // run cleanup
-                messager.printMessage(Diagnostic.Kind.NOTE, "Fixing elements related to: " + fixedMethodsInIteration);
-                var cleanupVisitor = new CleanupVisitor(fixedMethodsInIteration, trees, messager, treeMaker);
-                packageTree.accept(cleanupVisitor, null);
+                if (fixedMethodsInIteration.size() > fixedMethodsSize) {
+                    messager.printMessage(Diagnostic.Kind.NOTE, "Fixed method: " + methodInfo);
+                    messager.printMessage(Diagnostic.Kind.NOTE, "Fixing elements related to: " + fixedMethodsInIteration);
+                    var cleanupVisitor = new CleanupVisitor(fixedMethodsInIteration, trees, messager, treeMaker);
+                    packageTree.accept(cleanupVisitor, null);
+                }
             });
         } while (!fixedMethodsInIteration.isEmpty());
     }

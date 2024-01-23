@@ -7,6 +7,9 @@ public class Abobus {
     public float bibus(@DefaultValue("3.4") float abobus) {
         return abobus;
     }
+    public float doubleBibus(Main main, @DefaultValue("3.4") float abobus2) {
+        return abobus2;
+    }
 
     protected boolean totos(@DefaultValue("true") boolean abobus) {
         return true;
