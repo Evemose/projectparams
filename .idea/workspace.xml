@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="implemented default values inference for literals, needs refactoring">
+    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="Literal deafult value work in all cases now. Still needs refactoring">
+      <change afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Sucus.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/ast/TypeUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/ast/TypeUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueProcessor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/MethodInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/MethodInfo.java" afterDir="false" />
@@ -327,7 +329,15 @@
       <workItem from="1705858180546" duration="442000" />
       <workItem from="1705858754116" duration="14822000" />
       <workItem from="1705876867332" duration="6387000" />
-      <workItem from="1705883978954" duration="1564000" />
+      <workItem from="1705883978954" duration="1731000" />
+      <workItem from="1705886297296" duration="44000" />
+      <workItem from="1705890818821" duration="40000" />
+      <workItem from="1705890874654" duration="44000" />
+      <workItem from="1705896050374" duration="122000" />
+      <workItem from="1705898124969" duration="6236000" />
+      <workItem from="1705960123208" duration="3277000" />
+      <workItem from="1705970232571" duration="7429000" />
+      <workItem from="1705978205788" duration="1349000" />
     </task>
     <task id="LOCAL-00001" summary="split project into modules">
       <option name="closed" value="true" />
@@ -409,7 +419,15 @@
       <option name="project" value="LOCAL" />
       <updated>1705867487285</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Literal deafult value work in all cases now. Still needs refactoring">
+      <option name="closed" value="true" />
+      <created>1705885635003</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1705885635003</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -434,7 +452,8 @@
     <MESSAGE value="some cleanup before implementing processing logic" />
     <MESSAGE value="i began to change invocations params, but it doesn`t work with var keyword for now." />
     <MESSAGE value="implemented default values inference for literals, needs refactoring" />
-    <option name="LAST_COMMIT_MESSAGE" value="implemented default values inference for literals, needs refactoring" />
+    <MESSAGE value="Literal deafult value work in all cases now. Still needs refactoring" />
+    <option name="LAST_COMMIT_MESSAGE" value="Literal deafult value work in all cases now. Still needs refactoring" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -45,6 +45,7 @@ public class TypeUtils {
             case "double" -> symtab.doubleType;
             case "boolean" -> symtab.booleanType;
             case "void" -> symtab.voidType;
+            case "superSecretDefaultValuePlaceholder" -> symtab.botType;
             default -> types.getDeclaredType(elements.getTypeElement(name));
         };
     }
