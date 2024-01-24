@@ -16,6 +16,7 @@ import java.util.List;
 public class NewClassInvocableTree extends AbstractInvocableTree<NewClassTree> {
     public NewClassInvocableTree(NewClassTree wrapped, TreePath pathToWrapped) {
         super(wrapped, pathToWrapped);
+        initializeDummyTypeIfNeeded();
     }
 
     @Override
@@ -32,7 +33,8 @@ public class NewClassInvocableTree extends AbstractInvocableTree<NewClassTree> {
                 var cuContext = CUContext.from(pathToWrapped.getCompilationUnit());
                 yield cuContext.importedClassNames().stream()
                         .filter(imp -> imp.endsWith("." + typeIdentifier))
-                        .findAny().orElseThrow(() -> new RuntimeException("No matching import found for " + typeIdentifier));
+                        .findAny().orElseThrow(() ->
+                                new IllegalArgumentException("No matching import found for " + typeIdentifier));
             }
             case MEMBER_SELECT -> ((MemberSelectTree) typeIdentifier).toString();
             case PARAMETERIZED_TYPE -> ((ParameterizedTypeTree) typeIdentifier).getType().toString();
@@ -46,12 +48,30 @@ public class NewClassInvocableTree extends AbstractInvocableTree<NewClassTree> {
         return wrapped.getArguments();
     }
 
+    // cant do it in constructor cause constructor arg types are for some reason not initialized
+    private void initializeDummyTypeIfNeeded() {
+        var asJC = (JCTree.JCNewClass) wrapped;
+        // initialize dummy type for method invocation
+        if (asJC.constructorType == null) {
+            asJC.constructorType = new Type.MethodType(
+                    com.sun.tools.javac.util.List.from(
+                           asJC.args.stream().map(arg -> arg.type).toArray(Type[]::new)),
+                    // for some reason the type I set here is ignored
+                    // and the type of the constructor is always void
+                    // so lets just set it to the void to not break anything accidentally
+                    TypeUtils.getTypeByName("void"),
+                    com.sun.tools.javac.util.List.nil(),
+                    TypeUtils.getTypeByName(getOwnerTypeQualifiedName()).asElement());
+        }
+    }
+
     @Override
     public void setArguments(ExpressionTree... arguments) {
         var asJC = (JCTree.JCNewClass) wrapped;
         asJC.args = com.sun.tools.javac.util.List.from(
                 Arrays.stream(arguments).map(t -> (JCTree.JCExpression) t).toArray(JCTree.JCExpression[]::new));
     }
+
 
     @Override
     public void setThrownTypes(Type... thrownTypes) {
@@ -61,5 +81,27 @@ public class NewClassInvocableTree extends AbstractInvocableTree<NewClassTree> {
     @Override
     public void setThrownTypes(String... thrownTypeNames) {
         setThrownTypes(Arrays.stream(thrownTypeNames).map(TypeUtils::getTypeByName).toArray(Type[]::new));
+    }
+
+    /**
+     * Ignores the return type update
+     * but throws if it's not the owner type
+     */
+    @Override
+    public void setReturnType(String returnType) {
+        if (!returnType.equals(getOwnerTypeQualifiedName())) {
+            throw new IllegalArgumentException("Cannot set return type of constructor to anything other than " +
+                    "the owner type. Got: " + returnType + " for " + wrapped);
+        }
+    }
+
+    /**
+     * Return type of constructor is the owner type
+     * even though internally it's void
+     * @return owner type
+     */
+    @Override
+    public Type getReturnType() {
+        return TypeUtils.getTypeByName(getOwnerTypeQualifiedName());
     }
 }

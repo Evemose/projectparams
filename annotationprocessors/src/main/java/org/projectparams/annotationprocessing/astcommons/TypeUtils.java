@@ -95,7 +95,7 @@ public class TypeUtils {
             ownerQualifiedName = getOwnerNameFromMemberSelect(memberSelectTree, path);
 //            var split = invocation.getMethodSelect().toString().split("\\.");
 //            var methodName = split[split.length - 1];
-//            if (invocation.toString().equals("Abobus.abobus().bibus()")) {
+//            if (methodName.equals("bibus") && !ownerQualifiedName.equals("<any>")) {
 //                throw new RuntimeException("ownerQualifiedName: " + ownerQualifiedName + ", identifier: "
 //                        + memberSelectTree.getExpression().toString() + ", invocation: " + invocation);
 //            }
@@ -139,6 +139,9 @@ public class TypeUtils {
             if (expression instanceof JCTree.JCMethodInvocation methodInvocation) {
                 if (methodInvocation.type != null) {
                     ownerQualifiedName = TypeUtils.getBoxedTypeName(methodInvocation.type.toString());
+//                    if (ownerQualifiedName.equals("org.projectparams.test.Abobus.abobus")) {
+//                        throw new RuntimeException(methodInvocation.meth.type.getReturnType());
+//                    }
                 }
             } else {
                 ownerQualifiedName = "";

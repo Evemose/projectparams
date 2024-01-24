@@ -40,6 +40,17 @@ public class MethodInvocableTree extends AbstractInvocableTree<MethodInvocationT
     }
 
     @Override
+    public void setReturnType(String returnType) {
+        super.setReturnType(returnType);
+        var asJC = (JCTree.JCMethodInvocation) wrapped;
+        asJC.meth.type = new Type.MethodType(
+                asJC.meth.type.getParameterTypes(),
+                TypeUtils.getTypeByName(returnType),
+                asJC.meth.type.getThrownTypes(),
+                asJC.meth.type.tsym);
+    }
+
+    @Override
     public List<? extends ExpressionTree> getArguments() {
         return wrapped.getArguments();
     }

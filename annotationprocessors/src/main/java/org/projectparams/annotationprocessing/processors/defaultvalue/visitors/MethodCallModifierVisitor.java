@@ -10,54 +10,53 @@ import org.projectparams.annotationprocessing.astcommons.invocabletree.MethodInv
 import org.projectparams.annotationprocessing.astcommons.invocabletree.NewClassInvocableTree;
 import org.projectparams.annotationprocessing.astcommons.visitors.AbstractVisitor;
 import org.projectparams.annotationprocessing.exceptions.UnsupportedSignatureException;
-import org.projectparams.annotationprocessing.processors.defaultvalue.MethodInfo;
+import org.projectparams.annotationprocessing.processors.defaultvalue.InvocableInfo;
 import org.projectparams.annotationprocessing.processors.defaultvalue.argumentsuppliers.ArgumentSupplier;
 
 import javax.annotation.processing.Messager;
 import javax.tools.Diagnostic;
 import java.util.Set;
 
-public class MethodCallModifier extends AbstractVisitor<Void, MethodInfo> {
+public class MethodCallModifierVisitor extends AbstractVisitor<Void, InvocableInfo> {
     private final Set<InvocableTree> fixedMethodsInIteration;
     private final Set<InvocableTree> allFixedMethods;
     private final ArgumentSupplier argumentSupplier;
 
-    public MethodCallModifier(Set<InvocableTree> fixedMethodsInIteration,
-                              Trees trees,
-                              ArgumentSupplier argumentSupplier,
-                              Messager messager, Set<InvocableTree> allFixedMethods) {
+    public MethodCallModifierVisitor(Set<InvocableTree> fixedMethodsInIteration,
+                                     Trees trees,
+                                     ArgumentSupplier argumentSupplier,
+                                     Messager messager, Set<InvocableTree> allFixedMethods) {
         super(trees, messager);
         this.fixedMethodsInIteration = fixedMethodsInIteration;
         this.allFixedMethods = allFixedMethods;
         this.argumentSupplier = argumentSupplier;
     }
 
-    private void fixMethod(MethodInfo methodInfo,
+    private void fixMethod(InvocableInfo invocableInfo,
                            InvocableTree call,
                            List<JCTree.JCExpression> args) {
         call.setArguments(args.toArray(new JCTree.JCExpression[0]));
-        call.setReturnType(methodInfo.returnTypeQualifiedName());
+        call.setReturnType(invocableInfo.returnTypeQualifiedName());
     }
 
     @Override
-    public Void visitMethodInvocation(MethodInvocationTree invocation, MethodInfo methodInfo) {
-        visitInvocable(new MethodInvocableTree(invocation, getCurrentPath()), methodInfo);
-        return super.visitMethodInvocation(invocation, methodInfo);
+    public Void visitMethodInvocation(MethodInvocationTree invocation, InvocableInfo invocableInfo) {
+        visitInvocable(new MethodInvocableTree(invocation, getCurrentPath()), invocableInfo);
+        return super.visitMethodInvocation(invocation, invocableInfo);
     }
 
-    private void visitInvocable(InvocableTree invocation, MethodInfo methodInfo) {
-        messager.printMessage(Diagnostic.Kind.NOTE, "Inspecting method invocation: " + invocation);
+    private void visitInvocable(InvocableTree invocation, InvocableInfo invocableInfo) {
         if (!allFixedMethods.contains(invocation) &&
-                methodInfo.matches(invocation)) {
+                invocableInfo.matches(invocation)) {
             messager.printMessage(Diagnostic.Kind.NOTE, "Fixing matched method invocation: " + invocation);
             List<JCTree.JCExpression> args;
             try {
-                args = argumentSupplier.getModifiedArguments(invocation, methodInfo);
+                args = argumentSupplier.getModifiedArguments(invocation, invocableInfo);
             } catch (UnsupportedSignatureException e) {
                 messager.printMessage(Diagnostic.Kind.ERROR, e.getMessage());
                 throw new RuntimeException(e);
             }
-            fixMethod(methodInfo, invocation, args);
+            fixMethod(invocableInfo, invocation, args);
             fixedMethodsInIteration.add(invocation);
             messager.printMessage(Diagnostic.Kind.NOTE, "Fixed method invocation: " + invocation);
         }
@@ -65,8 +64,8 @@ public class MethodCallModifier extends AbstractVisitor<Void, MethodInfo> {
 
     // TODO: implement default values for constructors
     @Override
-    public Void visitNewClass(NewClassTree that, MethodInfo methodInfo) {
-        visitInvocable(new NewClassInvocableTree(that, getCurrentPath()), methodInfo);
-        return super.visitNewClass(that, methodInfo);
+    public Void visitNewClass(NewClassTree that, InvocableInfo invocableInfo) {
+        visitInvocable(new NewClassInvocableTree(that, getCurrentPath()), invocableInfo);
+        return super.visitNewClass(that, invocableInfo);
     }
 }

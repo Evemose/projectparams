@@ -32,12 +32,13 @@ public class CleanupVisitor extends AbstractVisitor<Void, Void> {
             for (var fixedMethod : allFixedMethods) {
                 var initializer = variableTree.getInitializer();
                 if (initializer != null &&
-                        initializer.getKind() == Tree.Kind.METHOD_INVOCATION
+                        (initializer.getKind() == Tree.Kind.METHOD_INVOCATION || initializer.getKind() == Tree.Kind.NEW_CLASS)
                         && fixedMethod.getWrapped() == initializer) {
                     messager.printMessage(Diagnostic.Kind.NOTE, "Error var initializer: " + variableTree.getInitializer());
                     var asJC = (JCTree.JCVariableDecl) variableTree;
                     asJC.vartype = treeMaker.Type(fixedMethod.getReturnType());
                     asJC.type = asJC.vartype.type;
+                    asJC.sym.type = asJC.vartype.type;
                     messager.printMessage(Diagnostic.Kind.NOTE, "Assigned type : " + asJC.vartype);
                 }
             }

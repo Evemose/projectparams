@@ -41,6 +41,7 @@ public abstract class AbstractInvocableTree<T extends ExpressionTree> implements
         if (this == obj) return true;
         if (obj == null) return false;
         if (!(obj instanceof AbstractInvocableTree)) return false;
+        if (this.wrapped == ((AbstractInvocableTree<?>) obj).wrapped) return true;
         return wrapped.equals(obj);
     }
 

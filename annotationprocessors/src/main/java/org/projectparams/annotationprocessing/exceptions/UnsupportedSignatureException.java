@@ -1,17 +1,17 @@
 package org.projectparams.annotationprocessing.exceptions;
 
-import org.projectparams.annotationprocessing.processors.defaultvalue.MethodInfo;
+import org.projectparams.annotationprocessing.processors.defaultvalue.InvocableInfo;
 
 public class UnsupportedSignatureException extends Exception {
     private final String missingArgumentType;
     private final int argumentIndex;
-    private final MethodInfo methodInfo;
+    private final InvocableInfo invocableInfo;
 
-    public UnsupportedSignatureException(String missingArgumentType, int argumentIndex, MethodInfo methodInfo) {
+    public UnsupportedSignatureException(String missingArgumentType, int argumentIndex, InvocableInfo invocableInfo) {
         super();
         this.missingArgumentType = missingArgumentType;
         this.argumentIndex = argumentIndex;
-        this.methodInfo = methodInfo;
+        this.invocableInfo = invocableInfo;
     }
 
     @SuppressWarnings("unused")
@@ -27,6 +27,6 @@ public class UnsupportedSignatureException extends Exception {
     @Override
     public String getMessage() {
         return "Unsupported signature: missing required argument " + missingArgumentType + " at index " + argumentIndex
-                + " in method invocation " + methodInfo;
+                + " in method invocation " + invocableInfo;
     }
 }

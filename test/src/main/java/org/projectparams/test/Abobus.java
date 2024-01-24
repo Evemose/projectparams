@@ -21,6 +21,8 @@ public class Abobus {
     }
 
     public static class Bibus {
+        public Bibus(@DefaultValue("3.4") float abobus) {
+        }
         public static float bibus(@DefaultValue("3.4") float abobus) {
             return abobus;
         }
