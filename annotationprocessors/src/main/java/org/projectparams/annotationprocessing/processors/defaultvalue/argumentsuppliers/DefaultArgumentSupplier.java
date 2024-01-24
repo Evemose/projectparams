@@ -35,9 +35,7 @@ public class DefaultArgumentSupplier implements ArgumentSupplier {
 
     private JCTree.JCLiteral makeLiteral(TypeTag tag, Object value) {
         if (value.equals(InvocableInfo.NULL)) {
-            var nullLiteral = treeMaker.Literal(TypeTag.BOT, null);
-            nullLiteral.type = TypeUtils.getTypeByName("java.lang.Object");
-            return nullLiteral;
+            return treeMaker.Literal(TypeTag.BOT, null);
         }
         var literal = treeMaker.Literal(tag, value);
         literal.type = TypeUtils.getTypeByName(value.getClass().getCanonicalName());

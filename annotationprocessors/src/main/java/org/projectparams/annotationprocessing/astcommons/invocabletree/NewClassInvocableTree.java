@@ -5,6 +5,8 @@ import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.NewClassTree;
 import com.sun.source.tree.ParameterizedTypeTree;
 import com.sun.source.util.TreePath;
+import com.sun.source.util.TreePathScanner;
+import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
@@ -12,6 +14,7 @@ import org.projectparams.annotationprocessing.astcommons.parsing.CUContext;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class NewClassInvocableTree extends AbstractInvocableTree<NewClassTree> {
     public NewClassInvocableTree(NewClassTree wrapped, TreePath pathToWrapped) {
@@ -28,16 +31,28 @@ public class NewClassInvocableTree extends AbstractInvocableTree<NewClassTree> {
     public String getOwnerTypeQualifiedName() {
         var asJC = (JCTree.JCNewClass) wrapped;
         var typeIdentifier = asJC.getIdentifier();
+        var cuContext = CUContext.from(pathToWrapped.getCompilationUnit());
         return switch (typeIdentifier.getKind()) {
-            case IDENTIFIER -> {
-                var cuContext = CUContext.from(pathToWrapped.getCompilationUnit());
-                yield cuContext.importedClassNames().stream()
-                        .filter(imp -> imp.endsWith("." + typeIdentifier))
-                        .findAny().orElseThrow(() ->
-                                new IllegalArgumentException("No matching import found for " + typeIdentifier));
+            case IDENTIFIER -> cuContext.importedClassNames().stream()
+                    .filter(imp -> imp.endsWith("." + typeIdentifier))
+                    .findAny().orElseThrow(() ->
+                            new IllegalArgumentException("No matching import found for " + typeIdentifier));
+            case MEMBER_SELECT -> {
+                var memberSelect = (MemberSelectTree) typeIdentifier;
+                var ownerType = memberSelect.getExpression();
+                var ownerTypeQualifiedName = switch (ownerType.getKind()) {
+                    case IDENTIFIER -> cuContext.importedClassNames().stream()
+                            .filter(imp -> imp.endsWith("." + ownerType))
+                            .findAny().orElseThrow(() ->
+                                    new IllegalArgumentException("No matching import found for " + ownerType));
+                    case MEMBER_SELECT -> ((MemberSelectTree) ownerType).toString();
+                    default -> throw new UnsupportedOperationException("Type extraction not supported for trees of type " +
+                            ownerType.getKind());
+                };
+                yield ownerTypeQualifiedName + "." + memberSelect.getIdentifier();
             }
-            case MEMBER_SELECT -> ((MemberSelectTree) typeIdentifier).toString();
-            case PARAMETERIZED_TYPE -> ((ParameterizedTypeTree) typeIdentifier).getType().toString();
+            case PARAMETERIZED_TYPE -> throw new UnsupportedOperationException("Cannot extract owner type name from " +
+                    typeIdentifier);
             default -> throw new UnsupportedOperationException("Type extraction not supported for trees of type " +
                     typeIdentifier.getKind());
         };

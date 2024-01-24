@@ -38,14 +38,21 @@ public class TypeUtils {
     }
 
     public static Type getTypeByName(String name) {
-        return (Type) switch (name) {
+        return switch (name) {
             case "int" -> symtab.intType;
             case "long" -> symtab.longType;
             case "float" -> symtab.floatType;
             case "double" -> symtab.doubleType;
             case "boolean" -> symtab.booleanType;
             case "void" -> symtab.voidType;
-            default -> types.getDeclaredType(elements.getTypeElement(name));
+            default -> {
+                var typeElement = elements.getTypeElement(name);
+                if (typeElement == null) {
+                    throw new RuntimeException("Cannot resolve type for " + name);
+                }
+                var type = types.getDeclaredType(typeElement);
+                yield (Type) type;
+            }
         };
     }
 

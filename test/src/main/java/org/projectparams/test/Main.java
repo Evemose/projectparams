@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         var abobus = new org.projectparams.test.Abobus();
         var sucus = new Sucus(3);
-        var classBibus = new Bibus();
+        var classBibus = new Abobus.Bibus();
         var bibus4 = abobus.bibus();
         var bibus = Abobus.abobus().bibus();
         var doubleBibus = Abobus.abobus(abobus.doubleBibus(new Main()), Abobus.akakus()).doubleBibus(new Main());
