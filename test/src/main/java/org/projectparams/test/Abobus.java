@@ -20,7 +20,7 @@ public class Abobus {
         return new Abobus();
     }
 
-    public static class Bibus {
+    public class Bibus {
         public Bibus(@DefaultValue("3.4") float abobus) {
         }
         public static float bibus(@DefaultValue("3.4") float abobus) {

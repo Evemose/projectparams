@@ -1,8 +1,8 @@
 package org.projectparams.annotationprocessing.astcommons.visitors;
 
-import com.sun.source.tree.Tree;
-import com.sun.source.tree.VariableTree;
+import com.sun.source.tree.*;
 import com.sun.source.util.Trees;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
@@ -11,16 +11,27 @@ import org.projectparams.annotationprocessing.astcommons.invocabletree.Invocable
 import javax.annotation.processing.Messager;
 import javax.lang.model.type.TypeKind;
 import javax.tools.Diagnostic;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class CleanupVisitor extends AbstractVisitor<Void, Void> {
     private final Set<InvocableTree> allFixedMethods;
     private final TreeMaker treeMaker;
+    private final Map<String, Type> fixedVarTypeNames = new HashMap<>();
 
     public CleanupVisitor(Set<InvocableTree> allFixedMethods, Trees trees, Messager messager, TreeMaker treeMaker) {
         super(trees, messager);
         this.allFixedMethods = allFixedMethods;
         this.treeMaker = treeMaker;
+    }
+
+    // clear fixed local variables pool on method enter
+    @Override
+    public Void visitMethod(MethodTree method, Void aVoid) {
+        fixedVarTypeNames.clear();
+        return super.visitMethod(method, aVoid);
     }
 
     /**
@@ -38,11 +49,26 @@ public class CleanupVisitor extends AbstractVisitor<Void, Void> {
                     var asJC = (JCTree.JCVariableDecl) variableTree;
                     asJC.vartype = treeMaker.Type(fixedMethod.getReturnType());
                     asJC.type = asJC.vartype.type;
-                    asJC.sym.type = asJC.vartype.type;
+                    fixedVarTypeNames.put(variableTree.getName().toString(), asJC.type);
                     messager.printMessage(Diagnostic.Kind.NOTE, "Assigned type : " + asJC.vartype);
                 }
             }
         }
         return super.visitVariable(variableTree, ignored);
+    }
+
+    // for some reason variable type changes doesn't propagate to NewClassTree nodes, including their identifiers,
+    // so we need to fix them manually
+    @Override
+    public Void visitNewClass(NewClassTree invocation, Void ignored) {
+        var asJC = (JCTree.JCNewClass) invocation;
+        var enclosingExpression = asJC.getEnclosingExpression();
+        if (enclosingExpression != null &&
+                fixedVarTypeNames.containsKey(enclosingExpression.toString())) {
+            var returnType = TypeUtils.getTypeByName(fixedVarTypeNames.get(enclosingExpression.toString()) + "." +
+                            invocation.getIdentifier().toString().replaceAll("<.*>", ""));
+            asJC.getIdentifier().type = returnType;
+        }
+        return super.visitNewClass(invocation, ignored);
     }
 }

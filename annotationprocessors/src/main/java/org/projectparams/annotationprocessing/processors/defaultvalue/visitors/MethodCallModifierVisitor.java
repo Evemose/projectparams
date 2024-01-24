@@ -46,6 +46,7 @@ public class MethodCallModifierVisitor extends AbstractVisitor<Void, InvocableIn
     }
 
     private void visitInvocable(InvocableTree invocation, InvocableInfo invocableInfo) {
+        messager.printMessage(Diagnostic.Kind.NOTE, "Visiting method invocation: " + invocation.getOwnerTypeQualifiedName() + "." + invocation.getSelfName());
         if (!allFixedMethods.contains(invocation) &&
                 invocableInfo.matches(invocation)) {
             messager.printMessage(Diagnostic.Kind.NOTE, "Fixing matched method invocation: " + invocation);
