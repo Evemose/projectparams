@@ -20,11 +20,21 @@ public class Abobus {
         return new Abobus();
     }
 
-    public class Bibus {
+    public class Bibus extends Abobus {
         public Bibus(@DefaultValue("3.4") float abobus) {
+            super(abobus);
         }
-        public static float bibus(@DefaultValue("3.4") float abobus) {
-            return abobus;
+//        public UltimaPopus ultima(@DefaultValue("3.4") float abobus) {
+//            return new UltimaPopus();
+//        }
+
+        public class UltimaPopus extends Bibus {
+            public UltimaPopus(@DefaultValue("3.4") float abobus) {
+                super(abobus);
+            }
+//            public UltimaPopus ororos(@DefaultValue("3.4") float abobus) {
+//                return Bibus.this.new UltimaPopus();
+//            }
         }
     }
 

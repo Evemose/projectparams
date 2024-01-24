@@ -6,7 +6,9 @@ import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
+import org.projectparams.annotationprocessing.utils.ElementUtils;
 
+import javax.lang.model.element.TypeElement;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,9 +29,8 @@ public class NewClassInvocableTree extends AbstractInvocableTree<NewClassTree> {
         var typeIdentifier = asJC.getIdentifier();
         if (typeIdentifier.type == null) {
             TypeUtils.attributeExpression(asJC, pathToWrapped);
-            typeIdentifier = asJC.getIdentifier();
         }
-        return typeIdentifier.type.tsym.getQualifiedName().toString();
+        return typeIdentifier.type.toString();
     }
 
     @Override
@@ -42,19 +43,15 @@ public class NewClassInvocableTree extends AbstractInvocableTree<NewClassTree> {
         var asJC = (JCTree.JCNewClass) wrapped;
         // initialize dummy type for method invocation
         if (asJC.constructorType == null) {
-            var ownerName = getOwnerTypeQualifiedName();
-            if (ownerName.startsWith("<any>")) {
+            var newClassName = getOwnerTypeQualifiedName();
+            if (newClassName.startsWith("<any>")) {
                 return;
             }
-            asJC.constructorType = new Type.MethodType(
-                    com.sun.tools.javac.util.List.from(
-                           asJC.args.stream().map(arg -> arg.type).toArray(Type[]::new)),
-                    // for some reason the type I set here is ignored
-                    // and the type of the constructor is always void
-                    // so lets just set it to the void to not break anything accidentally
-                    TypeUtils.getTypeByName("void"),
-                    com.sun.tools.javac.util.List.nil(),
-                    TypeUtils.getTypeByName(ownerName).asElement());
+            try {
+                var newClassType = TypeUtils.getTypeByName(newClassName);
+                TypeUtils.updateIdentifierType(wrapped, newClassType);
+            } catch (Exception ignored) {
+            }
         }
     }
 

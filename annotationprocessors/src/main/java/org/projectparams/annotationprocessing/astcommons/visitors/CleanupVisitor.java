@@ -65,10 +65,22 @@ public class CleanupVisitor extends AbstractVisitor<Void, Void> {
         var enclosingExpression = asJC.getEnclosingExpression();
         if (enclosingExpression != null &&
                 fixedVarTypeNames.containsKey(enclosingExpression.toString())) {
-            var returnType = TypeUtils.getTypeByName(fixedVarTypeNames.get(enclosingExpression.toString()) + "." +
+            var newClassType = TypeUtils.getTypeByName(fixedVarTypeNames.get(enclosingExpression.toString()) + "." +
                             invocation.getIdentifier().toString().replaceAll("<.*>", ""));
-            asJC.getIdentifier().type = returnType;
+            TypeUtils.updateIdentifierType(invocation, newClassType);
+        } else if (allFixedMethods.stream()
+                .anyMatch(fixedMethod -> fixedMethod.getWrapped().equals(invocation.getEnclosingExpression()))) {
+            var enclosingTypeName = ((JCTree.JCExpression) invocation.getEnclosingExpression()).type.toString();
+            if (!enclosingTypeName.startsWith("<any>")) {
+                var newClassType = TypeUtils.getTypeByName(enclosingTypeName + "." +
+                        invocation.getIdentifier().toString().replaceAll("<.*>", ""));
+                TypeUtils.updateIdentifierType(invocation, newClassType);
+            }
+        } else if (invocation.getEnclosingExpression() instanceof JCTree.JCIdent) {
+
         }
+        messager.printMessage(Diagnostic.Kind.NOTE, "Enclosing expression: " + invocation.getEnclosingExpression() + " for " + invocation);
         return super.visitNewClass(invocation, ignored);
     }
+
 }

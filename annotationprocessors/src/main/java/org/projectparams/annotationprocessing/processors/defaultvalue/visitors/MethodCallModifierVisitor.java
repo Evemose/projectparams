@@ -3,8 +3,10 @@ package org.projectparams.annotationprocessing.processors.defaultvalue.visitors;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.NewClassTree;
 import com.sun.source.util.Trees;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.List;
+import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.MethodInvocableTree;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.NewClassInvocableTree;
@@ -46,7 +48,7 @@ public class MethodCallModifierVisitor extends AbstractVisitor<Void, InvocableIn
     }
 
     private void visitInvocable(InvocableTree invocation, InvocableInfo invocableInfo) {
-        messager.printMessage(Diagnostic.Kind.NOTE, "Visiting method invocation: " + invocation.getOwnerTypeQualifiedName() + "." + invocation.getSelfName());
+        messager.printMessage(Diagnostic.Kind.NOTE, "Visiting method invocation: " + invocation);
         if (!allFixedMethods.contains(invocation) &&
                 invocableInfo.matches(invocation)) {
             messager.printMessage(Diagnostic.Kind.NOTE, "Fixing matched method invocation: " + invocation);

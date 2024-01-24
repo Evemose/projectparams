@@ -52,7 +52,8 @@ public class MainProcessor extends AbstractProcessor {
                     Symtab.instance(javacProcessingEnv.getContext()),
                     Attr.instance(javacProcessingEnv.getContext()),
                     Enter.instance(javacProcessingEnv.getContext()));
-            ElementUtils.init(processingEnv.getElementUtils());
+            ElementUtils.init(processingEnv.getElementUtils(),
+                    trees);
         } catch (Throwable t) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
                     t.getMessage() + "\n" + Arrays.toString(t.getStackTrace()).replaceAll(",", "\n"));

@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValue> {
 
@@ -29,10 +30,8 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
 
     @Override
     public void process(Set<Element> elements) {
-        var methods = elements.stream().map(Element::getEnclosingElement)
-                .collect(() -> Collections.newSetFromMap(new IdentityHashMap<ExecutableElement, Boolean>()),
-                        (set, element) -> set.add((ExecutableElement) element),
-                        Set::addAll);
+        var methods = elements.stream().map(el -> (ExecutableElement) el.getEnclosingElement())
+                .collect(Collectors.toUnmodifiableSet());
         messager.printMessage(Diagnostic.Kind.NOTE, "Methods to process: " + methods);
         var argumentSupplier = new DefaultArgumentSupplier(treeMaker);
         var fixedMethodsInIteration = new HashSet<InvocableTree>();

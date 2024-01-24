@@ -4,18 +4,18 @@ import com.sun.source.tree.ExpressionTree;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
+import org.projectparams.annotationprocessing.utils.ElementUtils;
 import org.projectparams.annotations.DefaultValue;
 
+import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public record InvocableInfo(String name,
-                            String ownerQualifiedName,
+                            Set<String> possibleOwnerQualifiedNames,
                             String returnTypeQualifiedName,
                             String[] parameterTypeQualifiedNames,
                             Map<Integer, Object> paramIndexToDefaultValue) {
@@ -24,11 +24,44 @@ public record InvocableInfo(String name,
 
     public static InvocableInfo from(ExecutableElement method) {
         return new InvocableInfo(method.getSimpleName().toString(),
-                method.getEnclosingElement().toString(),
+                method.getSimpleName().toString().equals("<init>") ?
+                        Set.of(((TypeElement)method.getEnclosingElement()).getQualifiedName().toString())
+                        : getPossibleOwnerQualifiedNames(method),
                 getReturnTypeQualifiedName(method),
                 method.getParameters().stream().map(parameter ->
                         parameter.asType().toString()).toArray(String[]::new),
                 getDefaultValuesMap(method));
+    }
+
+    private static Set<String> getPossibleOwnerQualifiedNames(ExecutableElement method) {
+        var classElement = (TypeElement) method.getEnclosingElement();
+        var result = new HashSet<>(Set.of(classElement.getQualifiedName().toString()));
+        while (classElement.getEnclosingElement().getKind() == ElementKind.CLASS) {
+            classElement = (TypeElement) classElement.getEnclosingElement();
+            // detect method that this method overrides
+            if (classElement.getEnclosedElements().stream().filter(e -> e.getKind() == ElementKind.METHOD)
+                    .anyMatch(e -> isOverride(method, (ExecutableElement) e))) {
+                break;
+            } else {
+                result.add(classElement.getQualifiedName().toString());
+            }
+        }
+        result.addAll(ElementUtils.getAllAncestors((TypeElement) method.getEnclosingElement())
+                .stream()
+                        .takeWhile(el -> el.getEnclosedElements().stream()
+                                .noneMatch(e -> e.getKind() == ElementKind.METHOD
+                                        && isOverride((ExecutableElement) e, method)))
+                .map(el -> el.getQualifiedName().toString()).collect(Collectors.toSet()));
+        if (((TypeElement)method.getEnclosingElement()).getQualifiedName().toString().equals("Abobus")) {
+            throw new RuntimeException(result.toString());
+        }
+        return result;
+    }
+
+    private static boolean isOverride(ExecutableElement method, ExecutableElement superMethod) {
+        return method.getSimpleName().toString().equals(superMethod.getSimpleName().toString())
+                && method.getParameters().equals(superMethod.getParameters())
+                && method.getReturnType().equals(superMethod.getReturnType());
     }
 
     private static String getReturnTypeQualifiedName(ExecutableElement method) {
@@ -69,30 +102,10 @@ public record InvocableInfo(String name,
     public boolean matches(InvocableTree invocation) {
         var methodName = invocation.getSelfName();
         var ownerQualifiedName = invocation.getOwnerTypeQualifiedName();
-        return (ownerQualifiedName == null || ownerQualifiedName.equals(this.ownerQualifiedName))
+        return possibleOwnerQualifiedNames.contains(ownerQualifiedName)
                 && methodName.equals(name)
                 && doesExistingArgsMatch(invocation.getArguments());
         // for now not considering return type
-    }
-
-    public boolean matchesExact(InvocableTree invocation) {
-        var methodName = invocation.getSelfName();
-        var ownerQualifiedName = invocation.getOwnerTypeQualifiedName();
-        return (ownerQualifiedName == null || ownerQualifiedName.equals(this.ownerQualifiedName))
-                && methodName.equals(name)
-                && doesAllArgsMatchExact(invocation.getArguments());
-        // for now not considering return type
-    }
-
-    private boolean doesAllArgsMatchExact(List<? extends ExpressionTree> args) {
-        var currentArgs = args.stream().map(arg -> {
-            if (((JCTree.JCExpression) arg).type == null) {
-                return "superSecretErrTypePlaceholder";
-            } else {
-                return TypeUtils.getBoxedTypeName(((JCTree.JCExpression) arg).type.toString());
-            }
-        }).toArray(String[]::new);
-        return Arrays.equals(parameterTypeQualifiedNames, currentArgs);
     }
 
     // TODO: fix
@@ -115,7 +128,23 @@ public record InvocableInfo(String name,
     }
 
     public String toString() {
-        return ownerQualifiedName + "." + name + "(" + Arrays.toString(parameterTypeQualifiedNames)
+        return String.join("|", possibleOwnerQualifiedNames) + "." + name + "(" + Arrays.toString(parameterTypeQualifiedNames)
                 .replaceAll("[\\[\\]]", "") + "): " + returnTypeQualifiedName;
+    }
+
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof InvocableInfo invocable) {
+            return Arrays.equals(parameterTypeQualifiedNames, invocable.parameterTypeQualifiedNames)
+                    && name.equals(invocable.name) && returnTypeQualifiedName.equals(invocable.returnTypeQualifiedName)
+                    && (Objects.equals(possibleOwnerQualifiedNames, invocable.possibleOwnerQualifiedNames));
+        } else {
+            return false;
+        }
     }
 }

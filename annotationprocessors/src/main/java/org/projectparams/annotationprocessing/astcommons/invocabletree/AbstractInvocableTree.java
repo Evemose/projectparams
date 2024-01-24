@@ -33,7 +33,7 @@ public abstract class AbstractInvocableTree<T extends ExpressionTree> implements
 
     @Override
     public String toString() {
-        return wrapped.toString();
+        return getOwnerTypeQualifiedName() + "." + getSelfName() + "(" + getArguments() + ")" + ": " + getReturnType();
     }
 
     @Override
