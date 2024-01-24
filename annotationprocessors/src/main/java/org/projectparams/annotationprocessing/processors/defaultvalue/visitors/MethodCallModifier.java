@@ -2,12 +2,12 @@ package org.projectparams.annotationprocessing.processors.defaultvalue.visitors;
 
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.NewClassTree;
-import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.List;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.MethodInvocableTree;
+import org.projectparams.annotationprocessing.astcommons.invocabletree.NewClassInvocableTree;
 import org.projectparams.annotationprocessing.astcommons.visitors.AbstractVisitor;
 import org.projectparams.annotationprocessing.exceptions.UnsupportedSignatureException;
 import org.projectparams.annotationprocessing.processors.defaultvalue.MethodInfo;
@@ -66,8 +66,7 @@ public class MethodCallModifier extends AbstractVisitor<Void, MethodInfo> {
     // TODO: implement default values for constructors
     @Override
     public Void visitNewClass(NewClassTree that, MethodInfo methodInfo) {
-//        var adapted = new NewClassToMethodInvocationTreeAdapter(that);
-//        parent = adapted;
+        visitInvocable(new NewClassInvocableTree(that, getCurrentPath()), methodInfo);
         return super.visitNewClass(that, methodInfo);
     }
 }

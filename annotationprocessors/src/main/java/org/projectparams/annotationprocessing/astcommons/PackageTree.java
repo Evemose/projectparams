@@ -3,7 +3,6 @@ package org.projectparams.annotationprocessing.astcommons;
 import com.sun.source.util.TreePathScanner;
 import com.sun.source.util.Trees;
 
-import javax.annotation.processing.Messager;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import java.util.ArrayList;
@@ -11,12 +10,10 @@ import java.util.List;
 
 public class PackageTree {
     private final List<TypeElement> classes;
-    private final Messager messager;
     private final Trees trees;
 
-    public PackageTree(PackageElement packageDecl, Messager messager, Trees trees) {
+    public PackageTree(PackageElement packageDecl, Trees trees) {
         classes = new ArrayList<>();
-        this.messager = messager;
         this.trees = trees;
         addPackageClasses(packageDecl);
     }

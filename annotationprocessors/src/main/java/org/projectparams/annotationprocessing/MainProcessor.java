@@ -3,11 +3,14 @@ package org.projectparams.annotationprocessing;
 import com.google.auto.service.AutoService;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.Symtab;
+import com.sun.tools.javac.comp.Attr;
+import com.sun.tools.javac.comp.Enter;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.TreeMaker;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.processors.managers.DefaultProcessorsManager;
 import org.projectparams.annotationprocessing.processors.managers.ProcessorsManager;
+import org.projectparams.annotationprocessing.utils.ElementUtils;
 import org.projectparams.annotationprocessing.utils.ProcessingUtils;
 import org.projectparams.annotationprocessing.utils.ReflectionUtils;
 
@@ -46,7 +49,10 @@ public class MainProcessor extends AbstractProcessor {
             this.treeMaker = TreeMaker.instance(javacProcessingEnv.getContext());
             TypeUtils.init(trees, javacProcessingEnv.getTypeUtils(),
                     processingEnv.getElementUtils(),
-                    Symtab.instance(javacProcessingEnv.getContext()));
+                    Symtab.instance(javacProcessingEnv.getContext()),
+                    Attr.instance(javacProcessingEnv.getContext()),
+                    Enter.instance(javacProcessingEnv.getContext()));
+            ElementUtils.init(processingEnv.getElementUtils());
         } catch (Throwable t) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
                     t.getMessage() + "\n" + Arrays.toString(t.getStackTrace()).replaceAll(",", "\n"));

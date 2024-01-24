@@ -20,6 +20,6 @@ public abstract class GlobalAnnotationProcessor<T extends Annotation> extends Ab
     public GlobalAnnotationProcessor(Trees trees, TreeMaker treeMaker, PackageElement rootPackageElement, Messager messager) {
         super(trees, treeMaker, messager);
         this.rootPackageElement = rootPackageElement;
-        this.packageTree = new PackageTree(rootPackageElement, messager, trees);
+        this.packageTree = new PackageTree(rootPackageElement, trees);
     }
 }

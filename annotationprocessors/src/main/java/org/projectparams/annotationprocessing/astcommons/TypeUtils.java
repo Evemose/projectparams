@@ -1,17 +1,21 @@
 package org.projectparams.annotationprocessing.astcommons;
 
-import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
+import com.sun.source.tree.ParameterizedTypeTree;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.Symtab;
 import com.sun.tools.javac.code.Type;
+import com.sun.tools.javac.comp.Attr;
+import com.sun.tools.javac.comp.Enter;
 import com.sun.tools.javac.model.JavacTypes;
 import com.sun.tools.javac.tree.JCTree;
+import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
+import org.projectparams.annotationprocessing.astcommons.invocabletree.NewClassInvocableTree;
+import org.projectparams.annotationprocessing.astcommons.parsing.CUContext;
 
-import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.Elements;
 
@@ -20,13 +24,17 @@ public class TypeUtils {
     private static JavacTypes types;
     private static Elements elements;
     private static Symtab symtab;
+    private static Attr attr;
+    private static Enter enter;
 
     // initialized in org.projectparams.annotationprocessing.MainProcessor
-    public static void init(Trees trees, JavacTypes types, Elements elements, Symtab symtab) {
+    public static void init(Trees trees, JavacTypes types, Elements elements, Symtab symtab, Attr attr, Enter enter) {
         TypeUtils.trees = trees;
         TypeUtils.types = types;
         TypeUtils.elements = elements;
         TypeUtils.symtab = symtab;
+        TypeUtils.attr = attr;
+        TypeUtils.enter = enter;
     }
 
     public static Type getTypeByName(String name) {
@@ -60,11 +68,24 @@ public class TypeUtils {
         return trees.getTypeMirror(path).getKind();
     }
 
-    public static String getOwnerTypeName(ExpressionTree expression, TreePath path) {
-        if (expression instanceof MethodInvocationTree methodInvocationTree) {
+    public static String getOwnerTypeName(InvocableTree tree, TreePath path) {
+        if (tree.getWrapped() instanceof MethodInvocationTree methodInvocationTree) {
             return getOwnerTypeName(methodInvocationTree, path);
+        } else if (tree.getWrapped() instanceof NewClassInvocableTree newClassInvocableTree) {
+            var asJC = (JCTree.JCNewClass) newClassInvocableTree.getWrapped();
+            var typeIdentifier = asJC.getIdentifier();
+            return switch (typeIdentifier.getKind()) {
+                case IDENTIFIER -> CUContext.from(path.getCompilationUnit()).importedClassNames().stream()
+                        .filter(imp -> imp.endsWith("." + newClassInvocableTree.getOwnerTypeQualifiedName()))
+                        .findAny().orElseThrow(() -> new RuntimeException("Cannot resolve owner type for "
+                                + newClassInvocableTree.getOwnerTypeQualifiedName() + ": no matching import found"));
+                case MEMBER_SELECT -> ((MemberSelectTree) typeIdentifier).toString();
+                case PARAMETERIZED_TYPE -> ((ParameterizedTypeTree) typeIdentifier).getType().toString();
+                default -> throw new UnsupportedOperationException("Type extraction not supported for trees of type " +
+                        typeIdentifier.getKind());
+            };
         } else {
-            throw new IllegalArgumentException("Unsupported expression type: " + expression.getClass().getCanonicalName());
+            throw new IllegalArgumentException("Unsupported expression type: " + tree.getWrapped().getClass().getCanonicalName());
         }
     }
 

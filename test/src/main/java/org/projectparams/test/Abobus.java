@@ -1,6 +1,7 @@
 package org.projectparams.test;
 
 import org.projectparams.annotations.DefaultValue;
+
 public class Abobus {
     public Abobus(@DefaultValue("3.4") float abobus) {
     }
@@ -16,7 +17,13 @@ public class Abobus {
     }
 
     public static Abobus abobus(@DefaultValue("3.4") float abobus, @DefaultValue("true") boolean abobus2, @DefaultValue("4") int abobus3) {
-        return new Abobus(abobus);
+        return new Abobus();
+    }
+
+    public static class Bibus {
+        public static float bibus(@DefaultValue("3.4") float abobus) {
+            return abobus;
+        }
     }
 
     public static boolean akakus(@DefaultValue("4") long abobus) {

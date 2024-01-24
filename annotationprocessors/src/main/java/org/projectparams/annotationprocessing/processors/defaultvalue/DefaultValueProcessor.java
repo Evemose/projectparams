@@ -1,6 +1,5 @@
 package org.projectparams.annotationprocessing.processors.defaultvalue;
 
-import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.TreeMaker;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
@@ -36,7 +35,9 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
         var argumentSupplier = new DefaultArgumentSupplier(treeMaker);
         var fixedMethodsInIteration = new HashSet<InvocableTree>();
         var allFixedMethods = new HashSet<InvocableTree>();
+        var count = 0;
         do {
+            count++;
             allFixedMethods.addAll(fixedMethodsInIteration);
             fixedMethodsInIteration.clear();
             methods.forEach(method -> {
@@ -52,7 +53,7 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
                         allFixedMethods);
                 packageTree.accept(modifier, methodInfo);
             });
-        } while (!fixedMethodsInIteration.isEmpty());
+        } while (!fixedMethodsInIteration.isEmpty() && count < 5);
 
         messager.printMessage(Diagnostic.Kind.NOTE, "Fixing variable declarations related to: " + allFixedMethods);
         var cleanupVisitor = new CleanupVisitor(allFixedMethods, trees, messager, treeMaker);
