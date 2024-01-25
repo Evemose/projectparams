@@ -99,9 +99,13 @@ public record InvocableInfo(String name,
     public boolean matches(InvocableTree invocation) {
         var methodName = invocation.getSelfName();
         var ownerQualifiedName = invocation.getOwnerTypeQualifiedName();
-        return possibleOwnerQualifiedNames.contains(ownerQualifiedName)
-                && methodName.equals(name)
-                && doesExistingArgsMatch(invocation.getArguments());
+        try {
+            return possibleOwnerQualifiedNames.contains(ownerQualifiedName)
+                    && methodName.equals(name)
+                    && doesExistingArgsMatch(invocation.getArguments());
+        } catch (Exception e) {
+            throw new RuntimeException("Error matching " + this + " with " + invocation, e);
+        }
         // for now not considering return type
     }
 
@@ -111,7 +115,7 @@ public record InvocableInfo(String name,
             if (((JCTree.JCExpression) arg).type == null) {
                 return "superSecretErrTypePlaceholder";
             } else {
-                return TypeUtils.getBoxedTypeName(((JCTree.JCExpression) arg).type.toString());
+                return TypeUtils.getBoxedTypeName(TypeUtils.getActualType(arg).toString());
             }
         }).toArray(String[]::new);
         return doesExistingArgsMatch(currentArgs);

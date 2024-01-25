@@ -71,7 +71,10 @@ public class CleanupVisitor extends AbstractVisitor<Void, Void> {
         } else {
             for (var fixedMethod : allFixedMethods) {
                 if (fixedMethod.getWrapped() == invocation.getEnclosingExpression()) {
-                    TypeUtils.addConstructorOwnerTypeName(invocation, fixedMethod.getReturnType().toString());
+                    TypeUtils.addConstructorOwnerTypeName(invocation, fixedMethod.getReturnType().toString()
+                    + "." + asJC.getIdentifier().toString().replaceAll(".?<.*>.?", ""));
+                    messager.printMessage(Diagnostic.Kind.NOTE, "Fixed new class owner type: " + invocation
+                            + " to " + fixedMethod.getReturnType().toString());
                     break;
                 }
             }

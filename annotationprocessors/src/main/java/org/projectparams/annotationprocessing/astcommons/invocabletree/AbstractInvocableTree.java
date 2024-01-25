@@ -7,6 +7,8 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 
+import java.util.List;
+
 public abstract class AbstractInvocableTree<T extends ExpressionTree> implements InvocableTree {
     protected final T wrapped;
     protected final TreePath pathToWrapped;
@@ -63,5 +65,10 @@ public abstract class AbstractInvocableTree<T extends ExpressionTree> implements
     @Override
     public void setReturnType(String type) {
         setReturnType(TypeUtils.getTypeByName(type));
+    }
+
+    @Override
+    public List<Type> getArgumentTypes() {
+        return getArguments().stream().map(TypeUtils::getActualType).toList();
     }
 }

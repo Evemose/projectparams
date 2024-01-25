@@ -17,4 +17,5 @@ public interface InvocableTree extends ExpressionTree {
     void setThrownTypes(String ...thrownTypeNames);
     ExpressionTree getWrapped();
     Type getReturnType();
+    List<Type> getArgumentTypes();
 }

@@ -14,6 +14,7 @@ import org.projectparams.annotationprocessing.astcommons.invocabletree.NewClassI
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
+import javax.lang.model.type.ExecutableType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.Elements;
 import java.util.IdentityHashMap;
@@ -21,6 +22,7 @@ import java.util.Map;
 
 /**
  * Utility class for working with types
+ * <p>
  * !!! THIS CLASS IS THE ONLY SOURCE OF TRUTH FOR TYPES !!!
  */
 public class TypeUtils {
@@ -63,7 +65,7 @@ public class TypeUtils {
             default -> {
                 var typeElement = elements.getTypeElement(name);
                 if (typeElement == null) {
-                    throw new IllegalArgumentException("Cannot resolve type for " + name);
+                    yield Type.noType;
                 }
                 var type = types.getDeclaredType(typeElement);
                 yield (Type) type;
@@ -83,7 +85,6 @@ public class TypeUtils {
             case "byte" -> "java.lang.Byte";
             case "short" -> "java.lang.Short";
             case "char" -> "java.lang.Character";
-            case "<any>" -> null;
             default -> name;
         };
     }
@@ -173,26 +174,17 @@ public class TypeUtils {
         String ownerQualifiedName = null;
         if (ownerTree != null) {
             switch (ownerTree) {
+                case JCTree.JCExpression expr -> {
+                    ownerQualifiedName = getActualType(expr).toString();
+                }
                 case JCTree.JCClassDecl staticRef -> {
                     var ownerType = staticRef.sym.type;
                     if (ownerType != null) {
                         ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
                     }
                 }
-                case JCTree.JCFieldAccess fieldAccess -> {
-                    var ownerType = fieldAccess.selected.type;
-                    if (ownerType != null) {
-                        ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
-                    }
-                }
-                case JCTree.JCNewClass clazz -> {
-                    var ownerType = clazz.type;
-                    if (ownerType != null) {
-                        ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
-                    }
-                }
-                case JCTree.JCMethodInvocation method -> {
-                    var ownerType = method.meth.type.getReturnType();
+                case JCTree.JCVariableDecl variableDecl -> {
+                    var ownerType = variableDecl.type;
                     if (ownerType != null) {
                         ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
                     }
@@ -203,22 +195,22 @@ public class TypeUtils {
         } else {
             // in case owner is return type of fixed method, we won`t be able to access its tree
             // so retrieve type from method invocation manually
-            if (expression instanceof JCTree.JCMethodInvocation methodInvocation) {
-                if (methodInvocation.type != null) {
-                    ownerQualifiedName = TypeUtils.getBoxedTypeName(methodInvocation.type.toString());
-                }
-            } else if (expression instanceof JCTree.JCNewClass newClass) {
-                var ownerType = getOwnerTypeName(newClass);
+            if (expression instanceof JCTree.JCExpression expr) {
+                var ownerType = getActualType(expr);
                 if (ownerType != null) {
-                    ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType);
-                } else {
-                    var ownerTypeName = newClass.constructorType.tsym.type.toString();
-                    if (ownerTypeName != null) {
-                        ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerTypeName);
-                    }
+                    ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
                 }
+            } else {
+                throw new IllegalArgumentException("Unsupported owner type: " + expression.getClass().getCanonicalName());
             }
         }
         return ownerQualifiedName;
+    }
+
+    public static Type getActualType(ExpressionTree tree) {
+        if (tree instanceof NewClassTree newClassTree) {
+            return getTypeByName(getOwnerTypeName(newClassTree));
+        }
+        return ((JCTree.JCExpression) tree).type;
     }
 }
