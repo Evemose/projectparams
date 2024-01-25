@@ -17,7 +17,7 @@ public class PrepareNewClassTreesVisitor extends AbstractVisitor<Void, Void> {
     public Void visitNewClass(NewClassTree newClassTree, Void aVoid) {
         var asJC = (JCTree.JCNewClass) newClassTree;
         var enclosingExpression = asJC.getEnclosingExpression();
-        if (enclosingExpression == null) {
+        if (enclosingExpression == null || enclosingExpression.type != null) {
             TypeUtils.attributeExpression(asJC,
                     TypeUtils.getEnclosingMethodPath(getCurrentPath()));
             messager.printMessage(javax.tools.Diagnostic.Kind.NOTE, "Enclosing expression is null for "

@@ -6,7 +6,7 @@ public class Abobus {
     public Abobus(@DefaultValue("3.4") float abobus) {
     }
     public float bibus(@DefaultValue("3.4") float abobus) {
-        return abobus;
+        return this.doubleBibus(new Main());
     }
     public float doubleBibus(Main main, @DefaultValue("3.4") float abobus2) {
         return abobus2;
@@ -36,9 +36,17 @@ public class Abobus {
                 super(abobus);
             }
             public UltimaPopus ororos(@DefaultValue("3.4") float abobus) {
-                return new UltimaPopus(new Abobus());
+                return this.new UltimaPopus(new Abobus());
             }
 
+        }
+    }
+
+    public static class Sucus {
+        public Sucus(@DefaultValue("3.4") float abobus) {
+        }
+        public float bibus(@DefaultValue("3.4") float abobus) {
+            return 0;
         }
     }
 
