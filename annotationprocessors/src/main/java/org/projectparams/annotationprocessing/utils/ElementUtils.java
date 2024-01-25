@@ -36,21 +36,12 @@ public class ElementUtils {
         return trees.getElement(path);
     }
 
-    public static Set<TypeElement> getAllAncestors(TypeElement typeElement) {
+    public static List<TypeElement> getAllChildren(TypeElement typeElement) {
         var allClasses = new ArrayList<>(getAllClasses(typeElement));
-        var result = new TreeSet<TypeElement>((a, b) -> {
-            if (a.equals(b)) return 0;
-            while (!a.toString().equals("java.lang.Object")
-            && !a.getSuperclass().toString().equals("java.lang.Object")) {
-                if (a.getSuperclass().equals(b.asType())) {
-                    return -1;
-                }
-                a = elements.getTypeElement(a.getSuperclass().toString());
-            }
-            return 1;
-        });
+        var result = new ArrayList<TypeElement>();
         result.add(typeElement);
-        var previousSize = 0;
+        allClasses.remove(typeElement);
+        int previousSize;
         do {
             previousSize = result.size();
             for (var clazz : allClasses) {
@@ -60,6 +51,7 @@ public class ElementUtils {
             }
             allClasses.removeAll(result);
         } while (result.size() > previousSize);
+        result.remove(typeElement);
         return result;
     }
 
@@ -69,6 +61,12 @@ public class ElementUtils {
             rootPackage = rootPackage.getEnclosingElement();
         }
         return getClassesInPackage((PackageElement) rootPackage);
+    }
+
+    public static List<TypeElement> getAllTopLevelClasses(Element someElement) {
+        return getAllClasses(someElement).stream()
+                .filter(clazz -> !clazz.getNestingKind().isNested())
+                .toList();
     }
 
     public static List<TypeElement> getClassesInPackage(PackageElement packageElement) {

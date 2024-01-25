@@ -6,16 +6,16 @@ import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
-import org.projectparams.annotationprocessing.utils.ElementUtils;
 
-import javax.lang.model.element.TypeElement;
-import java.util.Arrays;
-import java.util.List;
+import javax.annotation.processing.Messager;
+import java.util.*;
 
 public class NewClassInvocableTree extends AbstractInvocableTree<NewClassTree> {
+
+    public static Messager messager;
+
     public NewClassInvocableTree(NewClassTree wrapped, TreePath pathToWrapped) {
         super(wrapped, pathToWrapped);
-        initializeDummyTypeIfNeeded();
     }
 
     @Override
@@ -25,34 +25,12 @@ public class NewClassInvocableTree extends AbstractInvocableTree<NewClassTree> {
 
     @Override
     public String getOwnerTypeQualifiedName() {
-        var asJC = (JCTree.JCNewClass) wrapped;
-        var typeIdentifier = asJC.getIdentifier();
-        if (typeIdentifier.type == null) {
-            TypeUtils.attributeExpression(asJC, pathToWrapped);
-        }
-        return typeIdentifier.type.toString();
+        return TypeUtils.getOwnerTypeName(wrapped);
     }
 
     @Override
     public List<? extends ExpressionTree> getArguments() {
         return wrapped.getArguments();
-    }
-
-    // cant do it in constructor cause constructor arg types are for some reason not initialized
-    private void initializeDummyTypeIfNeeded() {
-        var asJC = (JCTree.JCNewClass) wrapped;
-        // initialize dummy type for method invocation
-        if (asJC.constructorType == null) {
-            var newClassName = getOwnerTypeQualifiedName();
-            if (newClassName.startsWith("<any>")) {
-                return;
-            }
-            try {
-                var newClassType = TypeUtils.getTypeByName(newClassName);
-                TypeUtils.updateIdentifierType(wrapped, newClassType);
-            } catch (Exception ignored) {
-            }
-        }
     }
 
     @Override
@@ -92,6 +70,14 @@ public class NewClassInvocableTree extends AbstractInvocableTree<NewClassTree> {
      */
     @Override
     public Type getReturnType() {
-        return TypeUtils.getTypeByName(getOwnerTypeQualifiedName());
+        var ownerName = getOwnerTypeQualifiedName();
+        if (ownerName.startsWith("<any>")) {
+            return null;
+        }
+        try {
+            return TypeUtils.getTypeByName(ownerName);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

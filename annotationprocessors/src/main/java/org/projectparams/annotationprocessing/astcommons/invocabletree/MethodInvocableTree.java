@@ -24,6 +24,7 @@ public class MethodInvocableTree extends AbstractInvocableTree<MethodInvocationT
                     com.sun.tools.javac.util.List.nil(),
                     null);
         }
+
     }
 
     @Override
@@ -48,6 +49,7 @@ public class MethodInvocableTree extends AbstractInvocableTree<MethodInvocationT
                 TypeUtils.getTypeByName(returnType),
                 asJC.meth.type.getThrownTypes(),
                 asJC.meth.type.tsym);
+        asJC.type = TypeUtils.getTypeByName(returnType);
     }
 
     @Override

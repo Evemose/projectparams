@@ -48,10 +48,10 @@ public class MethodCallModifierVisitor extends AbstractVisitor<Void, InvocableIn
     }
 
     private void visitInvocable(InvocableTree invocation, InvocableInfo invocableInfo) {
-        messager.printMessage(Diagnostic.Kind.NOTE, "Visiting method invocation: " + invocation);
+        messager.printMessage(Diagnostic.Kind.NOTE, "Visiting invocable: " + invocation);
+
         if (!allFixedMethods.contains(invocation) &&
                 invocableInfo.matches(invocation)) {
-            messager.printMessage(Diagnostic.Kind.NOTE, "Fixing matched method invocation: " + invocation);
             List<JCTree.JCExpression> args;
             try {
                 args = argumentSupplier.getModifiedArguments(invocation, invocableInfo);

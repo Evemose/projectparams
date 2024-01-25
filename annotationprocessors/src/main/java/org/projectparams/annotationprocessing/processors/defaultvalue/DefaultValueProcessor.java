@@ -6,6 +6,7 @@ import com.sun.tools.javac.tree.TreeMaker;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
 import org.projectparams.annotationprocessing.astcommons.visitors.CleanupVisitor;
 import org.projectparams.annotationprocessing.astcommons.visitors.LoggingVisitor;
+import org.projectparams.annotationprocessing.astcommons.visitors.PrepareNewClassTreesVisitor;
 import org.projectparams.annotationprocessing.processors.GlobalAnnotationProcessor;
 import org.projectparams.annotationprocessing.processors.defaultvalue.argumentsuppliers.DefaultArgumentSupplier;
 import org.projectparams.annotationprocessing.processors.defaultvalue.visitors.MethodCallModifierVisitor;
@@ -36,6 +37,10 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
         var argumentSupplier = new DefaultArgumentSupplier(treeMaker);
         var fixedMethodsInIteration = new HashSet<InvocableTree>();
         var allFixedMethods = new HashSet<InvocableTree>();
+
+        var prepareNewClassTreesVisitor = new PrepareNewClassTreesVisitor(trees, messager);
+        packageTree.accept(prepareNewClassTreesVisitor, null);
+
         do {
             allFixedMethods.addAll(fixedMethodsInIteration);
             fixedMethodsInIteration.clear();

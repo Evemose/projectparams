@@ -13,6 +13,7 @@ import javax.lang.model.element.TypeElement;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public record InvocableInfo(String name,
                             Set<String> possibleOwnerQualifiedNames,
@@ -36,25 +37,21 @@ public record InvocableInfo(String name,
     private static Set<String> getPossibleOwnerQualifiedNames(ExecutableElement method) {
         var classElement = (TypeElement) method.getEnclosingElement();
         var result = new HashSet<>(Set.of(classElement.getQualifiedName().toString()));
-        while (classElement.getEnclosingElement().getKind() == ElementKind.CLASS) {
-            classElement = (TypeElement) classElement.getEnclosingElement();
-            // detect method that this method overrides
-            if (classElement.getEnclosedElements().stream().filter(e -> e.getKind() == ElementKind.METHOD)
-                    .anyMatch(e -> isOverride(method, (ExecutableElement) e))) {
-                break;
-            } else {
-                result.add(classElement.getQualifiedName().toString());
-            }
-        }
-        result.addAll(ElementUtils.getAllAncestors((TypeElement) method.getEnclosingElement())
-                .stream()
-                        .takeWhile(el -> el.getEnclosedElements().stream()
-                                .noneMatch(e -> e.getKind() == ElementKind.METHOD
-                                        && isOverride((ExecutableElement) e, method)))
-                .map(el -> el.getQualifiedName().toString()).collect(Collectors.toSet()));
-        if (((TypeElement)method.getEnclosingElement()).getQualifiedName().toString().equals("Abobus")) {
-            throw new RuntimeException(result.toString());
-        }
+
+        var allChildren = ElementUtils.getAllChildren(classElement);
+
+        var overridingSubclasses = allChildren.stream()
+                .filter(child -> child.getEnclosedElements().stream()
+                        .filter(e -> e.getKind() == ElementKind.METHOD)
+                        .anyMatch(e -> isOverride((ExecutableElement) e, method)))
+                .collect(Collectors.toSet());
+
+
+        allChildren.removeAll(overridingSubclasses.stream().flatMap(child ->
+                Stream.concat(ElementUtils.getAllChildren(child).stream(), Stream.of(child))).toList());
+
+        result.addAll(allChildren.stream().map(el -> el.getQualifiedName().toString()).toList());
+
         return result;
     }
 

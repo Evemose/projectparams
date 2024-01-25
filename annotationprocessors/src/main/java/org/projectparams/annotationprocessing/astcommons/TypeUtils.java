@@ -7,14 +7,22 @@ import com.sun.tools.javac.code.Symtab;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.comp.Attr;
 import com.sun.tools.javac.comp.Enter;
+import com.sun.tools.javac.comp.MemberEnter;
 import com.sun.tools.javac.model.JavacTypes;
 import com.sun.tools.javac.tree.JCTree;
+import org.projectparams.annotationprocessing.astcommons.invocabletree.NewClassInvocableTree;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.Elements;
+import java.util.IdentityHashMap;
+import java.util.Map;
 
+/**
+ * Utility class for working with types
+ * !!! THIS CLASS IS THE ONLY SOURCE OF TRUTH FOR TYPES !!!
+ */
 public class TypeUtils {
     private static Trees trees;
     private static JavacTypes types;
@@ -22,15 +30,23 @@ public class TypeUtils {
     private static Symtab symtab;
     private static Attr attr;
     private static Enter enter;
+    private static MemberEnter memberEnter;
+
+    // for some reason, types of NewClassTree nodes are not resolved during annotation processing
+    // and any attempt to resolve them manually results in an error, while attribution does not affect types at all
+    private static final Map<NewClassTree, String> effectiveConstructorOwnerTypeNames = new IdentityHashMap<>();
+
 
     // initialized in org.projectparams.annotationprocessing.MainProcessor
-    public static void init(Trees trees, JavacTypes types, Elements elements, Symtab symtab, Attr attr, Enter enter) {
+    public static void init(Trees trees, JavacTypes types, Elements elements, Symtab symtab, Attr attr, Enter enter,
+                            MemberEnter memberEnter) {
         TypeUtils.trees = trees;
         TypeUtils.types = types;
         TypeUtils.elements = elements;
         TypeUtils.symtab = symtab;
         TypeUtils.attr = attr;
         TypeUtils.enter = enter;
+        TypeUtils.memberEnter = memberEnter;
     }
 
     public static Type getTypeByName(String name) {
@@ -41,6 +57,9 @@ public class TypeUtils {
             case "double" -> symtab.doubleType;
             case "boolean" -> symtab.booleanType;
             case "void" -> symtab.voidType;
+            case "byte" -> symtab.byteType;
+            case "short" -> symtab.shortType;
+            case "char" -> symtab.charType;
             default -> {
                 var typeElement = elements.getTypeElement(name);
                 if (typeElement == null) {
@@ -53,19 +72,6 @@ public class TypeUtils {
     }
 
 
-    public static void updateIdentifierType(NewClassTree newClassTree, Type newType) {
-        var asJC = (JCTree.JCNewClass) newClassTree;
-        asJC.clazz.type = newType;
-        asJC.constructorType = new Type.MethodType(
-                com.sun.tools.javac.util.List.from(
-                        newClassTree.getArguments().stream().map(arg -> ((JCTree.JCExpression) arg).type).toList()),
-                TypeUtils.getTypeByName("void"),
-                com.sun.tools.javac.util.List.nil(),
-                asJC.clazz.type.tsym);
-        asJC.type = newType;
-        asJC.constructor = asJC.clazz.type.tsym;
-    }
-
     public static String getBoxedTypeName(String name) {
         return switch (name) {
             case "int" -> "java.lang.Integer";
@@ -73,6 +79,11 @@ public class TypeUtils {
             case "float" -> "java.lang.Float";
             case "double" -> "java.lang.Double";
             case "boolean" -> "java.lang.Boolean";
+            case "void" -> "java.lang.Void";
+            case "byte" -> "java.lang.Byte";
+            case "short" -> "java.lang.Short";
+            case "char" -> "java.lang.Character";
+            case "<any>" -> null;
             default -> name;
         };
     }
@@ -89,8 +100,8 @@ public class TypeUtils {
         String ownerQualifiedName;
         if (invocation.getMethodSelect() instanceof MemberSelectTree memberSelectTree) {
             ownerQualifiedName = getOwnerNameFromMemberSelect(memberSelectTree, path);
-        } else if (invocation.getMethodSelect() instanceof IdentifierTree identifierTree) {
-            ownerQualifiedName = getOwnerNameFromIdentifier(identifierTree, path);
+        } else if (invocation.getMethodSelect() instanceof IdentifierTree) {
+            ownerQualifiedName = getOwnerNameFromIdentifier(path);
         } else {
             throw new IllegalArgumentException("Unsupported method select type: "
                     + invocation.getMethodSelect().getClass().getCanonicalName());
@@ -98,13 +109,27 @@ public class TypeUtils {
         return ownerQualifiedName;
     }
 
-    // TODO: add support for IdentifierTree
-    @SuppressWarnings("unused")
-    public static String getOwnerNameFromIdentifier(IdentifierTree identifierTree, TreePath path) {
-        while (path != null && !(path.getLeaf() instanceof ClassTree)) {
+    public static String getOwnerTypeName(NewClassTree newClassTree) {
+        var effectiveOwnerTypeName = effectiveConstructorOwnerTypeNames.get(newClassTree);
+        if (effectiveOwnerTypeName != null) {
+            return effectiveOwnerTypeName;
+        }
+        var ownerType = ((JCTree.JCExpression)newClassTree.getIdentifier()).type;
+        if (ownerType != null) {
+            return ownerType.toString();
+        }
+        return "<any>";
+    }
+
+    public static void addConstructorOwnerTypeName(NewClassTree newClassTree, String ownerTypeName) {
+        effectiveConstructorOwnerTypeNames.put(newClassTree, ownerTypeName);
+    }
+
+    public static String getOwnerNameFromIdentifier(TreePath path) {
+        while (!(path.getLeaf() instanceof ClassTree)) {
             path = path.getParentPath();
         }
-        return path != null ? getFullyQualifiedName((ClassTree) path.getLeaf()) : null;
+        return getFullyQualifiedName((ClassTree) path.getLeaf());
     }
 
     public static String getFullyQualifiedName(ClassTree classTree) {
@@ -114,9 +139,32 @@ public class TypeUtils {
         return packageElement.getQualifiedName().toString() + "." + classElement.getSimpleName().toString();
     }
 
-    public static void attributeExpression(JCTree.JCExpression expression, TreePath path) {
-        var env = enter.getTopLevelEnv((JCTree.JCCompilationUnit) path.getCompilationUnit());
+    public static void attributeExpression(JCTree expression, TreePath methodTree) {
+        var env = memberEnter.getMethodEnv(
+                (JCTree.JCMethodDecl) methodTree.getLeaf(),
+                enter.getClassEnv(((JCTree.JCClassDecl)getEnclosingClassPath(getEnclosingMethodPath(methodTree)).getLeaf()).sym)
+        );
         attr.attribExpr(expression, env);
+    }
+
+    public static TreePath getEnclosingClassPath(TreePath path) {
+        while (path != null && !(path.getLeaf() instanceof ClassTree)) {
+            path = path.getParentPath();
+        }
+        if (path == null) {
+            throw new IllegalArgumentException("Path is not enclosed in class");
+        }
+        return path;
+    }
+
+    public static TreePath getEnclosingMethodPath(TreePath path) {
+        while (path != null && !(path.getLeaf() instanceof MethodTree)) {
+            path = path.getParentPath();
+        }
+        if (path == null) {
+            throw new IllegalArgumentException("Path is not enclosed in method");
+        }
+        return path;
     }
 
     private static String getOwnerNameFromMemberSelect(MemberSelectTree memberSelectTree, TreePath path) {
@@ -124,23 +172,33 @@ public class TypeUtils {
         var ownerTree = trees.getTree(trees.getElement(new TreePath(path, expression)));
         String ownerQualifiedName = null;
         if (ownerTree != null) {
-            if (ownerTree instanceof JCTree.JCClassDecl staticRef) {
-                var ownerType = staticRef.sym.type;
-                if (ownerType != null) {
-                    ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
+            switch (ownerTree) {
+                case JCTree.JCClassDecl staticRef -> {
+                    var ownerType = staticRef.sym.type;
+                    if (ownerType != null) {
+                        ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
+                    }
                 }
-            } else if (ownerTree instanceof JCTree.JCExpression newClass) {
-                var ownerType = newClass.type;
-                if (ownerType != null) {
-                    ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
+                case JCTree.JCFieldAccess fieldAccess -> {
+                    var ownerType = fieldAccess.selected.type;
+                    if (ownerType != null) {
+                        ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
+                    }
                 }
-            } else if (ownerTree instanceof JCTree.JCVariableDecl varDecl) {
-                var ownerType = varDecl.type;
-                if (ownerType != null) {
-                    ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
+                case JCTree.JCNewClass clazz -> {
+                    var ownerType = clazz.type;
+                    if (ownerType != null) {
+                        ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
+                    }
                 }
-            } else {
-                throw new IllegalArgumentException("Unsupported owner type: " + ownerTree.getClass().getCanonicalName());
+                case JCTree.JCMethodInvocation method -> {
+                    var ownerType = method.meth.type.getReturnType();
+                    if (ownerType != null) {
+                        ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
+                    }
+                }
+                default ->
+                        throw new IllegalArgumentException("Unsupported owner type: " + ownerTree.getClass().getCanonicalName());
             }
         } else {
             // in case owner is return type of fixed method, we won`t be able to access its tree
@@ -148,17 +206,17 @@ public class TypeUtils {
             if (expression instanceof JCTree.JCMethodInvocation methodInvocation) {
                 if (methodInvocation.type != null) {
                     ownerQualifiedName = TypeUtils.getBoxedTypeName(methodInvocation.type.toString());
-//                    if (possibleOwnerQualifiedNames.equals("org.projectparams.test.Abobus.abobus")) {
-//                        throw new RuntimeException(methodInvocation.meth.type.getReturnType());
-//                    }
                 }
             } else if (expression instanceof JCTree.JCNewClass newClass) {
-                var ownerType = newClass.constructorType.tsym.type;
+                var ownerType = getOwnerTypeName(newClass);
                 if (ownerType != null) {
-                    ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
+                    ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType);
+                } else {
+                    var ownerTypeName = newClass.constructorType.tsym.type.toString();
+                    if (ownerTypeName != null) {
+                        ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerTypeName);
+                    }
                 }
-            } else {
-                ownerQualifiedName = "";
             }
         }
         return ownerQualifiedName;

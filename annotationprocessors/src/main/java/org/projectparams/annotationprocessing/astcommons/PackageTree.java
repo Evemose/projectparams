@@ -14,7 +14,7 @@ public class PackageTree {
     private final Trees trees;
 
     public PackageTree(PackageElement packageDecl, Trees trees) {
-        classes = ElementUtils.getAllClasses(packageDecl);
+        classes = ElementUtils.getAllTopLevelClasses(packageDecl);
         this.trees = trees;
     }
 

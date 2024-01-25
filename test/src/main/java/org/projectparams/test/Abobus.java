@@ -24,17 +24,21 @@ public class Abobus {
         public Bibus(@DefaultValue("3.4") float abobus) {
             super(abobus);
         }
+        public Bibus ultima(@DefaultValue("3.4") float abobus, @DefaultValue("true") boolean abobus2, @DefaultValue("4") int abobus3) {
+            return new Bibus(abobus);
+        }
 //        public UltimaPopus ultima(@DefaultValue("3.4") float abobus) {
 //            return new UltimaPopus();
 //        }
 
         public class UltimaPopus extends Bibus {
-            public UltimaPopus(@DefaultValue("3.4") float abobus) {
+            public UltimaPopus(Abobus abobus45, @DefaultValue("3.4") float abobus) {
                 super(abobus);
             }
-//            public UltimaPopus ororos(@DefaultValue("3.4") float abobus) {
-//                return Bibus.this.new UltimaPopus();
-//            }
+            public UltimaPopus ororos(@DefaultValue("3.4") float abobus) {
+                return new UltimaPopus(new Abobus());
+            }
+
         }
     }
 
