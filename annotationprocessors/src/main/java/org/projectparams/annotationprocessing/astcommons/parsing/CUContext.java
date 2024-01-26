@@ -14,9 +14,9 @@ public record CUContext(
 ) {
     public static CUContext from(CompilationUnitTree compilationUnitTree) {
         return new CUContext(
-                ParsingUtils.getImportedClassNames(compilationUnitTree),
-                ParsingUtils.getImportedNestedClasses(compilationUnitTree),
-                ParsingUtils.getImportedStaticMethods(compilationUnitTree)
+                ContextUtils.getImportedClassNames(compilationUnitTree),
+                ContextUtils.getImportedNestedClasses(compilationUnitTree),
+                ContextUtils.getImportedStaticMethods(compilationUnitTree)
         );
     }
 

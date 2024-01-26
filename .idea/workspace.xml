@@ -4,9 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="cleaned code up">
+    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="fixed field level initializer NewClassTree attribution">
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/ParsedExpressionTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/CUContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/CUContext.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ParsedExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ParsedExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ParsingUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ContextUtils.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -107,49 +110,53 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Application.Main (1).executor&quot;: &quot;Run&quot;,
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
-    &quot;Gradle.ASMMethodCallsScannerTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.ASMMethodCallsScannerTest.testGetMethodCallsInsideClass.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Build projectparams.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.MethodCallArgumentsInspectorTest.testVisitMethod.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Tests in 'projectparams.annotationprocessors'.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Upgrade Gradle wrapper.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.projectparams [:Main.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.projectparams [build].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.projectparams [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.projectparams:test [:test:Main.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Remote JVM Debug.Unnamed.executor&quot;: &quot;Debug&quot;,
-    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;extract.method.default.visibility&quot;: &quot;private&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;openjdk-21&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_directory_selection&quot;: &quot;C:/projectparams/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/projectparams&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;inlay.hints&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Application.Main (1).executor": "Run",
+    "Application.Main.executor": "Run",
+    "Downloaded.Files.Path.Enabled": "false",
+    "Gradle.ASMMethodCallsScannerTest.executor": "Run",
+    "Gradle.ASMMethodCallsScannerTest.testGetMethodCallsInsideClass.executor": "Run",
+    "Gradle.Build projectparams.executor": "Run",
+    "Gradle.MethodCallArgumentsInspectorTest.testVisitMethod.executor": "Run",
+    "Gradle.ParsedExpressionTest.executor": "Debug",
+    "Gradle.ParsedExpressionTest.testFrom_FieldAccessExpression.executor": "Debug",
+    "Gradle.ParsedExpressionTest.testFrom_MethodInvocationExpression.executor": "Run",
+    "Gradle.ParsedExpressionTest.testFrom_NewClassExpression.executor": "Run",
+    "Gradle.Tests in 'projectparams.annotationprocessors'.executor": "Run",
+    "Gradle.Upgrade Gradle wrapper.executor": "Run",
+    "Gradle.projectparams [:Main.main()].executor": "Run",
+    "Gradle.projectparams [build].executor": "Run",
+    "Gradle.projectparams [clean].executor": "Run",
+    "Gradle.projectparams:test [:test:Main.main()].executor": "Run",
+    "Remote JVM Debug.Unnamed.executor": "Debug",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "extract.method.default.visibility": "private",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "jdk.selected.JAVA_MODULE": "openjdk-21",
+    "kotlin-language-version-configured": "true",
+    "last_directory_selection": "C:/projectparams/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors",
+    "last_opened_file_path": "C:/projectparams",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "inlay.hints",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\projectparams" />
@@ -168,54 +175,8 @@
       <recent name="org.projectparams.annotationprocessing.processors.defaultvalue.visitors" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Main">
-    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="org.projectparams.test.Main" />
-      <module name="projectparams.test.main" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.projectparams.test.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <extension name="net.ashald.envfile">
-        <option name="IS_ENABLED" value="false" />
-        <option name="IS_SUBST" value="false" />
-        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
-        <option name="IS_IGNORE_MISSING_FILES" value="false" />
-        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
-        <ENTRIES>
-          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
-        </ENTRIES>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="org.projectparams.processors.Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="org.projectparams.processors.Main" />
-      <module name="projectparams.main" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.projectparams.defaultvalue.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <extension name="net.ashald.envfile">
-        <option name="IS_ENABLED" value="false" />
-        <option name="IS_SUBST" value="false" />
-        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
-        <option name="IS_IGNORE_MISSING_FILES" value="false" />
-        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
-        <ENTRIES>
-          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
-        </ENTRIES>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Tests in 'projectparams.annotationprocessors'" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+  <component name="RunManager" selected="Gradle.ParsedExpressionTest.testFrom_FieldAccessExpression">
+    <configuration name="ParsedExpressionTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -227,6 +188,8 @@
         <option name="taskNames">
           <list>
             <option value=":annotationprocessors:test" />
+            <option value="--tests" />
+            <option value="&quot;org.projectparams.annotationprocessing.astcommons.parsing.ParsedExpressionTest&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -237,26 +200,76 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="projectparams [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="ParsedExpressionTest.testFrom_FieldAccessExpression" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
+        <option name="scriptParameters" value="" />
         <option name="taskDescriptions">
           <list />
         </option>
         <option name="taskNames">
           <list>
-            <option value="build" />
+            <option value=":annotationprocessors:test" />
+            <option value="--tests" />
+            <option value="&quot;org.projectparams.annotationprocessing.astcommons.parsing.ParsedExpressionTest.testFrom_FieldAccessExpression&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
       </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
       <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>false</RunAsTest>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="ParsedExpressionTest.testFrom_MethodInvocationExpression" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":annotationprocessors:test" />
+            <option value="--tests" />
+            <option value="&quot;org.projectparams.annotationprocessing.astcommons.parsing.ParsedExpressionTest.testFrom_MethodInvocationExpression&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="ParsedExpressionTest.testFrom_NewClassExpression" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":annotationprocessors:test" />
+            <option value="--tests" />
+            <option value="&quot;org.projectparams.annotationprocessing.astcommons.parsing.ParsedExpressionTest.testFrom_NewClassExpression&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
     <configuration name="projectparams [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
@@ -282,19 +295,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Application.Main" />
-      <item itemvalue="Application.org.projectparams.processors.Main" />
-      <item itemvalue="Gradle.Tests in 'projectparams.annotationprocessors'" />
-      <item itemvalue="Gradle.projectparams [build]" />
+      <item itemvalue="Gradle.ParsedExpressionTest.testFrom_FieldAccessExpression" />
+      <item itemvalue="Gradle.ParsedExpressionTest.testFrom_MethodInvocationExpression" />
+      <item itemvalue="Gradle.ParsedExpressionTest" />
+      <item itemvalue="Gradle.ParsedExpressionTest.testFrom_NewClassExpression" />
       <item itemvalue="Gradle.projectparams [clean]" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.ParsedExpressionTest.testFrom_FieldAccessExpression" />
+        <item itemvalue="Gradle.ParsedExpressionTest" />
+        <item itemvalue="Gradle.ParsedExpressionTest.testFrom_MethodInvocationExpression" />
+        <item itemvalue="Gradle.ParsedExpressionTest.testFrom_NewClassExpression" />
         <item itemvalue="Gradle.projectparams [clean]" />
-        <item itemvalue="Gradle.projectparams [build]" />
-        <item itemvalue="Gradle.Tests in 'projectparams.annotationprocessors'" />
-        <item itemvalue="Application.org.projectparams.processors.Main" />
-        <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
   </component>
@@ -374,7 +387,9 @@
       <workItem from="1706226361198" duration="8488000" />
       <workItem from="1706239588702" duration="5672000" />
       <workItem from="1706248333357" duration="2449000" />
-      <workItem from="1706251281400" duration="114000" />
+      <workItem from="1706251281400" duration="447000" />
+      <workItem from="1706256199724" duration="5285000" />
+      <workItem from="1706267203513" duration="1944000" />
     </task>
     <task id="LOCAL-00001" summary="split project into modules">
       <option name="closed" value="true" />
@@ -648,7 +663,15 @@
       <option name="project" value="LOCAL" />
       <updated>1706250766871</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="fixed field level initializer NewClassTree attribution">
+      <option name="closed" value="true" />
+      <created>1706251642783</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1706251642783</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -685,7 +708,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="i managed to get it working" />
     <MESSAGE value="some cleanup before implementing processing logic" />
     <MESSAGE value="i began to change invocations params, but it doesn`t work with var keyword for now." />
     <MESSAGE value="implemented default values inference for literals, needs refactoring" />
@@ -710,7 +732,29 @@
     <MESSAGE value="fixed overrides detection" />
     <MESSAGE value="implemented this() and super() defaults, fixed owner type name evaluation in IdentifierTrees of method invocations" />
     <MESSAGE value="cleaned code up" />
-    <option name="LAST_COMMIT_MESSAGE" value="cleaned code up" />
+    <MESSAGE value="fixed field level initializer NewClassTree attribution" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed field level initializer NewClassTree attribution" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ParsedExpression.java</url>
+          <line>96</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ParsedExpression.java</url>
+          <line>78</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ParsedExpression.java</url>
+          <line>85</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

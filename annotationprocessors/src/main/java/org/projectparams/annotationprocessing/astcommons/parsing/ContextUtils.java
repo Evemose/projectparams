@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class ParsingUtils {
+public class ContextUtils {
     public static List<String> getClassnamesInPackage(String packageName) {
         return ElementUtils.getPackageByName(packageName).getEnclosedElements().stream()
                 .filter(el -> el.getKind() == ElementKind.CLASS)
@@ -61,7 +61,7 @@ public class ParsingUtils {
             // add all classes from the package (wildcard import)
             if (fieldAccess.getIdentifier().contentEquals("*")) {
                 var packageName = fieldAccess.getExpression().toString();
-                return ParsingUtils.getClassnamesInPackage(packageName).stream();
+                return ContextUtils.getClassnamesInPackage(packageName).stream();
             } else {
                 return Stream.of(imp.getQualifiedIdentifier().toString());
             }
@@ -72,7 +72,7 @@ public class ParsingUtils {
     private static Stream<String> mapStaticImportToImportedNames(ImportTree imp) {
         if (imp.getQualifiedIdentifier() instanceof JCTree.JCFieldAccess fieldAccess) {
             if (fieldAccess.getIdentifier().contentEquals("*")) {
-                return ParsingUtils.getStaticClassMembersNames(fieldAccess.getExpression().toString()).stream();
+                return ContextUtils.getStaticClassMembersNames(fieldAccess.getExpression().toString()).stream();
             } else {
                 return Stream.of(switch (fieldAccess.sym) {
                     case Symbol.ClassSymbol classSymbol -> classSymbol.getQualifiedName().toString();
