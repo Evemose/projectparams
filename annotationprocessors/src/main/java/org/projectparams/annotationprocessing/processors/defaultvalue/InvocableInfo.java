@@ -56,9 +56,9 @@ public record InvocableInfo(String name,
     }
 
     private static boolean isOverride(ExecutableElement method, ExecutableElement superMethod) {
-        return method.getSimpleName().toString().equals(superMethod.getSimpleName().toString())
-                && method.getParameters().stream().map(VariableElement::asType).equals(
-                superMethod.getParameters().stream().map(VariableElement::asType))
+        return method.getSimpleName().equals(superMethod.getSimpleName())
+                && method.getParameters().stream().map(VariableElement::asType).toList().equals(
+                superMethod.getParameters().stream().map(VariableElement::asType).toList())
                 && method.getReturnType().equals(superMethod.getReturnType());
     }
 
