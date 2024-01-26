@@ -20,6 +20,14 @@ public class Abobus {
         return new Abobus();
     }
 
+    public static class Dodus {
+        public Dodus(@DefaultValue("3.4") float abobus) {
+        }
+        public float bibus(@DefaultValue("3.4") float abobus) {
+            return 0;
+        }
+    }
+
     public class Bibus extends Abobus {
         public Bibus(@DefaultValue("3.4") float abobus) {
             super(abobus);

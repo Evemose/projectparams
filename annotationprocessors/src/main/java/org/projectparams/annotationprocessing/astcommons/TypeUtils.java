@@ -11,6 +11,7 @@ import com.sun.tools.javac.comp.MemberEnter;
 import com.sun.tools.javac.model.JavacTypes;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.NewClassInvocableTree;
+import org.projectparams.annotationprocessing.astcommons.parsing.CUContext;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
@@ -101,8 +102,8 @@ public class TypeUtils {
         String ownerQualifiedName;
         if (invocation.getMethodSelect() instanceof MemberSelectTree memberSelectTree) {
             ownerQualifiedName = getOwnerNameFromMemberSelect(memberSelectTree, path);
-        } else if (invocation.getMethodSelect() instanceof IdentifierTree) {
-            ownerQualifiedName = getOwnerNameFromIdentifier(path);
+        } else if (invocation.getMethodSelect() instanceof IdentifierTree identifierTree) {
+            ownerQualifiedName = getOwnerNameFromIdentifier(identifierTree, path);
         } else {
             throw new IllegalArgumentException("Unsupported method select type: "
                     + invocation.getMethodSelect().getClass().getCanonicalName());
@@ -126,11 +127,11 @@ public class TypeUtils {
         effectiveConstructorOwnerTypeNames.put(newClassTree, ownerTypeName);
     }
 
-    public static String getOwnerNameFromIdentifier(TreePath path) {
-        while (!(path.getLeaf() instanceof ClassTree)) {
-            path = path.getParentPath();
-        }
-        return getFullyQualifiedName((ClassTree) path.getLeaf());
+    public static String getOwnerNameFromIdentifier(IdentifierTree tree, TreePath path) {
+        var cuContext = CUContext.from(path.getCompilationUnit());
+        var matchingImport = cuContext.getMatchingImportedStaticMethod(tree.getName().toString());
+        return matchingImport.map(name -> name.substring(0, name.lastIndexOf('.')))
+                .orElse(getFullyQualifiedName((ClassTree) getEnclosingClassPath(path).getLeaf()));
     }
 
     public static String getFullyQualifiedName(ClassTree classTree) {
@@ -189,8 +190,16 @@ public class TypeUtils {
                         ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
                     }
                 }
+                case JCTree.JCMethodDecl methodInvocation -> {
+                    var ownerType = methodInvocation.getReturnType().type;
+                    if (ownerType != null) {
+                        ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
+                    }
+                }
                 default ->
-                        throw new IllegalArgumentException("Unsupported owner type: " + ownerTree.getClass().getCanonicalName());
+                        throw new IllegalArgumentException("Unsupported owner type: "
+                                + ownerTree.getClass().getCanonicalName() + " " + ownerTree
+                        + " " + memberSelectTree);
             }
         } else {
             // in case owner is return type of fixed method, we won`t be able to access its tree
