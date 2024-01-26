@@ -14,6 +14,7 @@ import org.projectparams.annotationprocessing.astcommons.parsing.CUContext;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.Elements;
 import java.util.IdentityHashMap;
@@ -132,14 +133,11 @@ public class TypeUtils {
         var cuContext = CUContext.from(path.getCompilationUnit());
         var matchingImport = cuContext.getMatchingImportedStaticMethod(tree.getName().toString());
         return matchingImport.map(name -> name.substring(0, name.lastIndexOf('.')))
-                .orElse(getFullyQualifiedName((ClassTree) getEnclosingClassPath(path).getLeaf()));
-    }
-
-    public static String getFullyQualifiedName(ClassTree classTree) {
-        JCTree.JCClassDecl classDecl = (JCTree.JCClassDecl) classTree;
-        Element classElement = classDecl.sym;
-        PackageElement packageElement = elements.getPackageOf(classElement);
-        return packageElement.getQualifiedName().toString() + "." + classElement.getSimpleName().toString();
+                .orElseGet(() -> {
+                    var classDecl = (JCTree.JCClassDecl) getEnclosingClassPath(path).getLeaf();
+                    var classElement = classDecl.sym;
+                    return classElement.getQualifiedName().toString();
+                });
     }
 
     public static void attributeExpression(JCTree expression, TreePath methodTree) {

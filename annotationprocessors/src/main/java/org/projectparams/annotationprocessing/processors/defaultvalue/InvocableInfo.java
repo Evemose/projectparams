@@ -24,8 +24,8 @@ public record InvocableInfo(String name,
 
     public static final String NULL = "superSecretDefaultValuePlaceholder";
 
-    public static InvocableInfo from(ExecutableElement method) {
-        return new InvocableInfo(method.getSimpleName().toString(),
+    public static List<InvocableInfo> from(ExecutableElement method) {
+        var mainInvocable = new InvocableInfo(method.getSimpleName().toString(),
                 method.getSimpleName().toString().equals("<init>") ?
                         Set.of(((TypeElement) method.getEnclosingElement()).getQualifiedName().toString())
                         : getPossibleOwnerQualifiedNames(method),
@@ -33,6 +33,33 @@ public record InvocableInfo(String name,
                 method.getParameters().stream().map(parameter ->
                         parameter.asType().toString()).toList(),
                 getDefaultValuesMap(method));
+        var result = new ArrayList<>(List.of(mainInvocable));
+        if (method.getSimpleName().toString().equals("<init>")) {
+            addThisAndSuperInvocable(result, method, mainInvocable);
+        }
+        return result;
+    }
+
+    private static void addThisAndSuperInvocable(ArrayList<InvocableInfo> result, ExecutableElement method, InvocableInfo mainInvocable) {
+        var directChildren = ElementUtils.getAllChildren((TypeElement) method.getEnclosingElement()).stream()
+                .filter(child -> child.getSuperclass() != null
+                        && child.getSuperclass().toString().equals(method.getEnclosingElement().asType().toString()))
+                .collect(Collectors.toSet());
+        for (var child : directChildren) {
+            result.add(mainInvocable.withName("super")
+                    .withPossibleOwnerQualifiedNames(Set.of(child.getQualifiedName().toString())));
+        }
+        result.add(mainInvocable.withName("this"));
+    }
+
+    public InvocableInfo withName(String name) {
+        return new InvocableInfo(name, possibleOwnerQualifiedNames, returnTypeQualifiedName,
+                parameterTypeQualifiedNames, paramIndexToDefaultValue);
+    }
+
+    public InvocableInfo withPossibleOwnerQualifiedNames(Set<String> possibleOwnerQualifiedNames) {
+        return new InvocableInfo(name, possibleOwnerQualifiedNames, returnTypeQualifiedName,
+                parameterTypeQualifiedNames, paramIndexToDefaultValue);
     }
 
     private static Set<String> getPossibleOwnerQualifiedNames(ExecutableElement method) {

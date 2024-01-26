@@ -4,12 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="implemented detection of subclasses as valid params + some refactor in getAllChildren and literal creation (added support for short and byte types)">
+    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="fixed overrides detection">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/TypeUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/TypeUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/argumentsuppliers/DefaultArgumentSupplier.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/argumentsuppliers/DefaultArgumentSupplier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Abobus.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Abobus.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Sucus.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Sucus.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -125,7 +121,7 @@
     "Gradle.projectparams [:Main.main()].executor": "Run",
     "Gradle.projectparams [build].executor": "Run",
     "Gradle.projectparams [clean].executor": "Run",
-    "Gradle.projectparams:test [:test:Main.main()].executor": "Debug",
+    "Gradle.projectparams:test [:test:Main.main()].executor": "Run",
     "Remote JVM Debug.Unnamed.executor": "Debug",
     "Repository.Attach.Annotations": "false",
     "Repository.Attach.JavaDocs": "false",
@@ -375,7 +371,7 @@
       <workItem from="1706180237665" duration="65000" />
       <workItem from="1706216716211" duration="6183000" />
       <workItem from="1706226361198" duration="8488000" />
-      <workItem from="1706239588702" duration="4811000" />
+      <workItem from="1706239588702" duration="5672000" />
     </task>
     <task id="LOCAL-00001" summary="split project into modules">
       <option name="closed" value="true" />
@@ -617,7 +613,23 @@
       <option name="project" value="LOCAL" />
       <updated>1706243417759</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="fixed issue with boxed primitive classes. need to fix overrides detection">
+      <option name="closed" value="true" />
+      <created>1706244707916</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1706244707916</updated>
+    </task>
+    <task id="LOCAL-00032" summary="fixed overrides detection">
+      <option name="closed" value="true" />
+      <created>1706245265020</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1706245265020</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -647,7 +659,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="split project into modules" />
     <MESSAGE value="guess i am finally on the right track. Implemented framework of annotation processor" />
     <MESSAGE value="not sure if files package is needed at all by now. Seems like it only serves purpose of post-compiler transformations" />
     <MESSAGE value="i managed to get it working" />
@@ -671,7 +682,9 @@
     <MESSAGE value="implemented Identifier parsing for methods" />
     <MESSAGE value="implemented work with method static imports" />
     <MESSAGE value="implemented detection of subclasses as valid params + some refactor in getAllChildren and literal creation (added support for short and byte types)" />
-    <option name="LAST_COMMIT_MESSAGE" value="implemented detection of subclasses as valid params + some refactor in getAllChildren and literal creation (added support for short and byte types)" />
+    <MESSAGE value="fixed issue with boxed primitive classes. need to fix overrides detection" />
+    <MESSAGE value="fixed overrides detection" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed overrides detection" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -3,8 +3,13 @@ package org.projectparams.test;
 import org.projectparams.annotations.DefaultValue;
 
 public class Abobus {
-    public Abobus(@DefaultValue("3.4") float abobus) {
+    public Abobus(@DefaultValue("3.4") float abobus, @DefaultValue("32") short abobus2) {
     }
+
+    public Abobus(@DefaultValue("true") boolean abobus) {
+        this(2f);
+    }
+
     public float bibus(@DefaultValue("3.4") Double abobus) {
         return this.doubleBibus(new Main());
     }
@@ -31,7 +36,7 @@ public class Abobus {
     public class Bibus extends Abobus {
 
         public Bibus(@DefaultValue("3.4") float abobus) {
-            super(abobus);
+            super();
         }
         public Bibus ultima(@DefaultValue("3.4") float abobus,
                             @DefaultValue("true") boolean abobus2,

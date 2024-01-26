@@ -29,7 +29,6 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
     public void process(Set<Element> elements) {
         var methods = elements.stream().map(el -> (ExecutableElement) el.getEnclosingElement())
                 .collect(Collectors.toUnmodifiableSet());
-        messager.printMessage(Diagnostic.Kind.NOTE, "Methods to process: " + methods);
         var argumentSupplier = new DefaultArgumentSupplier(treeMaker);
         var fixedMethodsInIteration = new HashSet<InvocableTree>();
         var allFixedMethods = new HashSet<InvocableTree>();
@@ -37,11 +36,17 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
         var prepareNewClassTreesVisitor = new PrepareNewClassTreesVisitor(trees, messager);
         packageTree.accept(prepareNewClassTreesVisitor, null);
 
+        var invocablePool =
+                InvocableInfoPool.of(
+                        methods.stream().flatMap(method ->
+                                InvocableInfo.from(method).stream()).toArray(InvocableInfo[]::new));
+
+        messager.printMessage(Diagnostic.Kind.NOTE, "Invocable pool: " + invocablePool + "\n\n\nStarting");
+
         do {
             allFixedMethods.addAll(fixedMethodsInIteration);
             fixedMethodsInIteration.clear();
-            methods.forEach(method -> {
-                var methodInfo = InvocableInfo.from(method);
+            invocablePool.forEach(methodInfo -> {
                 messager.printMessage(Diagnostic.Kind.NOTE, "Method info: " + methodInfo);
 
                 // modify
