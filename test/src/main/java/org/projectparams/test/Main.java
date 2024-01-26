@@ -11,7 +11,7 @@ public class Main {
         var classBibus = abobus.new Bibus().new UltimaPopus(Abobus.abobus()).ororos();
         var bibus4 = abobus.bibus();
         var bibus = abobus().bibus();
-        var bibus2 = new Dodus();
+        var bibus2 = new Dodus().bibus();
         var doubleBibus = Abobus.abobus(abobus.doubleBibus(new Main()), Abobus.akakus()).doubleBibus(new Main());
         var abobusSucus = new Abobus.Sucus().bibus();
         System.out.println(" " + bibus);

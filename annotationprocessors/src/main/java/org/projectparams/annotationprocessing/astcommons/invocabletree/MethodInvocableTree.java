@@ -58,7 +58,7 @@ public class MethodInvocableTree extends AbstractInvocableTree<MethodInvocationT
     }
 
     @Override
-    public void setArguments(ExpressionTree ...arguments) {
+    public void setArguments(ExpressionTree... arguments) {
         var asJC = (JCTree.JCMethodInvocation) wrapped;
         asJC.args = com.sun.tools.javac.util.List.from(Arrays.stream(arguments).map(arg -> (JCTree.JCExpression) arg).toList());
     }

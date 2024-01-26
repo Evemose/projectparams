@@ -10,12 +10,10 @@ import com.sun.tools.javac.comp.Enter;
 import com.sun.tools.javac.comp.MemberEnter;
 import com.sun.tools.javac.model.JavacTypes;
 import com.sun.tools.javac.tree.JCTree;
-import org.projectparams.annotationprocessing.astcommons.invocabletree.NewClassInvocableTree;
 import org.projectparams.annotationprocessing.astcommons.parsing.CUContext;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.PackageElement;
-import javax.lang.model.type.ExecutableType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.Elements;
 import java.util.IdentityHashMap;
@@ -27,6 +25,9 @@ import java.util.Map;
  * !!! THIS CLASS IS THE ONLY SOURCE OF TRUTH FOR TYPES !!!
  */
 public class TypeUtils {
+    // for some reason, types of NewClassTree nodes are not resolved during annotation processing
+    // and any attempt to resolve them manually results in an error, while attribution does not affect types at all
+    private static final Map<NewClassTree, String> effectiveConstructorOwnerTypeNames = new IdentityHashMap<>();
     private static Trees trees;
     private static JavacTypes types;
     private static Elements elements;
@@ -34,11 +35,6 @@ public class TypeUtils {
     private static Attr attr;
     private static Enter enter;
     private static MemberEnter memberEnter;
-
-    // for some reason, types of NewClassTree nodes are not resolved during annotation processing
-    // and any attempt to resolve them manually results in an error, while attribution does not affect types at all
-    private static final Map<NewClassTree, String> effectiveConstructorOwnerTypeNames = new IdentityHashMap<>();
-
 
     // initialized in org.projectparams.annotationprocessing.MainProcessor
     public static void init(Trees trees, JavacTypes types, Elements elements, Symtab symtab, Attr attr, Enter enter,
@@ -116,7 +112,7 @@ public class TypeUtils {
         if (effectiveOwnerTypeName != null) {
             return effectiveOwnerTypeName;
         }
-        var ownerType = ((JCTree.JCExpression)newClassTree.getIdentifier()).type;
+        var ownerType = ((JCTree.JCExpression) newClassTree.getIdentifier()).type;
         if (ownerType != null) {
             return ownerType.toString();
         }
@@ -144,7 +140,7 @@ public class TypeUtils {
     public static void attributeExpression(JCTree expression, TreePath methodTree) {
         var env = memberEnter.getMethodEnv(
                 (JCTree.JCMethodDecl) methodTree.getLeaf(),
-                enter.getClassEnv(((JCTree.JCClassDecl)getEnclosingClassPath(getEnclosingMethodPath(methodTree)).getLeaf()).sym)
+                enter.getClassEnv(((JCTree.JCClassDecl) getEnclosingClassPath(getEnclosingMethodPath(methodTree)).getLeaf()).sym)
         );
         attr.attribExpr(expression, env);
     }
@@ -175,9 +171,7 @@ public class TypeUtils {
         String ownerQualifiedName = null;
         if (ownerTree != null) {
             switch (ownerTree) {
-                case JCTree.JCExpression expr -> {
-                    ownerQualifiedName = getActualType(expr).toString();
-                }
+                case JCTree.JCExpression expr -> ownerQualifiedName = getActualType(expr).toString();
                 case JCTree.JCClassDecl staticRef -> {
                     var ownerType = staticRef.sym.type;
                     if (ownerType != null) {
@@ -196,9 +190,8 @@ public class TypeUtils {
                         ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
                     }
                 }
-                default ->
-                        throw new IllegalArgumentException("Unsupported owner type: "
-                                + ownerTree.getClass().getCanonicalName() + " " + ownerTree
+                default -> throw new IllegalArgumentException("Unsupported owner type: "
+                        + ownerTree.getClass().getCanonicalName() + " " + ownerTree
                         + " " + memberSelectTree);
             }
         } else {

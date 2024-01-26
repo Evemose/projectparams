@@ -1,11 +1,9 @@
 package org.projectparams.annotationprocessing.processors.defaultvalue;
 
 import com.sun.source.util.Trees;
-import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
 import org.projectparams.annotationprocessing.astcommons.visitors.CleanupVisitor;
-import org.projectparams.annotationprocessing.astcommons.visitors.LoggingVisitor;
 import org.projectparams.annotationprocessing.astcommons.visitors.PrepareNewClassTreesVisitor;
 import org.projectparams.annotationprocessing.processors.GlobalAnnotationProcessor;
 import org.projectparams.annotationprocessing.processors.defaultvalue.argumentsuppliers.DefaultArgumentSupplier;
@@ -17,9 +15,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.PackageElement;
 import javax.tools.Diagnostic;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.IdentityHashMap;
 import java.util.Set;
 import java.util.stream.Collectors;
 

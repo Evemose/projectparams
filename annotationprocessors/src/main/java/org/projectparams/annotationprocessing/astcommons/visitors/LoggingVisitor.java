@@ -6,7 +6,7 @@ import com.sun.tools.javac.tree.JCTree;
 import javax.annotation.processing.Messager;
 import javax.tools.Diagnostic;
 
-public class LoggingVisitor extends AbstractVisitor<Void, Void>{
+public class LoggingVisitor extends AbstractVisitor<Void, Void> {
     public LoggingVisitor(Trees trees, Messager messager) {
         super(trees, messager);
     }

@@ -1,6 +1,9 @@
 package org.projectparams.annotationprocessing.astcommons.visitors;
 
-import com.sun.source.tree.*;
+import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.NewClassTree;
+import com.sun.source.tree.Tree;
+import com.sun.source.tree.VariableTree;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
@@ -72,7 +75,7 @@ public class CleanupVisitor extends AbstractVisitor<Void, Void> {
             for (var fixedMethod : allFixedMethods) {
                 if (fixedMethod.getWrapped() == invocation.getEnclosingExpression()) {
                     TypeUtils.addConstructorOwnerTypeName(invocation, fixedMethod.getReturnType().toString()
-                    + "." + asJC.getIdentifier().toString().replaceAll(".?<.*>.?", ""));
+                            + "." + asJC.getIdentifier().toString().replaceAll(".?<.*>.?", ""));
                     messager.printMessage(Diagnostic.Kind.NOTE, "Fixed new class owner type: " + invocation
                             + " to " + fixedMethod.getReturnType().toString());
                     break;

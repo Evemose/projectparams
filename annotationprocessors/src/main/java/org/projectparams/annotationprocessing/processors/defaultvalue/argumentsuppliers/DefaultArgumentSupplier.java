@@ -18,20 +18,23 @@ public class DefaultArgumentSupplier implements ArgumentSupplier {
         this.treeMaker = treeMaker;
     }
 
+    private static TypeTag getTypeTagOfParam(String paramType) {
+        return TypeUtils.getTypeByName(paramType).getTag();
+    }
+
     @Override
     public List<JCTree.JCExpression> getModifiedArguments(InvocableTree invocation, InvocableInfo invocableInfo)
             throws UnsupportedSignatureException {
         var args = new ArrayList<>(invocation.getArguments().stream().map(arg -> (JCTree.JCExpression) arg).toList());
         for (var i = invocation.getArguments().size(); i < invocableInfo.parameterTypeQualifiedNames().length; i++) {
-             var defaultValue = invocableInfo.paramIndexToDefaultValue().get(i);
-             if (defaultValue == null) {
-                 throw new UnsupportedSignatureException(invocableInfo.parameterTypeQualifiedNames()[i], i, invocableInfo);
-             }
-             args.add(makeLiteral(getTypeTagOfParam(invocableInfo.parameterTypeQualifiedNames()[i]), defaultValue));
+            var defaultValue = invocableInfo.paramIndexToDefaultValue().get(i);
+            if (defaultValue == null) {
+                throw new UnsupportedSignatureException(invocableInfo.parameterTypeQualifiedNames()[i], i, invocableInfo);
+            }
+            args.add(makeLiteral(getTypeTagOfParam(invocableInfo.parameterTypeQualifiedNames()[i]), defaultValue));
         }
         return List.from(args);
     }
-
 
     private JCTree.JCLiteral makeLiteral(TypeTag tag, Object value) {
         if (value.equals(InvocableInfo.NULL)) {
@@ -40,9 +43,5 @@ public class DefaultArgumentSupplier implements ArgumentSupplier {
         var literal = treeMaker.Literal(tag, value);
         literal.type = TypeUtils.getTypeByName(value.getClass().getCanonicalName());
         return literal;
-    }
-
-    private static TypeTag getTypeTagOfParam(String paramType) {
-        return TypeUtils.getTypeByName(paramType).getTag();
     }
 }

@@ -8,7 +8,8 @@ import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 
 import javax.annotation.processing.Messager;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 public class NewClassInvocableTree extends AbstractInvocableTree<NewClassTree> {
 
@@ -59,20 +60,9 @@ public class NewClassInvocableTree extends AbstractInvocableTree<NewClassTree> {
     }
 
     /**
-     * Ignores the return type update
-     * but throws if it's not the owner type
-     */
-    @Override
-    public void setReturnType(String returnType) {
-        if (!returnType.equals(getOwnerTypeQualifiedName())) {
-            throw new IllegalArgumentException("Cannot set return type of constructor to anything other than " +
-                    "the owner type. Got: " + returnType + " for " + wrapped);
-        }
-    }
-
-    /**
      * Return type of constructor is the owner type
      * even though internally it's void
+     *
      * @return owner type
      */
     @Override
@@ -85,6 +75,18 @@ public class NewClassInvocableTree extends AbstractInvocableTree<NewClassTree> {
             return TypeUtils.getTypeByName(ownerName);
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    /**
+     * Ignores the return type update
+     * but throws if it's not the owner type
+     */
+    @Override
+    public void setReturnType(String returnType) {
+        if (!returnType.equals(getOwnerTypeQualifiedName())) {
+            throw new IllegalArgumentException("Cannot set return type of constructor to anything other than " +
+                    "the owner type. Got: " + returnType + " for " + wrapped);
         }
     }
 }

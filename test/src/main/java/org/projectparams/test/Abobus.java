@@ -1,5 +1,6 @@
 package org.projectparams.test;
 
+import org.jetbrains.annotations.Nullable;
 import org.projectparams.annotations.DefaultValue;
 
 public class Abobus {
@@ -29,6 +30,7 @@ public class Abobus {
     }
 
     public class Bibus extends Abobus {
+
         public Bibus(@DefaultValue("3.4") float abobus) {
             super(abobus);
         }

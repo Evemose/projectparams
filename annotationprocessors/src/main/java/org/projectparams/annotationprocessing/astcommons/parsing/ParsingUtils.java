@@ -2,7 +2,6 @@ package org.projectparams.annotationprocessing.astcommons.parsing;
 
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.ImportTree;
-import com.sun.source.tree.MemberSelectTree;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.utils.ElementUtils;

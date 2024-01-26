@@ -1,6 +1,5 @@
 package org.projectparams.annotationprocessing.astcommons.visitors;
 
-import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.NewClassTree;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.JCTree;

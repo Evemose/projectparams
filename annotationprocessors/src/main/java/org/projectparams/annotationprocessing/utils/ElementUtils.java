@@ -10,8 +10,6 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Stream;
 
 public class ElementUtils {

@@ -6,7 +6,6 @@ import org.projectparams.annotationprocessing.utils.ElementUtils;
 
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
-import java.util.ArrayList;
 import java.util.List;
 
 public class PackageTree {

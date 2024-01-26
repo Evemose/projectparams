@@ -42,6 +42,7 @@ public class MainProcessor extends AbstractProcessor {
     // Initialized in first round of processing
     private Element rootPackage;
     private TreeMaker treeMaker;
+
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         try {

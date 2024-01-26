@@ -26,7 +26,7 @@ public record InvocableInfo(String name,
     public static InvocableInfo from(ExecutableElement method) {
         return new InvocableInfo(method.getSimpleName().toString(),
                 method.getSimpleName().toString().equals("<init>") ?
-                        Set.of(((TypeElement)method.getEnclosingElement()).getQualifiedName().toString())
+                        Set.of(((TypeElement) method.getEnclosingElement()).getQualifiedName().toString())
                         : getPossibleOwnerQualifiedNames(method),
                 getReturnTypeQualifiedName(method),
                 method.getParameters().stream().map(parameter ->
@@ -64,7 +64,7 @@ public record InvocableInfo(String name,
     private static String getReturnTypeQualifiedName(ExecutableElement method) {
         var name = method.getSimpleName().toString();
         if (name.equals("<init>")) {
-            return ((TypeElement)method.getEnclosingElement()).getQualifiedName().toString();
+            return ((TypeElement) method.getEnclosingElement()).getQualifiedName().toString();
         } else {
             return method.getReturnType().toString();
         }

@@ -3,7 +3,6 @@ package org.projectparams.annotationprocessing.astcommons.parsing;
 import com.sun.source.tree.CompilationUnitTree;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
