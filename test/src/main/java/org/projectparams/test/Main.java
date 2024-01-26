@@ -17,5 +17,6 @@ public class Main {
         System.out.println(" " + bibus);
         System.out.println(" " + doubleBibus);
         System.out.println(" " + sucus.bibus());
+        System.out.println(sucus.bibus() + " " + sucus.bibus());
     }
 }

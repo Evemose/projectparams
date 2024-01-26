@@ -10,6 +10,7 @@ import org.projectparams.annotations.DefaultValue;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -56,7 +57,8 @@ public record InvocableInfo(String name,
 
     private static boolean isOverride(ExecutableElement method, ExecutableElement superMethod) {
         return method.getSimpleName().toString().equals(superMethod.getSimpleName().toString())
-                && method.getParameters().equals(superMethod.getParameters())
+                && method.getParameters().stream().map(VariableElement::asType).equals(
+                superMethod.getParameters().stream().map(VariableElement::asType))
                 && method.getReturnType().equals(superMethod.getReturnType());
     }
 

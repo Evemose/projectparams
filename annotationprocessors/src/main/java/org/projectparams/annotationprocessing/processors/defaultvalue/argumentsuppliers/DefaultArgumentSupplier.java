@@ -18,8 +18,8 @@ public class DefaultArgumentSupplier implements ArgumentSupplier {
         this.treeMaker = treeMaker;
     }
 
-    private static TypeTag getTypeTagOfParam(String paramType) {
-        return TypeUtils.getTypeByName(paramType).getTag();
+    private static TypeTag getTypeTag(String type) {
+        return TypeUtils.getTypeByName(type).getTag();
     }
 
     @Override
@@ -31,7 +31,7 @@ public class DefaultArgumentSupplier implements ArgumentSupplier {
             if (defaultValue == null) {
                 throw new UnsupportedSignatureException(invocableInfo.parameterTypeQualifiedNames().get(i), i, invocableInfo);
             }
-            args.add(makeLiteral(getTypeTagOfParam(invocableInfo.parameterTypeQualifiedNames().get(i)), defaultValue));
+            args.add(makeLiteral(getTypeTag(invocableInfo.parameterTypeQualifiedNames().get(i)), defaultValue));
         }
         return List.from(args);
     }
@@ -40,6 +40,7 @@ public class DefaultArgumentSupplier implements ArgumentSupplier {
         if (value.equals(InvocableInfo.NULL)) {
             return treeMaker.Literal(TypeTag.BOT, null);
         }
+        // javac doesn't support short and byte literals directly, so we need to cast them to int
         if (tag == TypeTag.SHORT || tag == TypeTag.BYTE) {
             var cast = treeMaker.TypeCast(treeMaker.TypeIdent(tag), treeMaker.Literal(TypeTag.INT, value));
             cast.type = TypeUtils.getTypeByName(value.getClass().getCanonicalName());

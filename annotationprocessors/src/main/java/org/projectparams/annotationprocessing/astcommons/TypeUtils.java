@@ -51,15 +51,15 @@ public class TypeUtils {
 
     public static Type getTypeByName(String name) {
         return switch (name) {
-            case "int"  -> symtab.intType;
-            case "long" -> symtab.longType;
-            case "float" -> symtab.floatType;
-            case "double" -> symtab.doubleType;
-            case "boolean" -> symtab.booleanType;
-            case "void" -> symtab.voidType;
-            case "byte" -> symtab.byteType;
-            case "short" -> symtab.shortType;
-            case "char" -> symtab.charType;
+            case "int", "java.lang.Integer" -> symtab.intType;
+            case "long", "java.lang.Long" -> symtab.longType;
+            case "float", "java.lang.Float" -> symtab.floatType;
+            case "double", "java.lang.Double" -> symtab.doubleType;
+            case "boolean", "java.lang.Boolean" -> symtab.booleanType;
+            case "void", "java.lang.Void" -> symtab.voidType;
+            case "byte", "java.lang.Byte" -> symtab.byteType;
+            case "short", "java.lang.Short" -> symtab.shortType;
+            case "char", "java.lang.Character" -> symtab.charType;
             default -> {
                 var typeElement = elements.getTypeElement(name);
                 if (typeElement == null) {
