@@ -1,7 +1,5 @@
 package org.projectparams.annotationprocessing.utils;
 
-import com.sun.source.util.TreePath;
-import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.Type;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 
@@ -16,12 +14,10 @@ import java.util.stream.Stream;
 
 public class ElementUtils {
     private static Elements elements;
-    private static Trees trees;
 
     // initialized in org.projectparams.annotationprocessing.MainProcessor
-    public static void init(Elements elements, Trees trees) {
+    public static void init(Elements elements) {
         ElementUtils.elements = elements;
-        ElementUtils.trees = trees;
     }
 
     public static PackageElement getPackageByName(String packageName) {
@@ -30,10 +26,6 @@ public class ElementUtils {
 
     public static TypeElement getClassByName(String className) {
         return elements.getTypeElement(className);
-    }
-
-    public static Element getElementByPath(TreePath path) {
-        return trees.getElement(path);
     }
 
     public static List<TypeElement> getAllChildren(TypeElement typeElement) {

@@ -9,7 +9,6 @@ import com.sun.tools.javac.comp.MemberEnter;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.TreeMaker;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
-import org.projectparams.annotationprocessing.astcommons.invocabletree.NewClassInvocableTree;
 import org.projectparams.annotationprocessing.processors.managers.DefaultProcessorsManager;
 import org.projectparams.annotationprocessing.processors.managers.ProcessorsManager;
 import org.projectparams.annotationprocessing.utils.ElementUtils;
@@ -56,10 +55,7 @@ public class MainProcessor extends AbstractProcessor {
                     Attr.instance(javacProcessingEnv.getContext()),
                     Enter.instance(javacProcessingEnv.getContext()),
                     MemberEnter.instance(javacProcessingEnv.getContext()));
-            ElementUtils.init(processingEnv.getElementUtils(),
-                    trees);
-            // TODO: remove
-            NewClassInvocableTree.messager = processingEnv.getMessager();
+            ElementUtils.init(processingEnv.getElementUtils());
         } catch (Throwable t) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
                     t.getMessage() + "\n" + Arrays.toString(t.getStackTrace()).replaceAll(",", "\n"));

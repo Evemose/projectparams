@@ -62,9 +62,6 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
                 packageTree.accept(cleanupVisitor, null);
             });
         } while (!fixedMethodsInIteration.isEmpty());
-
-//        var loggingVisitor = new LoggingVisitor(trees, messager);
-//        packageTree.accept(loggingVisitor, null);
     }
 
     @Override

@@ -3,12 +3,13 @@ package org.projectparams.test;
 
 import static org.projectparams.test.Abobus.*;
 
+@SuppressWarnings("all")
 public class Main {
 
     public static void main(String[] args) {
         var abobus = new Abobus();
         var sucus = new Sucus();
-        var classBibus = abobus.new Bibus().new UltimaPopus(sucus, 3.4f).ororos();
+        var classBibus = abobus.new Bibus().new UltimaPopus(new Sucus(), 3.4f).ororos();
         var bibus4 = abobus.bibus();
         var bibus = abobus().bibus();
         var bibus2 = new Dodus().bibus();

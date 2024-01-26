@@ -18,8 +18,6 @@ public class PackageTree {
     }
 
     public <R, P> void accept(TreePathScanner<R, P> scanner, P arg) {
-        classes.forEach(clazz -> {
-            scanner.scan(trees.getPath(clazz), arg);
-        });
+        classes.forEach(clazz -> scanner.scan(trees.getPath(clazz), arg));
     }
 }

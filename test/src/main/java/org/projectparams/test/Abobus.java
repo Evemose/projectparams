@@ -2,6 +2,7 @@ package org.projectparams.test;
 
 import org.projectparams.annotations.DefaultValue;
 
+@SuppressWarnings("all")
 public class Abobus {
     public Abobus(@DefaultValue("3.4") float abobus, @DefaultValue("32") short abobus2) {
     }

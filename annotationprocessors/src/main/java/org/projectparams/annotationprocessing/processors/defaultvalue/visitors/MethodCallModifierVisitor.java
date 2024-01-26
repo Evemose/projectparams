@@ -63,7 +63,6 @@ public class MethodCallModifierVisitor extends AbstractVisitor<Void, InvocableIn
         }
     }
 
-    // TODO: implement default values for constructors
     @Override
     public Void visitNewClass(NewClassTree that, InvocableInfo invocableInfo) {
         visitInvocable(new NewClassInvocableTree(that, getCurrentPath()), invocableInfo);

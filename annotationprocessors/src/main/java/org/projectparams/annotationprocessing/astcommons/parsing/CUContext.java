@@ -20,10 +20,12 @@ public record CUContext(
         );
     }
 
+    @SuppressWarnings("unused")
     public Optional<String> getMatchingImportedClass(String className) {
         return getMatch(importedClassNames, className);
     }
 
+    @SuppressWarnings("unused")
     public Optional<String> getMatchingImportedNestedClass(String className) {
         return getMatch(importedNestedClasses, className);
     }

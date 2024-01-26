@@ -136,7 +136,6 @@ public record InvocableInfo(String name,
         // for now not considering return type
     }
 
-    // TODO: fix
     private boolean doesExistingArgsMatch(List<? extends ExpressionTree> args) {
         var currentArgs = args.stream().map(arg -> {
             if (((JCTree.JCExpression) arg).type == null) {

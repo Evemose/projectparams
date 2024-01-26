@@ -2,6 +2,7 @@ package org.projectparams.annotationprocessing.astcommons.parsing;
 
 import com.sun.tools.javac.util.List;
 
+@SuppressWarnings("unused")
 public record ParsedExpression(
         ParsedExpression.Type type,
         String name,

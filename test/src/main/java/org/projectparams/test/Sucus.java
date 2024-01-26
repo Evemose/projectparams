@@ -2,6 +2,7 @@ package org.projectparams.test;
 
 import org.projectparams.annotations.DefaultValue;
 
+@SuppressWarnings("unused")
 public class Sucus extends Abobus {
     public Sucus(@DefaultValue("3.4") float abobus) {
         super(abobus);

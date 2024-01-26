@@ -7,13 +7,10 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 
-import javax.annotation.processing.Messager;
 import java.util.Arrays;
 import java.util.List;
 
 public class NewClassInvocableTree extends AbstractInvocableTree<NewClassTree> {
-
-    public static Messager messager;
 
     public NewClassInvocableTree(NewClassTree wrapped, TreePath pathToWrapped) {
         super(wrapped, pathToWrapped);

@@ -12,9 +12,7 @@ import com.sun.tools.javac.model.JavacTypes;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.parsing.CUContext;
 
-import javax.lang.model.element.Element;
-import javax.lang.model.element.PackageElement;
-import javax.lang.model.element.TypeElement;
+
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.Elements;
 import java.util.IdentityHashMap;
@@ -29,7 +27,6 @@ public class TypeUtils {
     // for some reason, types of NewClassTree nodes are not resolved during annotation processing
     // and any attempt to resolve them manually results in an error, while attribution does not affect types at all
     private static final Map<NewClassTree, String> effectiveConstructorOwnerTypeNames = new IdentityHashMap<>();
-    private static final Map<Tree, String> effectiveConstructorArgTypes = new IdentityHashMap<>();
     private static Trees trees;
     private static JavacTypes types;
     private static Elements elements;
@@ -215,8 +212,6 @@ public class TypeUtils {
     public static Type getActualType(ExpressionTree tree) {
         if (tree instanceof NewClassTree newClassTree) {
             return getTypeByName(getOwnerTypeName(newClassTree));
-        } else if (effectiveConstructorArgTypes.containsKey(tree)) {
-            return getTypeByName(effectiveConstructorArgTypes.get(tree));
         }
         return ((JCTree.JCExpression) tree).type;
     }

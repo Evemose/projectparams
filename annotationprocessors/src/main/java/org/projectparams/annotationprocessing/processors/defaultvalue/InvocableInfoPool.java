@@ -1,7 +1,6 @@
 package org.projectparams.annotationprocessing.processors.defaultvalue;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -10,10 +9,6 @@ public class InvocableInfoPool {
 
     public void add(InvocableInfo invocableInfo) {
         invocableInfos.add(invocableInfo);
-    }
-
-    public List<InvocableInfo> getInvocableInfos() {
-        return Collections.unmodifiableList(invocableInfos);
     }
 
     public void addAll(List<InvocableInfo> invocableInfos) {
