@@ -1,10 +1,10 @@
 package org.projectparams.test;
 
-
 import static org.projectparams.test.Abobus.*;
 
 @SuppressWarnings("all")
 public class Main {
+    private static final Abobus abobus = new Abobus();
 
     public static void main(String[] args) {
         var abobus = new Abobus();

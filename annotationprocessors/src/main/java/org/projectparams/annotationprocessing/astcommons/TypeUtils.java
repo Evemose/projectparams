@@ -137,10 +137,18 @@ public class TypeUtils {
                 });
     }
 
+    @SuppressWarnings("unused")
     public static void attributeExpression(JCTree expression, TreePath methodTree) {
         var env = memberEnter.getMethodEnv(
                 (JCTree.JCMethodDecl) methodTree.getLeaf(),
                 enter.getClassEnv(((JCTree.JCClassDecl) getEnclosingClassPath(getEnclosingMethodPath(methodTree)).getLeaf()).sym)
+        );
+        attr.attribExpr(expression, env);
+    }
+
+    public static void attributeExpression(JCTree expression, Tree classTree) {
+        var env = enter.getClassEnv(
+                ((JCTree.JCClassDecl) classTree).sym
         );
         attr.attribExpr(expression, env);
     }

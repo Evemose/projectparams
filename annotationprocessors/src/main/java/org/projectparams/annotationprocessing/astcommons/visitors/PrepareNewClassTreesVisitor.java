@@ -1,5 +1,6 @@
 package org.projectparams.annotationprocessing.astcommons.visitors;
 
+import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.NewClassTree;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.JCTree;
@@ -18,7 +19,7 @@ public class PrepareNewClassTreesVisitor extends AbstractVisitor<Void, Void> {
         var enclosingExpression = asJC.getEnclosingExpression();
         if (enclosingExpression == null || enclosingExpression.type != null) {
             TypeUtils.attributeExpression(asJC,
-                    TypeUtils.getEnclosingMethodPath(getCurrentPath()));
+                    TypeUtils.getEnclosingClassPath(getCurrentPath()).getLeaf());
             messager.printMessage(javax.tools.Diagnostic.Kind.NOTE, "Enclosing expression is null for "
                     + newClassTree + " Identifier: " + asJC.getIdentifier().type);
         }
