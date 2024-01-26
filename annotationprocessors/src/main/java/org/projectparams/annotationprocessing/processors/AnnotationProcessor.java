@@ -5,7 +5,7 @@ import java.lang.annotation.Annotation;
 import java.util.Set;
 
 public interface AnnotationProcessor<T extends Annotation> {
-    void process(Set<Element> elements) throws Exception;
+    void process(Set<Element> elements);
 
     Class<T> getProcessedAnnotation();
 }

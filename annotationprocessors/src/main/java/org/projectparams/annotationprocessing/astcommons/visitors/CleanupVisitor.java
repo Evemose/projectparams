@@ -64,6 +64,34 @@ public class CleanupVisitor extends AbstractVisitor<Void, Void> {
     // so we need to fix them manually
     @Override
     public Void visitNewClass(NewClassTree invocation, Void ignored) {
+        updateOwnerTypeIfAnyFixMatchEnclosingExpr(invocation);
+        updateArgTypeIfAnyFixMatchEnclosingExpr(invocation);
+        return super.visitNewClass(invocation, ignored);
+    }
+
+    private void updateArgTypeIfAnyFixMatchEnclosingExpr(NewClassTree invocation) {
+        var asJC = (JCTree.JCNewClass) invocation;
+        var args = asJC.getArguments();
+        for (var arg : args) {
+            if (fixedVarTypeNames.containsKey(arg.toString())) {
+                arg.type = fixedVarTypeNames.get(arg.toString());
+                messager.printMessage(Diagnostic.Kind.NOTE, "Fixed new class arg type: " + invocation
+                        + " to " + fixedVarTypeNames.get(arg.toString()).toString());
+                break;
+            } else {
+                for (var fixedMethod : allFixedMethods) {
+                    if (fixedMethod.getWrapped() == arg) {
+                        arg.type = fixedMethod.getReturnType();
+                        messager.printMessage(Diagnostic.Kind.NOTE, "Fixed new class arg type: " + invocation
+                                + " to " + fixedMethod.getReturnType().toString());
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void updateOwnerTypeIfAnyFixMatchEnclosingExpr(NewClassTree invocation) {
         var asJC = (JCTree.JCNewClass) invocation;
         var enclosingExpression = asJC.getEnclosingExpression();
         if (enclosingExpression != null &&
@@ -82,7 +110,6 @@ public class CleanupVisitor extends AbstractVisitor<Void, Void> {
                 }
             }
         }
-        return super.visitNewClass(invocation, ignored);
     }
 
 }

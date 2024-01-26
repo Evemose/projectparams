@@ -2,6 +2,8 @@ package org.projectparams.annotationprocessing.utils;
 
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
+import com.sun.tools.javac.code.Type;
+import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -35,22 +37,10 @@ public class ElementUtils {
     }
 
     public static List<TypeElement> getAllChildren(TypeElement typeElement) {
-        var allClasses = new ArrayList<>(getAllClasses(typeElement));
-        var result = new ArrayList<TypeElement>();
-        result.add(typeElement);
-        allClasses.remove(typeElement);
-        int previousSize;
-        do {
-            previousSize = result.size();
-            for (var clazz : allClasses) {
-                if (result.contains(elements.getTypeElement(clazz.getSuperclass().toString()))) {
-                    result.add(clazz);
-                }
-            }
-            allClasses.removeAll(result);
-        } while (result.size() > previousSize);
-        result.remove(typeElement);
-        return result;
+        return getAllClasses(typeElement).stream()
+                .filter(clazz -> TypeUtils.isAssignable((Type) clazz.asType(), (Type) typeElement.asType())
+                && !clazz.equals(typeElement))
+                .toList();
     }
 
     public static List<TypeElement> getAllClasses(Element someElement) {
@@ -85,7 +75,7 @@ public class ElementUtils {
         var result = new ArrayList<>(List.of(classElement));
         result.addAll(classElement.getEnclosedElements().stream()
                 .filter(e -> e.getKind() == ElementKind.CLASS)
-                .map(e -> (TypeElement) e)
+                .flatMap(e -> getAllClassesInClass((TypeElement) e).stream())
                 .toList());
         return result;
     }

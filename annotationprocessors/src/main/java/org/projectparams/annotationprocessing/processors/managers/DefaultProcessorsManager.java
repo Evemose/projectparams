@@ -31,7 +31,7 @@ public class DefaultProcessorsManager implements ProcessorsManager {
     }
 
     @Override
-    public void process(RoundEnvironment roundEnv) throws Exception {
+    public void process(RoundEnvironment roundEnv) {
         for (var processor : processors) {
             processor.process(roundEnv.getElementsAnnotatedWith(processor.getProcessedAnnotation()).stream()
                     .filter(Predicate.not(processedUnits::contains)).collect(Collectors.toSet()));

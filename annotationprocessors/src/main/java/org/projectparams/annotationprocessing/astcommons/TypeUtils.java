@@ -28,6 +28,7 @@ public class TypeUtils {
     // for some reason, types of NewClassTree nodes are not resolved during annotation processing
     // and any attempt to resolve them manually results in an error, while attribution does not affect types at all
     private static final Map<NewClassTree, String> effectiveConstructorOwnerTypeNames = new IdentityHashMap<>();
+    private static final Map<Tree, String> effectiveConstructorArgTypes = new IdentityHashMap<>();
     private static Trees trees;
     private static JavacTypes types;
     private static Elements elements;
@@ -50,7 +51,7 @@ public class TypeUtils {
 
     public static Type getTypeByName(String name) {
         return switch (name) {
-            case "int" -> symtab.intType;
+            case "int"  -> symtab.intType;
             case "long" -> symtab.longType;
             case "float" -> symtab.floatType;
             case "double" -> symtab.doubleType;
@@ -91,7 +92,11 @@ public class TypeUtils {
         if (type == null) {
             return TypeKind.ERROR;
         }
-        return trees.getTypeMirror(path).getKind();
+        var kind = trees.getTypeMirror(path).getKind();
+        if (kind == TypeKind.BYTE || kind == TypeKind.SHORT) {
+            kind = TypeKind.INT;
+        }
+        return kind;
     }
 
     public static String getOwnerTypeName(MethodInvocationTree invocation, TreePath path) {
@@ -212,7 +217,13 @@ public class TypeUtils {
     public static Type getActualType(ExpressionTree tree) {
         if (tree instanceof NewClassTree newClassTree) {
             return getTypeByName(getOwnerTypeName(newClassTree));
+        } else if (effectiveConstructorArgTypes.containsKey(tree)) {
+            return getTypeByName(effectiveConstructorArgTypes.get(tree));
         }
         return ((JCTree.JCExpression) tree).type;
+    }
+
+    public static boolean isAssignable(Type fromType, Type toType) {
+        return types.isAssignable(fromType, toType);
     }
 }

@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 public record InvocableInfo(String name,
                             Set<String> possibleOwnerQualifiedNames,
                             String returnTypeQualifiedName,
-                            String[] parameterTypeQualifiedNames,
+                            List<String> parameterTypeQualifiedNames,
                             Map<Integer, Object> paramIndexToDefaultValue) {
 
     public static final String NULL = "superSecretDefaultValuePlaceholder";
@@ -30,7 +30,7 @@ public record InvocableInfo(String name,
                         : getPossibleOwnerQualifiedNames(method),
                 getReturnTypeQualifiedName(method),
                 method.getParameters().stream().map(parameter ->
-                        parameter.asType().toString()).toArray(String[]::new),
+                        parameter.asType().toString()).toList(),
                 getDefaultValuesMap(method));
     }
 
@@ -38,14 +38,13 @@ public record InvocableInfo(String name,
         var classElement = (TypeElement) method.getEnclosingElement();
         var result = new HashSet<>(Set.of(classElement.getQualifiedName().toString()));
 
-        var allChildren = ElementUtils.getAllChildren(classElement);
+        var allChildren = new ArrayList<>(ElementUtils.getAllChildren(classElement));
 
         var overridingSubclasses = allChildren.stream()
                 .filter(child -> child.getEnclosedElements().stream()
                         .filter(e -> e.getKind() == ElementKind.METHOD)
                         .anyMatch(e -> isOverride((ExecutableElement) e, method)))
                 .collect(Collectors.toSet());
-
 
         allChildren.removeAll(overridingSubclasses.stream().flatMap(child ->
                 Stream.concat(ElementUtils.getAllChildren(child).stream(), Stream.of(child))).toList());
@@ -89,7 +88,10 @@ public record InvocableInfo(String name,
                                     case "java.lang.Float", "float" -> Float.valueOf(value);
                                     case "java.lang.Double", "double" -> Double.valueOf(value);
                                     case "java.lang.Boolean", "boolean" -> value.equals("true") ? 1 : 0;
-                                    default -> throw new RuntimeException("Unsupported type: " + paramType);
+                                    case "java.lang.Character", "char" -> value.charAt(0);
+                                    case "java.lang.Byte", "byte" -> Byte.valueOf(value);
+                                    case "java.lang.Short", "short" -> Short.valueOf(value);
+                                    default -> throw new IllegalArgumentException("Unsupported type: " + paramType);
                                 };
                             }
                         })
@@ -99,13 +101,9 @@ public record InvocableInfo(String name,
     public boolean matches(InvocableTree invocation) {
         var methodName = invocation.getSelfName();
         var ownerQualifiedName = invocation.getOwnerTypeQualifiedName();
-        try {
-            return possibleOwnerQualifiedNames.contains(ownerQualifiedName)
-                    && methodName.equals(name)
-                    && doesExistingArgsMatch(invocation.getArguments());
-        } catch (Exception e) {
-            throw new RuntimeException("Error matching " + this + " with " + invocation, e);
-        }
+        return possibleOwnerQualifiedNames.contains(ownerQualifiedName)
+                && methodName.equals(name)
+                && doesExistingArgsMatch(invocation.getArguments());
         // for now not considering return type
     }
 
@@ -122,14 +120,14 @@ public record InvocableInfo(String name,
     }
 
     private boolean doesExistingArgsMatch(String[] argTypeNames) {
-        return Arrays.equals(
-                Arrays.stream(Arrays.copyOf(parameterTypeQualifiedNames, argTypeNames.length))
-                        .map(TypeUtils::getBoxedTypeName).toArray(String[]::new),
-                argTypeNames);
+        return IntStream.range(0, argTypeNames.length).allMatch(i ->
+                TypeUtils.isAssignable(
+                        TypeUtils.getTypeByName(TypeUtils.getBoxedTypeName(argTypeNames[i])),
+                        TypeUtils.getTypeByName(TypeUtils.getBoxedTypeName(parameterTypeQualifiedNames.get(i)))));
     }
 
     public String toString() {
-        return String.join("|", possibleOwnerQualifiedNames) + "." + name + "(" + Arrays.toString(parameterTypeQualifiedNames)
+        return String.join("|", possibleOwnerQualifiedNames) + "." + name + "(" + parameterTypeQualifiedNames.toString()
                 .replaceAll("[\\[\\]]", "") + "): " + returnTypeQualifiedName;
     }
 
@@ -141,7 +139,7 @@ public record InvocableInfo(String name,
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof InvocableInfo invocable) {
-            return Arrays.equals(parameterTypeQualifiedNames, invocable.parameterTypeQualifiedNames)
+            return Objects.equals(parameterTypeQualifiedNames, invocable.parameterTypeQualifiedNames)
                     && name.equals(invocable.name) && returnTypeQualifiedName.equals(invocable.returnTypeQualifiedName)
                     && (Objects.equals(possibleOwnerQualifiedNames, invocable.possibleOwnerQualifiedNames));
         } else {

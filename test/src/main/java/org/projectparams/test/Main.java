@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         var abobus = new Abobus();
         var sucus = new Sucus();
-        var classBibus = abobus.new Bibus().new UltimaPopus(Abobus.abobus()).ororos();
+        var classBibus = abobus.new Bibus().new UltimaPopus(sucus, 3.4f).ororos();
         var bibus4 = abobus.bibus();
         var bibus = abobus().bibus();
         var bibus2 = new Dodus().bibus();

@@ -42,7 +42,7 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
             fixedMethodsInIteration.clear();
             methods.forEach(method -> {
                 var methodInfo = InvocableInfo.from(method);
-                //messager.printMessage(Diagnostic.Kind.NOTE, "Method info: " + methodInfo);
+                messager.printMessage(Diagnostic.Kind.NOTE, "Method info: " + methodInfo);
 
                 // modify
                 var modifier = new MethodCallModifierVisitor(fixedMethodsInIteration,
