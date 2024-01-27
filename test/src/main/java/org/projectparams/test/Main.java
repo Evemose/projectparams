@@ -26,7 +26,7 @@ public class Main {
         System.out.println(sucus.bibus() + " " + sucus.bibus());
     }
 
-    private static float bibus() {
+    private static float bibus(@DefaultValue float someVar) {
         return 3.4f;
     }
 

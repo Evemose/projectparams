@@ -1,5 +1,6 @@
 package org.projectparams.annotationprocessing.astcommons.parsing;
 
+import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.TypeTag;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 
@@ -59,7 +60,8 @@ public class ExpressionFactory {
 
     @SuppressWarnings("all")
     public static Expression from(String expression,
-                                  @Nullable TypeTag typeTag) {
+                                  @Nullable TypeTag typeTag,
+                                  TreePath enclosingInvocablePath) {
         if (expression == null) {
             return new LiteralExpression<>(null, String.class);
         }
@@ -78,16 +80,17 @@ public class ExpressionFactory {
                 var argsStartIndex = getArgsStartIndex(expression);
                 var args = getArgStrings(expression);
                 var name = expression.substring(expression.lastIndexOf('.') + 1, argsStartIndex);
-                var owner = expression.substring(0, expression.lastIndexOf('.'));
+                var owner = from(expression.substring(0, expression.lastIndexOf('.')), null, enclosingInvocablePath);
                 return new MethodInvocationExpression(name,
-                        from(owner, null),
-                        args.stream().map(arg -> from(arg, null)).toList());
+                        owner,
+                        args.stream().map(arg -> from(arg, null, enclosingInvocablePath)).toList(),
+                        enclosingInvocablePath);
             }
             case FIELD_ACCESS -> {
                 var lastDotIndex = expression.lastIndexOf('.');
                 var owner = expression.substring(0, lastDotIndex);
                 var name = expression.substring(lastDotIndex + 1);
-                return new FieldAccessExpression(name, from(owner, null));
+                return new FieldAccessExpression(name, from(owner, null, enclosingInvocablePath));
             }
             case NEW_CLASS -> throw new UnsupportedOperationException();
             case IDENTIFIER -> {

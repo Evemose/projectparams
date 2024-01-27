@@ -63,7 +63,8 @@ public class ExpressionMaker {
     }
 
     public static JCTree.JCMethodInvocation makeMethodInvocation(
-            JCTree.JCExpression methodSelect, JCTree.JCExpression... args) {
+            JCTree.JCExpression methodSelect,
+            JCTree.JCExpression... args) {
         return treeMaker.Apply(
                 List.nil(),
                 methodSelect,

@@ -52,7 +52,7 @@ public class MethodCallModifierVisitor extends AbstractVisitor<Void, InvocableIn
                 invocableInfo.matches(invocation)) {
             List<JCTree.JCExpression> args;
             try {
-                args = argumentSupplier.getModifiedArguments(invocation, invocableInfo);
+                args = argumentSupplier.getModifiedArguments(invocation, invocableInfo, getCurrentPath());
             } catch (UnsupportedSignatureException e) {
                 messager.printMessage(Diagnostic.Kind.ERROR, e.getMessage());
                 throw new RuntimeException(e);

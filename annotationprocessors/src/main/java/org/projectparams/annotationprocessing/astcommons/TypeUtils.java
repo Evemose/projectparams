@@ -17,6 +17,7 @@ import org.projectparams.annotationprocessing.astcommons.context.CUContext;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.Elements;
 import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**

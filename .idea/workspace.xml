@@ -4,25 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="renamed Identifier cause figured out it doesn`t matter if its field_access or ident for expression making">
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/Expression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/FieldAccessExpression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/IdentifierExpression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/InvocableExpression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/LiteralExpression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/MethodInvocationExpression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/NamedExpression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/SelectableExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="refactored parsed expression class into class hierarchy, began to implement method invocations as defaults">
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/ExpressionMaker.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/ExpressionMaker.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/TypeUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/TypeUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/CUContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/context/CUContext.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ContextUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/context/ContextUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ParsedExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ExpressionFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ExpressionFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ExpressionFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/InvocableExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/InvocableExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/MethodInvocationExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/MethodInvocationExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/argumentsuppliers/ArgumentSupplier.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/argumentsuppliers/ArgumentSupplier.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/argumentsuppliers/DefaultArgumentSupplier.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/argumentsuppliers/DefaultArgumentSupplier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/ParsedExpressionTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/test/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/visitors/MethodCallModifierVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/visitors/MethodCallModifierVisitor.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -402,7 +392,7 @@
       <workItem from="1706325905550" duration="5014000" />
       <workItem from="1706330976412" duration="248000" />
       <workItem from="1706332874887" duration="22000" />
-      <workItem from="1706345540037" duration="4125000" />
+      <workItem from="1706345540037" duration="5322000" />
     </task>
     <task id="LOCAL-00001" summary="split project into modules">
       <option name="closed" value="true" />
@@ -724,7 +714,15 @@
       <option name="project" value="LOCAL" />
       <updated>1706331174561</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="refactored parsed expression class into class hierarchy, began to implement method invocations as defaults">
+      <option name="closed" value="true" />
+      <created>1706349844024</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1706349844024</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -761,7 +759,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="extracted CleanupVisitor + refactored methods in extracted classes" />
     <MESSAGE value="implemented multiple args support" />
     <MESSAGE value="seems like I don`t need to fix method signatures after I fixed arg" />
     <MESSAGE value="refactored method modifications to work with wrappers instead of with trees directly, implemented method wrapper, removed MethodInvocationArgumentTypeFixer.java due to discovered redundancy, but somewhy methods now match even when shouldn`t, its intermediate commit before fix" />
@@ -786,7 +783,8 @@
     <MESSAGE value="quick fix" />
     <MESSAGE value="implemented makeFieldAccess, introduced IDENTIFIER_OR_FIELD_ACCESS for unresolved parsing situations" />
     <MESSAGE value="renamed Identifier cause figured out it doesn`t matter if its field_access or ident for expression making" />
-    <option name="LAST_COMMIT_MESSAGE" value="renamed Identifier cause figured out it doesn`t matter if its field_access or ident for expression making" />
+    <MESSAGE value="refactored parsed expression class into class hierarchy, began to implement method invocations as defaults" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactored parsed expression class into class hierarchy, began to implement method invocations as defaults" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
