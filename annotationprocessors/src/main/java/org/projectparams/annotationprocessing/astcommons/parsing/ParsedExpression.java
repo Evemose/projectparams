@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+// TODO: implement type casting
 @SuppressWarnings("unused")
 public record ParsedExpression(
         ParsedExpression.Type type,
@@ -32,7 +33,7 @@ public record ParsedExpression(
                 return FIELD_ACCESS;
             } else {
                 expression = expression.substring(expression.lastIndexOf('.') + 1);
-                if (expression.matches("(\\d+(\\.\\d+)?[fdlFDL]?)|(true|false)")) {
+                if (expression.matches("(\\d+(\\.\\d+)?[fdlFDL]?)|(true|false)|('.')|(\".*\")")) {
                     return LITERAL;
                 }
                 return FIELD_ACCESS;

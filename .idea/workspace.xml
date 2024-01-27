@@ -4,14 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="implemented expression parsing into informative type">
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/ExpressionMaker.java" afterDir="false" />
+    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="began implementing expression making by moving out makeExpression">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/MainProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/MainProcessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/TypeUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/TypeUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ParsedExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ParsedExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/InvocableInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/InvocableInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/argumentsuppliers/DefaultArgumentSupplier.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/argumentsuppliers/DefaultArgumentSupplier.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -122,7 +117,7 @@
     &quot;Gradle.ASMMethodCallsScannerTest.testGetMethodCallsInsideClass.executor&quot;: &quot;Run&quot;,
     &quot;Gradle.Build projectparams.executor&quot;: &quot;Run&quot;,
     &quot;Gradle.MethodCallArgumentsInspectorTest.testVisitMethod.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.ParsedExpressionTest.executor&quot;: &quot;Debug&quot;,
+    &quot;Gradle.ParsedExpressionTest.executor&quot;: &quot;Run&quot;,
     &quot;Gradle.ParsedExpressionTest.testFrom_ComplexExpression.executor&quot;: &quot;Run&quot;,
     &quot;Gradle.ParsedExpressionTest.testFrom_FieldAccessExpression.executor&quot;: &quot;Debug&quot;,
     &quot;Gradle.ParsedExpressionTest.testFrom_MethodInvocationExpression.executor&quot;: &quot;Run&quot;,
@@ -385,7 +380,9 @@
       <workItem from="1706256199724" duration="5285000" />
       <workItem from="1706267203513" duration="2517000" />
       <workItem from="1706313169999" duration="22000" />
-      <workItem from="1706313203486" duration="3800000" />
+      <workItem from="1706313203486" duration="4044000" />
+      <workItem from="1706317995906" duration="79000" />
+      <workItem from="1706318090256" duration="52000" />
     </task>
     <task id="LOCAL-00001" summary="split project into modules">
       <option name="closed" value="true" />
@@ -675,7 +672,15 @@
       <option name="project" value="LOCAL" />
       <updated>1706269720681</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="began implementing expression making by moving out makeExpression">
+      <option name="closed" value="true" />
+      <created>1706317480963</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1706317480963</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -712,7 +717,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="i began to change invocations params, but it doesn`t work with var keyword for now." />
     <MESSAGE value="implemented default values inference for literals, needs refactoring" />
     <MESSAGE value="Literal deafult value work in all cases now. Still needs refactoring" />
     <MESSAGE value="extracted MethodCallModifier" />
@@ -737,14 +741,15 @@
     <MESSAGE value="cleaned code up" />
     <MESSAGE value="fixed field level initializer NewClassTree attribution" />
     <MESSAGE value="implemented expression parsing into informative type" />
-    <option name="LAST_COMMIT_MESSAGE" value="implemented expression parsing into informative type" />
+    <MESSAGE value="began implementing expression making by moving out makeExpression" />
+    <option name="LAST_COMMIT_MESSAGE" value="began implementing expression making by moving out makeExpression" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ParsedExpression.java</url>
-          <line>108</line>
+          <line>109</line>
           <option name="timeStamp" value="15" />
         </line-breakpoint>
       </breakpoints>
