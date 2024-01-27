@@ -1,4 +1,4 @@
-package org.projectparams.annotationprocessing.astcommons.parsing;
+package org.projectparams.annotationprocessing.astcommons.context;
 
 import com.sun.source.tree.CompilationUnitTree;
 

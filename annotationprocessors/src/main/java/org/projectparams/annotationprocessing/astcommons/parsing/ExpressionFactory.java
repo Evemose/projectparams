@@ -1,6 +1,7 @@
 package org.projectparams.annotationprocessing.astcommons.parsing;
 
-import org.projectparams.annotationprocessing.processors.defaultvalue.InvocableInfo;
+import com.sun.tools.javac.code.TypeTag;
+import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -9,14 +10,7 @@ import java.util.List;
 
 // TODO: implement type casting
 @SuppressWarnings("unused")
-public record ParsedExpression(
-        ParsedExpression.Type type,
-        // value for literals, name for field access and method invocation
-        String name,
-        ParsedExpression owner,
-        List<ParsedExpression> arguments,
-        @Nullable com.sun.tools.javac.code.Type returnType
-) {
+public class ExpressionFactory {
     public enum Type {
         NEW_CLASS,
         METHOD_INVOCATION,
@@ -63,57 +57,44 @@ public record ParsedExpression(
         return -1;
     }
 
-    public static ParsedExpression from(InvocableInfo.Expression expression) {
-        var stringOfExpr = expression.expression();
-        if (stringOfExpr == null) {
-            return new ParsedExpression(Type.LITERAL, null, null, Collections.emptyList(), expression.type());
+    @SuppressWarnings("all")
+    public static Expression from(String expression,
+                                  @Nullable TypeTag typeTag) {
+        if (expression == null) {
+            return new LiteralExpression<>(null, String.class);
         }
-        stringOfExpr = stringOfExpr.strip();
-        var type = Type.of(stringOfExpr);
-        if (type == Type.LITERAL) {
-            return new ParsedExpression(type, stringOfExpr, null, Collections.emptyList(), expression.type());
+        // infer type tag from expression if it is not provided explicitly
+        if (typeTag == null) {
+            typeTag = TypeUtils.geLiteralTypeTag(expression);
         }
-
-        if (type == Type.FIELD_ACCESS) {
-            var lastDotIndex = stringOfExpr.lastIndexOf('.');
-            if (lastDotIndex == -1) {
-                return new ParsedExpression(type, stringOfExpr, null, Collections.emptyList(), expression.type());
+        expression = expression.strip();
+        var type = Type.of(expression);
+        switch (type) {
+            case LITERAL -> {
+                var value = TypeUtils.literalValueFromStr(typeTag, expression);
+                return new LiteralExpression(value, value.getClass());
             }
+            case METHOD_INVOCATION -> {
+                var argsStartIndex = getArgsStartIndex(expression);
+                var args = getArgStrings(expression);
+                var name = expression.substring(expression.lastIndexOf('.') + 1, argsStartIndex);
+                var owner = expression.substring(0, expression.lastIndexOf('.'));
+                return new MethodInvocationExpression(name,
+                        from(owner, null),
+                        args.stream().map(arg -> from(arg, null)).toList());
+            }
+            case FIELD_ACCESS -> {
+                var lastDotIndex = expression.lastIndexOf('.');
+                var owner = expression.substring(0, lastDotIndex);
+                var name = expression.substring(lastDotIndex + 1);
+                return new FieldAccessExpression(name, from(owner, null));
+            }
+            case NEW_CLASS -> throw new UnsupportedOperationException();
+            case IDENTIFIER -> {
+                return new IdentifierExpression(expression);
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + type);
         }
-
-        var args = Collections.<ParsedExpression>emptyList();
-        if (type == Type.NEW_CLASS || type == Type.METHOD_INVOCATION) {
-            args = getArgStrings(stringOfExpr).stream()
-                    .map(str -> from(new InvocableInfo.Expression(null, str)))
-                    .toList();
-        }
-        ParsedExpression owner = null;
-        String name;
-
-        if (type == Type.NEW_CLASS) {
-            name = stringOfExpr.substring(stringOfExpr.lastIndexOf("new ") + 4);
-            name = name.substring(0, name.indexOf('('));
-        } else if (type == Type.METHOD_INVOCATION) {
-            var argsStartIndex = getArgsStartIndex(stringOfExpr);
-            name = stringOfExpr.substring(stringOfExpr.lastIndexOf('.', argsStartIndex) + 1, argsStartIndex);
-        } else {
-            name = stringOfExpr.substring(stringOfExpr.lastIndexOf('.') + 1);
-        }
-
-        int lastDotIndex;
-        if (type == Type.FIELD_ACCESS) {
-            lastDotIndex = stringOfExpr.lastIndexOf('.');
-        } else if (type == Type.IDENTIFIER) {
-            lastDotIndex = -1;
-        } else {
-            var argsStartIndex = getArgsStartIndex(stringOfExpr);
-            lastDotIndex = stringOfExpr.lastIndexOf('.', argsStartIndex);
-        }
-        if (lastDotIndex != -1) {
-            owner = from(new InvocableInfo.Expression(null, stringOfExpr.substring(0, lastDotIndex)));
-        }
-
-        return new ParsedExpression(type, name, owner, args, expression.type());
     }
 
     private static List<String> getArgStrings(String expression) {

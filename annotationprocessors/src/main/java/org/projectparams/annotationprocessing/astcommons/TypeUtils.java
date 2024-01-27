@@ -11,14 +11,13 @@ import com.sun.tools.javac.comp.Enter;
 import com.sun.tools.javac.comp.MemberEnter;
 import com.sun.tools.javac.model.JavacTypes;
 import com.sun.tools.javac.tree.JCTree;
-import org.projectparams.annotationprocessing.astcommons.parsing.CUContext;
+import org.projectparams.annotationprocessing.astcommons.context.CUContext;
 
 
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.Elements;
 import java.util.IdentityHashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * Utility class for working with types
@@ -258,10 +257,8 @@ public class TypeUtils {
         if (literalAsString.matches("'.'")) {
             return TypeTag.CHAR;
         }
-        if (literalAsString.matches("\".*\"")) {
-            return TypeTag.CLASS;
-        }
-        throw new IllegalArgumentException("Unsupported literal: " + literalAsString);
+        // fallback option
+        return TypeTag.CLASS;
     }
 
     public static Object literalValueFromStr(TypeTag tag, String literalAsString) {
@@ -274,7 +271,7 @@ public class TypeUtils {
             case LONG -> Long.parseLong(literalAsString);
             case FLOAT -> Float.parseFloat(literalAsString);
             case DOUBLE -> Double.parseDouble(literalAsString);
-            case BOOLEAN -> Boolean.parseBoolean(literalAsString) ? 1 : 0;
+            case BOOLEAN -> Boolean.parseBoolean(literalAsString);
             case CHAR -> literalAsString.charAt(1);
             case CLASS -> {
                 if (literalAsString.matches("\".*\"")) {

@@ -1,5 +1,7 @@
 package org.projectparams.test;
 
+import org.projectparams.annotations.DefaultValue;
+
 import static org.projectparams.test.Abobus.*;
 
 @SuppressWarnings("all")
@@ -17,9 +19,18 @@ public class Main {
         var bibus2 = new Dodus().bibus();
         var doubleBibus = Abobus.abobus(abobus.doubleBibus(new Main()), Abobus.akakus()).doubleBibus(new Main());
         var abobusSucus = new Abobus.Sucus().bibus();
+        rovarus();
         System.out.println(" " + bibus);
         System.out.println(" " + doubleBibus);
         System.out.println(" " + sucus.bibus());
         System.out.println(sucus.bibus() + " " + sucus.bibus());
+    }
+
+    private static float bibus() {
+        return 3.4f;
+    }
+
+    public static void rovarus(@DefaultValue("Main.bibus()") Float someVar) {
+        System.out.println(" " + someVar);
     }
 }

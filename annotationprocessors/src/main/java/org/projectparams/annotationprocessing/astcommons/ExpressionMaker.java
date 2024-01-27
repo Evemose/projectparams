@@ -3,8 +3,8 @@ package org.projectparams.annotationprocessing.astcommons;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
+import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
-import org.projectparams.annotationprocessing.astcommons.parsing.ParsedExpression;
 
 import javax.annotation.processing.Messager;
 
@@ -43,37 +43,44 @@ public class ExpressionMaker {
             cast.type = TypeUtils.getTypeByName(value.getClass().getCanonicalName());
             return cast;
         }
-        var literal = treeMaker.Literal(tag, value);
         if (tag == TypeTag.BOOLEAN) {
-            literal.type = TypeUtils.getTypeByName("java.lang.Boolean");
-        } else {
-            literal.type = TypeUtils.getTypeByName(value.getClass().getCanonicalName());
+            value = (boolean)value ? 1 : 0;
         }
+        var literal = treeMaker.Literal(tag, value);
+        literal.type = TypeUtils.getTypeByName(
+                tag == TypeTag.BOOLEAN ? "java.lang.Boolean" : value.getClass().getCanonicalName()
+        );
         return literal;
     }
 
-    @SuppressWarnings("all")
-    public static JCTree.JCExpression makeExpr(ParsedExpression expr) {
-        messager.printMessage(javax.tools.Diagnostic.Kind.NOTE, "Making expr from " + expr);
-        return switch (expr.type()) {
-            case LITERAL -> {
-                var tag = expr.returnType();
-                yield makeLiteral(expr.returnType().getTag(),
-                        TypeUtils.literalValueFromStr(expr.returnType().getTag(), expr.name()));
-            }
-            case METHOD_INVOCATION -> throw new UnsupportedOperationException();
-            case FIELD_ACCESS -> makeFieldAccess(expr);
-            case NEW_CLASS -> throw new UnsupportedOperationException();
-            case IDENTIFIER -> {
-                var name = names.fromString(expr.name());
-                var ident = treeMaker.Ident(name);
-                yield ident;
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + expr.type());
-        };
+
+    public static JCTree.JCFieldAccess makeFieldAccess(JCTree.JCExpression owner, String name) {
+        return treeMaker.Select(owner, names.fromString(name));
     }
 
-    public static JCTree.JCExpression makeFieldAccess(ParsedExpression expr) {
-        return treeMaker.Select(makeExpr(expr.owner()), names.fromString(expr.name()));
+    public static JCTree.JCIdent makeIdent(String name) {
+        return treeMaker.Ident(names.fromString(name));
     }
+
+    public static JCTree.JCMethodInvocation makeMethodInvocation(
+            JCTree.JCExpression methodSelect, JCTree.JCExpression... args) {
+        return treeMaker.Apply(
+                List.nil(),
+                methodSelect,
+                List.from(args)
+        );
+    }
+
+    public static JCTree.JCNewClass makeNewClass(JCTree.JCExpression enclosing,
+                                                 String className,
+                                                 JCTree.JCExpression... args) {
+        return treeMaker.NewClass(
+                enclosing,
+                List.nil(),
+                makeIdent(className),
+                List.from(args),
+                null
+        );
+    }
+
 }
