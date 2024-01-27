@@ -265,6 +265,9 @@ public class TypeUtils {
     }
 
     public static Object literalValueFromStr(TypeTag tag, String literalAsString) {
+        if (literalAsString == null) {
+            return null;
+        }
         literalAsString = literalAsString.replaceAll("[lLfFbBsSdD]", "");
         return switch (tag) {
             case INT -> Integer.parseInt(literalAsString);

@@ -1,6 +1,7 @@
 package org.projectparams.annotationprocessing.astcommons.parsing;
 
 import org.junit.jupiter.api.Test;
+import org.projectparams.annotationprocessing.processors.defaultvalue.InvocableInfo;
 
 import java.util.Collections;
 
@@ -20,7 +21,7 @@ class ParsedExpressionTest {
     @Test
     void testFrom_LiteralExpression() {
         var  expression = "true";
-        var parsedExpression = ParsedExpression.from(expression);
+        var parsedExpression = ParsedExpression.from(new InvocableInfo.Expression(null, expression));
         assertEquals(ParsedExpression.Type.LITERAL, parsedExpression.type());
         assertEquals(parsedExpression.name(), "true");
         assertNull(parsedExpression.owner());
@@ -30,8 +31,8 @@ class ParsedExpressionTest {
     @Test
     void testFrom_VariableExpression() {
         var  expression = "myVariable";
-        var parsedExpression = ParsedExpression.from(expression);
-        assertEquals(ParsedExpression.Type.FIELD_ACCESS, parsedExpression.type());
+        var parsedExpression = ParsedExpression.from(new InvocableInfo.Expression(null, expression));
+        assertEquals(ParsedExpression.Type.IDENTIFIER_OR_FIELD_ACCESS, parsedExpression.type());
         assertEquals("myVariable", parsedExpression.name());
         assertNull(parsedExpression.owner());
         assertEquals(Collections.emptyList(), parsedExpression.arguments());
@@ -40,7 +41,7 @@ class ParsedExpressionTest {
     @Test
     void testFrom_FieldAccessExpression() {
         var  expression = "myObject.myField";
-        var parsedExpression = ParsedExpression.from(expression);
+        var parsedExpression = ParsedExpression.from(new InvocableInfo.Expression(null, expression));
         assertEquals(ParsedExpression.Type.FIELD_ACCESS, parsedExpression.type());
         assertEquals("myField", parsedExpression.name());
         assertNotNull(parsedExpression.owner());
@@ -51,7 +52,7 @@ class ParsedExpressionTest {
     @Test
     void testFrom_MethodInvocationExpression() {
         var  expression = "myObject.myMethod(arg1, arg2)";
-        var parsedExpression = ParsedExpression.from(expression);
+        var parsedExpression = ParsedExpression.from(new InvocableInfo.Expression(null, expression));
         assertEquals(ParsedExpression.Type.METHOD_INVOCATION, parsedExpression.type());
         assertEquals("myMethod", parsedExpression.name());
         assertNotNull(parsedExpression.owner());
@@ -64,21 +65,21 @@ class ParsedExpressionTest {
     @Test
     void testFrom_NewClassExpression() {
         var  expression = "new MyClass(arg1, arg2)";
-        var parsedExpression = ParsedExpression.from(expression);
+        var parsedExpression = ParsedExpression.from(new InvocableInfo.Expression(null, expression));
         assertEquals(ParsedExpression.Type.NEW_CLASS, parsedExpression.type());
         assertEquals("MyClass", parsedExpression.name());
         assertNull(parsedExpression.owner());
         assertEquals(2, parsedExpression.arguments().size());
         assertEquals("arg1", parsedExpression.arguments().get(0).name());
-        assertEquals(ParsedExpression.Type.FIELD_ACCESS, parsedExpression.arguments().get(0).type());
+        assertEquals(ParsedExpression.Type.IDENTIFIER_OR_FIELD_ACCESS, parsedExpression.arguments().get(0).type());
         assertEquals("arg2", parsedExpression.arguments().get(1).name());
-        assertEquals(ParsedExpression.Type.FIELD_ACCESS, parsedExpression.arguments().get(1).type());
+        assertEquals(ParsedExpression.Type.IDENTIFIER_OR_FIELD_ACCESS, parsedExpression.arguments().get(1).type());
     }
 
     @Test
     void testFrom_ComplexExpression() {
         var  expression = "sosos.new myObject(new myObject(), totos.myMethod(sosos.arg3)).myMethod(arg1, arg2).myField";
-        var parsedExpression = ParsedExpression.from(expression);
+        var parsedExpression = ParsedExpression.from(new InvocableInfo.Expression(null, expression));
 
         assertEquals(ParsedExpression.Type.FIELD_ACCESS, parsedExpression.type());
         assertEquals("myField", parsedExpression.name());
@@ -112,6 +113,6 @@ class ParsedExpressionTest {
         var sosos = myObject.owner();
         assertEquals("sosos", sosos.name());
         assertNull(sosos.owner());
-        assertEquals(ParsedExpression.Type.FIELD_ACCESS, sosos.type());
+        assertEquals(ParsedExpression.Type.IDENTIFIER_OR_FIELD_ACCESS, sosos.type());
     }
 }

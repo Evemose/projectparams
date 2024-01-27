@@ -29,7 +29,7 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
     public void process(Set<Element> elements) {
         var methods = elements.stream().map(el -> (ExecutableElement) el.getEnclosingElement())
                 .collect(Collectors.toUnmodifiableSet());
-        var argumentSupplier = new DefaultArgumentSupplier(treeMaker);
+        var argumentSupplier = new DefaultArgumentSupplier();
         var fixedMethodsInIteration = new HashSet<InvocableTree>();
         var allFixedMethods = new HashSet<InvocableTree>();
 

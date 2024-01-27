@@ -1,6 +1,7 @@
 package org.projectparams.annotationprocessing.processors.defaultvalue;
 
 import com.sun.source.tree.ExpressionTree;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
@@ -20,7 +21,7 @@ public record InvocableInfo(String name,
                             Set<String> possibleOwnerQualifiedNames,
                             String returnTypeQualifiedName,
                             List<String> parameterTypeQualifiedNames,
-                            Map<Integer, Object> paramIndexToDefaultValue) {
+                            Map<Integer, Expression> paramIndexToDefaultValue) {
 
     public static final String NULL = "superSecretDefaultValuePlaceholder";
 
@@ -98,33 +99,29 @@ public record InvocableInfo(String name,
         }
     }
 
-    private static Map<Integer, Object> getDefaultValuesMap(ExecutableElement method) {
+    private static Map<Integer, Expression> getDefaultValuesMap(ExecutableElement method) {
         return IntStream.range(0, method.getParameters().size())
                 .filter(index -> method.getParameters().get(index).getAnnotation(DefaultValue.class) != null)
                 .boxed()
                 .collect(Collectors.toMap(index -> index,
                         index -> {
-                            // TODO: test enums
                             var value = method.getParameters().get(index).getAnnotation(DefaultValue.class).value();
-                            if (value.equals("superSecretDefaultValuePlaceholder")) {
-                                return NULL;
+                            if (value.equals(NULL)) {
+                                return new Expression(Type.noType, null);
                             } else {
-                                var paramType = method.getParameters().get(index).asType().toString();
-                                return switch (paramType) {
-                                    case "java.lang.String" -> value;
-                                    case "java.lang.Integer", "int" -> Integer.valueOf(value);
-                                    case "java.lang.Long", "long" -> Long.valueOf(value);
-                                    case "java.lang.Float", "float" -> Float.valueOf(value);
-                                    case "java.lang.Double", "double" -> Double.valueOf(value);
-                                    case "java.lang.Boolean", "boolean" -> Boolean.valueOf(value);
-                                    case "java.lang.Character", "char" -> value.charAt(0);
-                                    case "java.lang.Byte", "byte" -> Byte.valueOf(value);
-                                    case "java.lang.Short", "short" -> Short.valueOf(value);
-                                    default -> throw new IllegalArgumentException("Unsupported type: " + paramType);
-                                };
+                                return new Expression(TypeUtils.getTypeByName(
+                                        TypeUtils.getBoxedTypeName(
+                                                method.getParameters().get(index).asType().toString())),
+                                        value);
                             }
                         })
                 );
+    }
+
+    public record Expression(
+            Type type,
+            String expression
+    ) {
     }
 
     public boolean matches(InvocableTree invocation) {

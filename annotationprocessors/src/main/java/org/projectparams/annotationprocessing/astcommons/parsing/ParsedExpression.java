@@ -1,5 +1,8 @@
 package org.projectparams.annotationprocessing.astcommons.parsing;
 
+import org.projectparams.annotationprocessing.processors.defaultvalue.InvocableInfo;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,14 +11,17 @@ import java.util.List;
 @SuppressWarnings("unused")
 public record ParsedExpression(
         ParsedExpression.Type type,
+        // value for literals, name for field access and method invocation
         String name,
         ParsedExpression owner,
-        List<ParsedExpression> arguments
+        List<ParsedExpression> arguments,
+        @Nullable com.sun.tools.javac.code.Type returnType
 ) {
     public enum Type {
         NEW_CLASS,
         METHOD_INVOCATION,
         LITERAL,
+        IDENTIFIER_OR_FIELD_ACCESS,
         FIELD_ACCESS;
 
         public static Type of(String expression) {
@@ -29,15 +35,13 @@ public record ParsedExpression(
                 }
                 return METHOD_INVOCATION;
             }
+            if (expression.matches("(\\d+(\\.\\d+)?[fdlFDL]?)|(true|false)|('.')|(\".*\")")) {
+                return LITERAL;
+            }
             if (expression.contains(".")) {
                 return FIELD_ACCESS;
-            } else {
-                expression = expression.substring(expression.lastIndexOf('.') + 1);
-                if (expression.matches("(\\d+(\\.\\d+)?[fdlFDL]?)|(true|false)|('.')|(\".*\")")) {
-                    return LITERAL;
-                }
-                return FIELD_ACCESS;
             }
+            return IDENTIFIER_OR_FIELD_ACCESS;
         }
     }
 
@@ -59,51 +63,57 @@ public record ParsedExpression(
         return -1;
     }
 
-    public static ParsedExpression from(String expression) {
-        expression = expression.strip();
-        var type = Type.of(expression);
+    public static ParsedExpression from(InvocableInfo.Expression expression) {
+        var stringOfExpr = expression.expression();
+        if (stringOfExpr == null) {
+            return new ParsedExpression(Type.LITERAL, null, null, Collections.emptyList(), expression.type());
+        }
+        stringOfExpr = stringOfExpr.strip();
+        var type = Type.of(stringOfExpr);
         if (type == Type.LITERAL) {
-            return new ParsedExpression(type, expression, null, Collections.emptyList());
+            return new ParsedExpression(type, stringOfExpr, null, Collections.emptyList(), expression.type());
         }
 
         if (type == Type.FIELD_ACCESS) {
-            var lastDotIndex = expression.lastIndexOf('.');
+            var lastDotIndex = stringOfExpr.lastIndexOf('.');
             if (lastDotIndex == -1) {
-                return new ParsedExpression(type, expression, null, Collections.emptyList());
+                return new ParsedExpression(type, stringOfExpr, null, Collections.emptyList(), expression.type());
             }
         }
 
         var args = Collections.<ParsedExpression>emptyList();
         if (type == Type.NEW_CLASS || type == Type.METHOD_INVOCATION) {
-            args = getArgStrings(expression).stream()
-                    .map(ParsedExpression::from)
+            args = getArgStrings(stringOfExpr).stream()
+                    .map(str -> from(new InvocableInfo.Expression(null, str)))
                     .toList();
         }
         ParsedExpression owner = null;
         String name;
 
         if (type == Type.NEW_CLASS) {
-            name = expression.substring(expression.lastIndexOf("new ") + 4);
+            name = stringOfExpr.substring(stringOfExpr.lastIndexOf("new ") + 4);
             name = name.substring(0, name.indexOf('('));
         } else if (type == Type.METHOD_INVOCATION) {
-            var argsStartIndex = getArgsStartIndex(expression);
-            name = expression.substring(expression.lastIndexOf('.', argsStartIndex) + 1, argsStartIndex);
+            var argsStartIndex = getArgsStartIndex(stringOfExpr);
+            name = stringOfExpr.substring(stringOfExpr.lastIndexOf('.', argsStartIndex) + 1, argsStartIndex);
         } else {
-            name = expression.substring(expression.lastIndexOf('.') + 1);
+            name = stringOfExpr.substring(stringOfExpr.lastIndexOf('.') + 1);
         }
 
         int lastDotIndex;
         if (type == Type.FIELD_ACCESS) {
-            lastDotIndex = expression.lastIndexOf('.');
+            lastDotIndex = stringOfExpr.lastIndexOf('.');
+        } else if (type == Type.IDENTIFIER_OR_FIELD_ACCESS) {
+            lastDotIndex = -1;
         } else {
-            var argsStartIndex = getArgsStartIndex(expression);
-            lastDotIndex = expression.lastIndexOf('.', argsStartIndex);
+            var argsStartIndex = getArgsStartIndex(stringOfExpr);
+            lastDotIndex = stringOfExpr.lastIndexOf('.', argsStartIndex);
         }
         if (lastDotIndex != -1) {
-            owner = from(expression.substring(0, lastDotIndex));
+            owner = from(new InvocableInfo.Expression(null, stringOfExpr.substring(0, lastDotIndex)));
         }
 
-        return new ParsedExpression(type, name, owner, args);
+        return new ParsedExpression(type, name, owner, args, expression.type());
     }
 
     private static List<String> getArgStrings(String expression) {

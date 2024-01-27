@@ -58,7 +58,9 @@ public class MainProcessor extends AbstractProcessor {
                     Enter.instance(javacProcessingEnv.getContext()),
                     MemberEnter.instance(javacProcessingEnv.getContext()));
             ElementUtils.init(processingEnv.getElementUtils());
-            ExpressionMaker.init(treeMaker, Names.instance(javacProcessingEnv.getContext()));
+            ExpressionMaker.init(treeMaker,
+                    Names.instance(javacProcessingEnv.getContext()),
+                    javacProcessingEnv.getMessager());
         } catch (Throwable t) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
                     t.getMessage() + "\n" + Arrays.toString(t.getStackTrace()).replaceAll(",", "\n"));

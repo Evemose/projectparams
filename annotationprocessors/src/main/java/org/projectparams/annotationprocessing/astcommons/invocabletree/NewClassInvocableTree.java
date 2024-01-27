@@ -36,13 +36,6 @@ public class NewClassInvocableTree extends AbstractInvocableTree<NewClassTree> {
         var asJC = (JCTree.JCNewClass) wrapped;
         asJC.args = com.sun.tools.javac.util.List.from(
                 Arrays.stream(arguments).map(t -> (JCTree.JCExpression) t).toArray(JCTree.JCExpression[]::new));
-        asJC.constructorType = new Type.MethodType(
-                com.sun.tools.javac.util.List.from(
-                        Arrays.stream(arguments).map(t -> ((JCTree.JCExpression) t).type)
-                                .toList()),
-                asJC.constructorType.getReturnType(),
-                asJC.constructorType.getThrownTypes(),
-                asJC.constructorType.tsym);
     }
 
 
