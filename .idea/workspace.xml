@@ -4,19 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="quick fix">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/MainProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/MainProcessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/ExpressionMaker.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/ExpressionMaker.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/TypeUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/TypeUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/invocabletree/NewClassInvocableTree.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/invocabletree/NewClassInvocableTree.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ParsedExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ParsedExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueProcessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/InvocableInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/InvocableInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/argumentsuppliers/DefaultArgumentSupplier.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/argumentsuppliers/DefaultArgumentSupplier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/ParsedExpressionTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/ParsedExpressionTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Abobus.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Abobus.java" afterDir="false" />
-    </list>
+    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="implemented makeFieldAccess, introduced IDENTIFIER_OR_FIELD_ACCESS for unresolved parsing situations" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -116,55 +104,55 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Application.Main (1).executor": "Run",
-    "Application.Main.executor": "Run",
-    "Downloaded.Files.Path.Enabled": "false",
-    "Gradle.ASMMethodCallsScannerTest.executor": "Run",
-    "Gradle.ASMMethodCallsScannerTest.testGetMethodCallsInsideClass.executor": "Run",
-    "Gradle.Build projectparams.executor": "Run",
-    "Gradle.MethodCallArgumentsInspectorTest.testVisitMethod.executor": "Run",
-    "Gradle.ParsedExpressionTest.executor": "Run",
-    "Gradle.ParsedExpressionTest.testFrom_ComplexExpression.executor": "Run",
-    "Gradle.ParsedExpressionTest.testFrom_FieldAccessExpression.executor": "Debug",
-    "Gradle.ParsedExpressionTest.testFrom_MethodInvocationExpression.executor": "Run",
-    "Gradle.ParsedExpressionTest.testFrom_NewClassExpression.executor": "Run",
-    "Gradle.Tests in 'projectparams.annotationprocessors'.executor": "Run",
-    "Gradle.Tests in 'projectparams.annotationprocessors.test'.executor": "Run",
-    "Gradle.Upgrade Gradle wrapper.executor": "Run",
-    "Gradle.projectparams [:Main.main()].executor": "Run",
-    "Gradle.projectparams [build].executor": "Run",
-    "Gradle.projectparams [clean].executor": "Run",
-    "Gradle.projectparams:test [:test:Main.main()].executor": "Run",
-    "Remote JVM Debug.Unnamed.executor": "Debug",
-    "Repository.Attach.Annotations": "false",
-    "Repository.Attach.JavaDocs": "false",
-    "Repository.Attach.Sources": "false",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "extract.method.default.visibility": "private",
-    "git-widget-placeholder": "expressions-as-defaults",
-    "ignore.virus.scanning.warn.message": "true",
-    "jdk.selected.JAVA_MODULE": "openjdk-21",
-    "kotlin-language-version-configured": "true",
-    "last_directory_selection": "C:/projectparams/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors",
-    "last_opened_file_path": "C:/projectparams",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "inlay.hints",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Application.Main (1).executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;Gradle.ASMMethodCallsScannerTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ASMMethodCallsScannerTest.testGetMethodCallsInsideClass.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Build projectparams.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MethodCallArgumentsInspectorTest.testVisitMethod.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ParsedExpressionTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ParsedExpressionTest.testFrom_ComplexExpression.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ParsedExpressionTest.testFrom_FieldAccessExpression.executor&quot;: &quot;Debug&quot;,
+    &quot;Gradle.ParsedExpressionTest.testFrom_MethodInvocationExpression.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ParsedExpressionTest.testFrom_NewClassExpression.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Tests in 'projectparams.annotationprocessors'.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Tests in 'projectparams.annotationprocessors.test'.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Upgrade Gradle wrapper.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.projectparams [:Main.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.projectparams [build].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.projectparams [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.projectparams:test [:test:Main.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Remote JVM Debug.Unnamed.executor&quot;: &quot;Debug&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;extract.method.default.visibility&quot;: &quot;private&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;expressions-as-defaults&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;openjdk-21&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_directory_selection&quot;: &quot;C:/projectparams/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/projectparams&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;inlay.hints&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\projectparams" />
@@ -392,7 +380,7 @@
       <workItem from="1706317995906" duration="79000" />
       <workItem from="1706318090256" duration="52000" />
       <workItem from="1706318151430" duration="12000" />
-      <workItem from="1706325905550" duration="4934000" />
+      <workItem from="1706325905550" duration="5014000" />
     </task>
     <task id="LOCAL-00001" summary="split project into modules">
       <option name="closed" value="true" />
@@ -698,7 +686,15 @@
       <option name="project" value="LOCAL" />
       <updated>1706318159485</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="implemented makeFieldAccess, introduced IDENTIFIER_OR_FIELD_ACCESS for unresolved parsing situations">
+      <option name="closed" value="true" />
+      <created>1706330944551</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1706330944551</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -735,7 +731,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Literal deafult value work in all cases now. Still needs refactoring" />
     <MESSAGE value="extracted MethodCallModifier" />
     <MESSAGE value="extracted CleanupVisitor + refactored methods in extracted classes" />
     <MESSAGE value="implemented multiple args support" />
@@ -760,7 +755,8 @@
     <MESSAGE value="implemented expression parsing into informative type" />
     <MESSAGE value="began implementing expression making by moving out makeExpression" />
     <MESSAGE value="quick fix" />
-    <option name="LAST_COMMIT_MESSAGE" value="quick fix" />
+    <MESSAGE value="implemented makeFieldAccess, introduced IDENTIFIER_OR_FIELD_ACCESS for unresolved parsing situations" />
+    <option name="LAST_COMMIT_MESSAGE" value="implemented makeFieldAccess, introduced IDENTIFIER_OR_FIELD_ACCESS for unresolved parsing situations" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -36,7 +36,7 @@ public class Abobus {
 
     public class Bibus extends Abobus {
 
-        public Bibus(@DefaultValue("Float.MAX_VALUE") float abobus) {
+        public Bibus(@DefaultValue("someVar.MAX_VALUE") float abobus) {
             super();
         }
         public Bibus ultima(@DefaultValue("3.4") float abobus,

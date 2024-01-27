@@ -21,7 +21,7 @@ public record ParsedExpression(
         NEW_CLASS,
         METHOD_INVOCATION,
         LITERAL,
-        IDENTIFIER_OR_FIELD_ACCESS,
+        IDENTIFIER,
         FIELD_ACCESS;
 
         public static Type of(String expression) {
@@ -41,7 +41,7 @@ public record ParsedExpression(
             if (expression.contains(".")) {
                 return FIELD_ACCESS;
             }
-            return IDENTIFIER_OR_FIELD_ACCESS;
+            return IDENTIFIER;
         }
     }
 
@@ -103,7 +103,7 @@ public record ParsedExpression(
         int lastDotIndex;
         if (type == Type.FIELD_ACCESS) {
             lastDotIndex = stringOfExpr.lastIndexOf('.');
-        } else if (type == Type.IDENTIFIER_OR_FIELD_ACCESS) {
+        } else if (type == Type.IDENTIFIER) {
             lastDotIndex = -1;
         } else {
             var argsStartIndex = getArgsStartIndex(stringOfExpr);

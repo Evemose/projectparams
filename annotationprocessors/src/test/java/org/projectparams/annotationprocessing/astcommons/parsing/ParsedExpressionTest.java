@@ -32,7 +32,7 @@ class ParsedExpressionTest {
     void testFrom_VariableExpression() {
         var  expression = "myVariable";
         var parsedExpression = ParsedExpression.from(new InvocableInfo.Expression(null, expression));
-        assertEquals(ParsedExpression.Type.IDENTIFIER_OR_FIELD_ACCESS, parsedExpression.type());
+        assertEquals(ParsedExpression.Type.IDENTIFIER, parsedExpression.type());
         assertEquals("myVariable", parsedExpression.name());
         assertNull(parsedExpression.owner());
         assertEquals(Collections.emptyList(), parsedExpression.arguments());
@@ -71,9 +71,9 @@ class ParsedExpressionTest {
         assertNull(parsedExpression.owner());
         assertEquals(2, parsedExpression.arguments().size());
         assertEquals("arg1", parsedExpression.arguments().get(0).name());
-        assertEquals(ParsedExpression.Type.IDENTIFIER_OR_FIELD_ACCESS, parsedExpression.arguments().get(0).type());
+        assertEquals(ParsedExpression.Type.IDENTIFIER, parsedExpression.arguments().get(0).type());
         assertEquals("arg2", parsedExpression.arguments().get(1).name());
-        assertEquals(ParsedExpression.Type.IDENTIFIER_OR_FIELD_ACCESS, parsedExpression.arguments().get(1).type());
+        assertEquals(ParsedExpression.Type.IDENTIFIER, parsedExpression.arguments().get(1).type());
     }
 
     @Test
@@ -113,6 +113,6 @@ class ParsedExpressionTest {
         var sosos = myObject.owner();
         assertEquals("sosos", sosos.name());
         assertNull(sosos.owner());
-        assertEquals(ParsedExpression.Type.IDENTIFIER_OR_FIELD_ACCESS, sosos.type());
+        assertEquals(ParsedExpression.Type.IDENTIFIER, sosos.type());
     }
 }

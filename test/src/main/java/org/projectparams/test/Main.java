@@ -6,6 +6,8 @@ import static org.projectparams.test.Abobus.*;
 public class Main {
     private static final Abobus abobus = new Abobus();
 
+    public static Float someVar = 3.4f;
+
     public static void main(String[] args) {
         var abobus = new Abobus();
         var sucus = new Sucus();

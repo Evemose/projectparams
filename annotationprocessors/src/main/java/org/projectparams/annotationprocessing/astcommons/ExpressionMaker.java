@@ -64,7 +64,7 @@ public class ExpressionMaker {
             case METHOD_INVOCATION -> throw new UnsupportedOperationException();
             case FIELD_ACCESS -> makeFieldAccess(expr);
             case NEW_CLASS -> throw new UnsupportedOperationException();
-            case IDENTIFIER_OR_FIELD_ACCESS -> {
+            case IDENTIFIER -> {
                 var name = names.fromString(expr.name());
                 var ident = treeMaker.Ident(name);
                 yield ident;
