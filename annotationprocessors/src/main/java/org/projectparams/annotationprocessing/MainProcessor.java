@@ -8,6 +8,8 @@ import com.sun.tools.javac.comp.Enter;
 import com.sun.tools.javac.comp.MemberEnter;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.TreeMaker;
+import com.sun.tools.javac.util.Names;
+import org.projectparams.annotationprocessing.astcommons.ExpressionMaker;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.processors.managers.DefaultProcessorsManager;
 import org.projectparams.annotationprocessing.processors.managers.ProcessorsManager;
@@ -56,6 +58,7 @@ public class MainProcessor extends AbstractProcessor {
                     Enter.instance(javacProcessingEnv.getContext()),
                     MemberEnter.instance(javacProcessingEnv.getContext()));
             ElementUtils.init(processingEnv.getElementUtils());
+            ExpressionMaker.init(treeMaker, Names.instance(javacProcessingEnv.getContext()));
         } catch (Throwable t) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
                     t.getMessage() + "\n" + Arrays.toString(t.getStackTrace()).replaceAll(",", "\n"));

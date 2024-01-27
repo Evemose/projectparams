@@ -14,7 +14,6 @@ public record ParsedExpression(
     public enum Type {
         NEW_CLASS,
         METHOD_INVOCATION,
-        LOCAL_FIELD_ACCESS,
         LITERAL,
         FIELD_ACCESS;
 
@@ -29,15 +28,14 @@ public record ParsedExpression(
                 }
                 return METHOD_INVOCATION;
             }
-            if (expression.contains(".") && !(expression.startsWith("this.") || expression.startsWith("super."))) {
+            if (expression.contains(".")) {
                 return FIELD_ACCESS;
             } else {
                 expression = expression.substring(expression.lastIndexOf('.') + 1);
                 if (expression.matches("(\\d+(\\.\\d+)?[fdlFDL]?)|(true|false)")) {
                     return LITERAL;
-                } else {
-                    return LOCAL_FIELD_ACCESS;
                 }
+                return FIELD_ACCESS;
             }
         }
     }
@@ -63,6 +61,17 @@ public record ParsedExpression(
     public static ParsedExpression from(String expression) {
         expression = expression.strip();
         var type = Type.of(expression);
+        if (type == Type.LITERAL) {
+            return new ParsedExpression(type, expression, null, Collections.emptyList());
+        }
+
+        if (type == Type.FIELD_ACCESS) {
+            var lastDotIndex = expression.lastIndexOf('.');
+            if (lastDotIndex == -1) {
+                return new ParsedExpression(type, expression, null, Collections.emptyList());
+            }
+        }
+
         var args = Collections.<ParsedExpression>emptyList();
         if (type == Type.NEW_CLASS || type == Type.METHOD_INVOCATION) {
             args = getArgStrings(expression).stream()
@@ -82,17 +91,15 @@ public record ParsedExpression(
             name = expression.substring(expression.lastIndexOf('.') + 1);
         }
 
-        if (type != Type.LITERAL && type != Type.LOCAL_FIELD_ACCESS) {
-            int lastDotIndex;
-            if (type == Type.FIELD_ACCESS) {
-                lastDotIndex = expression.lastIndexOf('.');
-            } else {
-                var argsStartIndex = getArgsStartIndex(expression);
-                lastDotIndex = expression.lastIndexOf('.', argsStartIndex);
-            }
-            if (lastDotIndex != -1) {
-                owner = from(expression.substring(0, lastDotIndex));
-            }
+        int lastDotIndex;
+        if (type == Type.FIELD_ACCESS) {
+            lastDotIndex = expression.lastIndexOf('.');
+        } else {
+            var argsStartIndex = getArgsStartIndex(expression);
+            lastDotIndex = expression.lastIndexOf('.', argsStartIndex);
+        }
+        if (lastDotIndex != -1) {
+            owner = from(expression.substring(0, lastDotIndex));
         }
 
         return new ParsedExpression(type, name, owner, args);

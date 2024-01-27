@@ -5,6 +5,7 @@ import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.Symtab;
 import com.sun.tools.javac.code.Type;
+import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.comp.Attr;
 import com.sun.tools.javac.comp.Enter;
 import com.sun.tools.javac.comp.MemberEnter;
@@ -17,6 +18,7 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.Elements;
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Utility class for working with types
@@ -226,5 +228,61 @@ public class TypeUtils {
 
     public static boolean isAssignable(Type fromType, Type toType) {
         return types.isAssignable(fromType, toType);
+    }
+
+    public static TypeTag geLiteralTypeTag(String literalAsString) {
+        if (literalAsString.equals("superSecretDefaultValuePlaceholder")) {
+            return TypeTag.BOT;
+        }
+        if (literalAsString.matches("true|false")) {
+            return TypeTag.BOOLEAN;
+        }
+        if (literalAsString.matches("\\d+[lLsSbB]?")) {
+            if (literalAsString.endsWith("l") || literalAsString.endsWith("L")) {
+                return TypeTag.LONG;
+            }
+            if (literalAsString.endsWith("s") || literalAsString.endsWith("S")) {
+                return TypeTag.SHORT;
+            }
+            if (literalAsString.endsWith("b") || literalAsString.endsWith("B")) {
+                return TypeTag.BYTE;
+            }
+            return TypeTag.INT;
+        }
+        if (literalAsString.matches("\\d+(\\.\\d+)?[fFdD]?")) {
+            if (literalAsString.endsWith("f") || literalAsString.endsWith("F")) {
+                return TypeTag.FLOAT;
+            }
+            return TypeTag.DOUBLE;
+        }
+        if (literalAsString.matches("'.'")) {
+            return TypeTag.CHAR;
+        }
+        if (literalAsString.matches("\".*\"")) {
+            return TypeTag.CLASS;
+        }
+        throw new IllegalArgumentException("Unsupported literal: " + literalAsString);
+    }
+
+    public static Object literalValueFromStr(TypeTag tag, String literalAsString) {
+        literalAsString = literalAsString.replaceAll("[lLfFbBsSdD]", "");
+        return switch (tag) {
+            case INT -> Integer.parseInt(literalAsString);
+            case LONG -> Long.parseLong(literalAsString);
+            case FLOAT -> Float.parseFloat(literalAsString);
+            case DOUBLE -> Double.parseDouble(literalAsString);
+            case BOOLEAN -> Boolean.parseBoolean(literalAsString) ? 1 : 0;
+            case CHAR -> literalAsString.charAt(1);
+            case CLASS -> {
+                if (literalAsString.matches("\".*\"")) {
+                    yield  literalAsString.substring(1, literalAsString.length() - 1);
+                }
+                throw new IllegalArgumentException("Unsupported literal: " + literalAsString);
+            }
+            case BYTE -> Byte.parseByte(literalAsString);
+            case SHORT -> Short.parseShort(literalAsString);
+            case BOT -> null;
+            default -> throw new IllegalArgumentException("Unsupported literal: " + literalAsString);
+        };
     }
 }

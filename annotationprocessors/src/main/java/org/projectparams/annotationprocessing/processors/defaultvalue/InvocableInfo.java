@@ -116,7 +116,7 @@ public record InvocableInfo(String name,
                                     case "java.lang.Long", "long" -> Long.valueOf(value);
                                     case "java.lang.Float", "float" -> Float.valueOf(value);
                                     case "java.lang.Double", "double" -> Double.valueOf(value);
-                                    case "java.lang.Boolean", "boolean" -> value.equals("true") ? 1 : 0;
+                                    case "java.lang.Boolean", "boolean" -> Boolean.valueOf(value);
                                     case "java.lang.Character", "char" -> value.charAt(0);
                                     case "java.lang.Byte", "byte" -> Byte.valueOf(value);
                                     case "java.lang.Short", "short" -> Short.valueOf(value);
@@ -139,7 +139,7 @@ public record InvocableInfo(String name,
     private boolean doesExistingArgsMatch(List<? extends ExpressionTree> args) {
         var currentArgs = args.stream().map(arg -> {
             if (((JCTree.JCExpression) arg).type == null) {
-                return "superSecretErrTypePlaceholder";
+                return "null";
             } else {
                 return TypeUtils.getBoxedTypeName(TypeUtils.getActualType(arg).toString());
             }

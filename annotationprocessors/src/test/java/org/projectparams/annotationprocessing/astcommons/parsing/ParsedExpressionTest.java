@@ -31,7 +31,7 @@ class ParsedExpressionTest {
     void testFrom_VariableExpression() {
         var  expression = "myVariable";
         var parsedExpression = ParsedExpression.from(expression);
-        assertEquals(ParsedExpression.Type.LOCAL_FIELD_ACCESS, parsedExpression.type());
+        assertEquals(ParsedExpression.Type.FIELD_ACCESS, parsedExpression.type());
         assertEquals("myVariable", parsedExpression.name());
         assertNull(parsedExpression.owner());
         assertEquals(Collections.emptyList(), parsedExpression.arguments());
@@ -70,9 +70,9 @@ class ParsedExpressionTest {
         assertNull(parsedExpression.owner());
         assertEquals(2, parsedExpression.arguments().size());
         assertEquals("arg1", parsedExpression.arguments().get(0).name());
-        assertEquals(ParsedExpression.Type.LOCAL_FIELD_ACCESS, parsedExpression.arguments().get(0).type());
+        assertEquals(ParsedExpression.Type.FIELD_ACCESS, parsedExpression.arguments().get(0).type());
         assertEquals("arg2", parsedExpression.arguments().get(1).name());
-        assertEquals(ParsedExpression.Type.LOCAL_FIELD_ACCESS, parsedExpression.arguments().get(1).type());
+        assertEquals(ParsedExpression.Type.FIELD_ACCESS, parsedExpression.arguments().get(1).type());
     }
 
     @Test
@@ -112,6 +112,6 @@ class ParsedExpressionTest {
         var sosos = myObject.owner();
         assertEquals("sosos", sosos.name());
         assertNull(sosos.owner());
-        assertEquals(ParsedExpression.Type.LOCAL_FIELD_ACCESS, sosos.type());
+        assertEquals(ParsedExpression.Type.FIELD_ACCESS, sosos.type());
     }
 }

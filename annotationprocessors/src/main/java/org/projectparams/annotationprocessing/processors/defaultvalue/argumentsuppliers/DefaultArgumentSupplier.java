@@ -4,12 +4,15 @@ import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
+import org.projectparams.annotationprocessing.astcommons.ExpressionMaker;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
+import org.projectparams.annotationprocessing.astcommons.parsing.ParsedExpression;
 import org.projectparams.annotationprocessing.exceptions.UnsupportedSignatureException;
 import org.projectparams.annotationprocessing.processors.defaultvalue.InvocableInfo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class DefaultArgumentSupplier implements ArgumentSupplier {
     private final TreeMaker treeMaker;
@@ -31,27 +34,24 @@ public class DefaultArgumentSupplier implements ArgumentSupplier {
             if (defaultValue == null) {
                 throw new UnsupportedSignatureException(invocableInfo.parameterTypeQualifiedNames().get(i), i, invocableInfo);
             }
-            args.add(makeLiteral(getTypeTag(invocableInfo.parameterTypeQualifiedNames().get(i)), defaultValue));
+            var value = switch (defaultValue) {
+                case Short s -> defaultValue + "S";
+                case Byte b -> defaultValue + "B";
+                case Character c -> "'" + defaultValue + "'";
+                case String s when !defaultValue.equals("superSecretDefaultValuePlaceholder") -> "\"" + defaultValue + "\"";
+                case Float v -> defaultValue + "F";
+                default -> defaultValue;
+            };
+            args.add(ExpressionMaker.makeExpr(
+                    new ParsedExpression(
+                            ParsedExpression.Type.LITERAL,
+                            String.valueOf(value),
+                            null,
+                            Collections.emptyList()
+                    )));
         }
         return List.from(args);
     }
 
-    private JCTree.JCExpression makeLiteral(TypeTag tag, Object value) {
-        if (value.equals(InvocableInfo.NULL)) {
-            return treeMaker.Literal(TypeTag.BOT, null);
-        }
-        // javac doesn't support short and byte literals directly, so we need to cast them to int
-        if (tag == TypeTag.SHORT || tag == TypeTag.BYTE) {
-            var cast = treeMaker.TypeCast(treeMaker.TypeIdent(tag), treeMaker.Literal(TypeTag.INT, value));
-            cast.type = TypeUtils.getTypeByName(value.getClass().getCanonicalName());
-            return cast;
-        }
-        var literal = treeMaker.Literal(tag, value);
-        if (tag == TypeTag.BOOLEAN) {
-            literal.type = TypeUtils.getTypeByName("java.lang.Boolean");
-        } else {
-            literal.type = TypeUtils.getTypeByName(value.getClass().getCanonicalName());
-        }
-        return literal;
-    }
+
 }
