@@ -11,6 +11,7 @@ import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Names;
 import org.projectparams.annotationprocessing.astcommons.ExpressionMaker;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
+import org.projectparams.annotationprocessing.astcommons.parsing.MethodInvocationExpression;
 import org.projectparams.annotationprocessing.processors.managers.DefaultProcessorsManager;
 import org.projectparams.annotationprocessing.processors.managers.ProcessorsManager;
 import org.projectparams.annotationprocessing.utils.ElementUtils;
@@ -61,6 +62,7 @@ public class MainProcessor extends AbstractProcessor {
             ExpressionMaker.init(treeMaker,
                     Names.instance(javacProcessingEnv.getContext()),
                     javacProcessingEnv.getMessager());
+            MethodInvocationExpression.messager = processingEnv.getMessager();
         } catch (Throwable t) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
                     t.getMessage() + "\n" + Arrays.toString(t.getStackTrace()).replaceAll(",", "\n"));

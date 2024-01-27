@@ -2,6 +2,7 @@ package org.projectparams.annotationprocessing.astcommons.context;
 
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.ImportTree;
+import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.utils.ElementUtils;
@@ -12,6 +13,8 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ContextUtils {
@@ -121,5 +124,16 @@ public class ContextUtils {
                     }
                 })
                 .toList();
+    }
+
+    public static Set<ClassContext.Method> getMethodsInClass(TreePath classPath) {
+        var classSymbol = (Symbol.ClassSymbol) ((JCTree.JCClassDecl)classPath.getLeaf()).sym;
+        return classSymbol.getEnclosedElements().stream()
+                .filter(el -> el.getKind() == ElementKind.METHOD)
+                .map(el -> new ClassContext.Method(
+                        el.getSimpleName().toString(),
+                        classSymbol.getQualifiedName().toString(),
+                        el.getModifiers().contains(Modifier.STATIC)))
+                .collect(Collectors.toUnmodifiableSet());
     }
 }

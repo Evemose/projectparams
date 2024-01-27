@@ -58,8 +58,18 @@ public class ExpressionMaker {
         return treeMaker.Select(owner, names.fromString(name));
     }
 
-    public static JCTree.JCIdent makeIdent(String name) {
-        return treeMaker.Ident(names.fromString(name));
+    // may be JCIdent or JCFieldAccess
+    public static JCTree.JCExpression makeIdent(String name) {
+        if (!name.contains(".")) {
+            return treeMaker.Ident(names.fromString(name));
+        } else {
+            var expressionParts = name.split("\\.");
+            var owner = makeIdent(expressionParts[0]);
+            for (int i = 1; i < expressionParts.length - 1; i++) {
+                owner = makeFieldAccess(owner, expressionParts[i]);
+            }
+            return makeFieldAccess(owner, expressionParts[expressionParts.length - 1]);
+        }
     }
 
     public static JCTree.JCMethodInvocation makeMethodInvocation(

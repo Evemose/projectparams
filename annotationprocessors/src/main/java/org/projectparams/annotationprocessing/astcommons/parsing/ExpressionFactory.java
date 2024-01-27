@@ -65,14 +65,14 @@ public class ExpressionFactory {
         if (expression == null) {
             return new LiteralExpression<>(null, String.class);
         }
-        // infer type tag from expression if it is not provided explicitly
-        if (typeTag == null) {
-            typeTag = TypeUtils.geLiteralTypeTag(expression);
-        }
         expression = expression.strip();
         var type = Type.of(expression);
         switch (type) {
             case LITERAL -> {
+                // infer type tag of literal if it is not provided explicitly
+                if (typeTag == null) {
+                    typeTag = TypeUtils.geLiteralTypeTag(expression);
+                }
                 var value = TypeUtils.literalValueFromStr(typeTag, expression);
                 return new LiteralExpression(value, value.getClass());
             }
@@ -80,7 +80,12 @@ public class ExpressionFactory {
                 var argsStartIndex = getArgsStartIndex(expression);
                 var args = getArgStrings(expression);
                 var name = expression.substring(expression.lastIndexOf('.') + 1, argsStartIndex);
-                var owner = from(expression.substring(0, expression.lastIndexOf('.')), null, enclosingInvocablePath);
+                var lastDotIndex = expression.lastIndexOf('.', argsStartIndex - 1);
+                Expression owner = null;
+                if (lastDotIndex != -1) {
+                    var ownerExpression = expression.substring(0, lastDotIndex);
+                    owner = from(ownerExpression, null, enclosingInvocablePath);
+                }
                 return new MethodInvocationExpression(name,
                         owner,
                         args.stream().map(arg -> from(arg, null, enclosingInvocablePath)).toList(),

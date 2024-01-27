@@ -26,11 +26,11 @@ public class Main {
         System.out.println(sucus.bibus() + " " + sucus.bibus());
     }
 
-    private static float bibus(@DefaultValue float someVar) {
+    private static float bibus(@DefaultValue Float someVar) {
         return 3.4f;
     }
 
-    public static void rovarus(@DefaultValue("Main.bibus()") Float someVar) {
+    public static void rovarus(@DefaultValue("bibus()") Float someVar) {
         System.out.println(" " + someVar);
     }
 }
