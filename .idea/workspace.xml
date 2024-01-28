@@ -4,15 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="implemented implicit this and static methods calls">
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/NewClassExpression.java" afterDir="false" />
+    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="Implemented NewClass as method default">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/MainProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/MainProcessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/context/ContextUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/context/ContextUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ExpressionFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ExpressionFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/MethodInvocationExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/MethodInvocationExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Sucus.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Sucus.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -395,7 +388,7 @@
       <workItem from="1706345540037" duration="5407000" />
       <workItem from="1706362584761" duration="2714000" />
       <workItem from="1706396756279" duration="1954000" />
-      <workItem from="1706408537402" duration="1798000" />
+      <workItem from="1706408537402" duration="3205000" />
     </task>
     <task id="LOCAL-00001" summary="split project into modules">
       <option name="closed" value="true" />
@@ -741,7 +734,15 @@
       <option name="project" value="LOCAL" />
       <updated>1706365068450</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="Implemented NewClass as method default">
+      <option name="closed" value="true" />
+      <created>1706411554372</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1706411554372</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -778,7 +779,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="refactored method modifications to work with wrappers instead of with trees directly, implemented method wrapper, removed MethodInvocationArgumentTypeFixer.java due to discovered redundancy, but somewhy methods now match even when shouldn`t, its intermediate commit before fix" />
     <MESSAGE value="fixed issue with type inference by moving cleanup invocation to the end of methods modification process. Still have to discover why some methods matched earlier then should" />
     <MESSAGE value="fixed getReturnType()" />
     <MESSAGE value="optimized method modification a bit by removing redundant visitors instantiation" />
@@ -803,7 +803,8 @@
     <MESSAGE value="refactored parsed expression class into class hierarchy, began to implement method invocations as defaults" />
     <MESSAGE value="implemented method invokes as params, need to add default value support in it though" />
     <MESSAGE value="implemented implicit this and static methods calls" />
-    <option name="LAST_COMMIT_MESSAGE" value="implemented implicit this and static methods calls" />
+    <MESSAGE value="Implemented NewClass as method default" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented NewClass as method default" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

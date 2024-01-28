@@ -29,7 +29,11 @@ public class Main {
         return 3.4f;
     }
 
-    public static void rovarus(@DefaultValue("new Dodus()") Dodus abobus) {
+    public static void rovarus(@DefaultValue("Akakus.A") Akakus akakus) {
         System.out.println(" " + someVar);
+    }
+
+    public enum Akakus {
+        A, B, C
     }
 }

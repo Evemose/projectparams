@@ -17,7 +17,9 @@ public class PrepareNewClassTreesVisitor extends AbstractVisitor<Void, Void> {
     public Void visitNewClass(NewClassTree newClassTree, Void aVoid) {
         var asJC = (JCTree.JCNewClass) newClassTree;
         var enclosingExpression = asJC.getEnclosingExpression();
-        if (enclosingExpression == null || enclosingExpression.type != null) {
+        if ((enclosingExpression == null || enclosingExpression.type != null)
+        && (asJC.getIdentifier().type != null
+                && !asJC.getIdentifier().type.tsym.isEnum())) {
             TypeUtils.attributeExpression(asJC,
                     TypeUtils.getEnclosingClassPath(getCurrentPath()).getLeaf());
             messager.printMessage(javax.tools.Diagnostic.Kind.NOTE, "Enclosing expression is null for "
