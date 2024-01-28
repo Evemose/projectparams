@@ -97,7 +97,21 @@ public class ExpressionFactory {
                 var name = expression.substring(lastDotIndex + 1);
                 return new FieldAccessExpression(name, from(owner, null, enclosingInvocablePath));
             }
-            case NEW_CLASS -> throw new UnsupportedOperationException();
+            case NEW_CLASS -> {
+                var argsStartIndex = getArgsStartIndex(expression);
+                var args = getArgStrings(expression);
+                var name = expression.substring(expression.lastIndexOf("new ") + 4, argsStartIndex);
+                var lastDotIndex = expression.lastIndexOf('.', argsStartIndex - 1);
+                Expression owner = null;
+                if (lastDotIndex != -1) {
+                    var ownerExpression = expression.substring(0, lastDotIndex);
+                    owner = from(ownerExpression, null, enclosingInvocablePath);
+                }
+                return new NewClassExpression(name,
+                        owner,
+                        args.stream().map(arg -> from(arg, null, enclosingInvocablePath)).toList(),
+                        enclosingInvocablePath);
+            }
             case IDENTIFIER -> {
                 return new IdentifierExpression(expression);
             }

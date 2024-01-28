@@ -2,12 +2,11 @@ package org.projectparams.test;
 
 import org.projectparams.annotations.DefaultValue;
 
-import static org.projectparams.test.Abobus.*;
+import static org.projectparams.test.Abobus.Dodus;
 
 @SuppressWarnings("all")
 public class Main {
     private static final Abobus abobus = new Abobus();
-
     public static Float someVar = 3.4f;
 
     public static void main(String[] args) {
@@ -15,7 +14,7 @@ public class Main {
         var sucus = new Sucus();
         var classBibus = abobus.new Bibus().new UltimaPopus(new Sucus(), 3.4f).ororos();
         var bibus4 = abobus.bibus();
-        var bibus = abobus().bibus();
+        var bibus = Abobus.abobus().bibus();
         var bibus2 = new Dodus().bibus();
         var doubleBibus = Abobus.abobus(abobus.doubleBibus(new Main()), Abobus.akakus()).doubleBibus(new Main());
         var abobusSucus = new Abobus.Sucus().bibus();
@@ -30,7 +29,7 @@ public class Main {
         return 3.4f;
     }
 
-    public static void rovarus(@DefaultValue("bibus()") Float someVar) {
+    public static void rovarus(@DefaultValue("new Dodus()") Dodus abobus) {
         System.out.println(" " + someVar);
     }
 }

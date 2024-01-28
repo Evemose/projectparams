@@ -19,4 +19,8 @@ public class Sucus extends Abobus {
         cocos();
         totos();
     }
+
+    public static float momos(@DefaultValue("657") Float abobus) {
+        return 3.4f;
+    }
 }

@@ -6,6 +6,7 @@ import org.projectparams.annotationprocessing.astcommons.ExpressionMaker;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.context.CUContext;
 import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
+import org.projectparams.annotationprocessing.exceptions.UnsupportedSignatureException;
 
 
 import javax.annotation.processing.Messager;
@@ -36,12 +37,8 @@ public class MethodInvocationExpression extends InvocableExpression {
         if (owner == null) {
             var classContext = ClassContext.from(TypeUtils.getEnclosingClassPath(enclosingInvocationPath));
             var matchingMethod = classContext.getMatchingMethod(name);
-            messager.printMessage(javax.tools.Diagnostic.Kind.NOTE,
-                    "Matching method: " + matchingMethod);
             if (matchingMethod.isEmpty()) {
-                messager.printMessage(javax.tools.Diagnostic.Kind.ERROR,
-                        "Could not find matching method for " + name);
-                return null;
+                throw new IllegalArgumentException("No matching method found for " + name);
             }
             var method = matchingMethod.get();
             if (method.isStatic()) {

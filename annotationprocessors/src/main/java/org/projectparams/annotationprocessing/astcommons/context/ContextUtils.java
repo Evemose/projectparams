@@ -7,6 +7,7 @@ import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.utils.ElementUtils;
 
+import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ContextUtils {
+    public static Messager messager;
     public static List<String> getClassnamesInPackage(String packageName) {
         return ElementUtils.getPackageByName(packageName).getEnclosedElements().stream()
                 .filter(el -> el.getKind() == ElementKind.CLASS)
@@ -77,6 +79,9 @@ public class ContextUtils {
             if (fieldAccess.getIdentifier().contentEquals("*")) {
                 return ContextUtils.getStaticClassMembersNames(fieldAccess.getExpression().toString()).stream();
             } else {
+                if (fieldAccess.sym == null) {
+                    fieldAccess.sym = fieldAccess.selected.type.tsym;
+                }
                 return Stream.of(switch (fieldAccess.sym) {
                     case Symbol.ClassSymbol classSymbol -> classSymbol.getQualifiedName().toString();
                     case Symbol.MethodSymbol methodSymbol -> methodSymbol.owner.getQualifiedName() + "."
