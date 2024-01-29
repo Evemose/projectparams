@@ -17,7 +17,6 @@ import org.projectparams.annotationprocessing.astcommons.context.CUContext;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.Elements;
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -87,6 +86,21 @@ public class TypeUtils {
         };
     }
 
+    public static Type getBoxedType(Type type) {
+        return switch (type.getTag()) {
+            case INT -> getTypeByName("java.lang.Integer");
+            case LONG -> getTypeByName("java.lang.Long");
+            case FLOAT -> getTypeByName("java.lang.Float");
+            case DOUBLE -> getTypeByName("java.lang.Double");
+            case BOOLEAN -> getTypeByName("java.lang.Boolean");
+            case VOID -> getTypeByName("java.lang.Void");
+            case BYTE -> getTypeByName("java.lang.Byte");
+            case SHORT -> getTypeByName("java.lang.Short");
+            case CHAR -> getTypeByName("java.lang.Character");
+            default -> type;
+        };
+    }
+
     public static TypeKind getTypeKind(TreePath path) {
         var type = trees.getTypeMirror(path);
         if (type == null) {
@@ -133,17 +147,17 @@ public class TypeUtils {
         var matchingImport = cuContext.getMatchingImportedStaticMethod(tree.getName().toString());
         return matchingImport.map(name -> name.substring(0, name.lastIndexOf('.')))
                 .orElseGet(() -> {
-                    var classDecl = (JCTree.JCClassDecl) getEnclosingClassPath(path).getLeaf();
+                    var classDecl = (JCTree.JCClassDecl) PathUtils.getEnclosingClassPath(path).getLeaf();
                     var classElement = classDecl.sym;
                     return classElement.getQualifiedName().toString();
                 });
     }
 
     @SuppressWarnings("unused")
-    public static void attributeExpression(JCTree expression, TreePath methodTree) {
+    public static void attributeExpression(JCTree expression, TreePath methodTreePath) {
         var env = memberEnter.getMethodEnv(
-                (JCTree.JCMethodDecl) methodTree.getLeaf(),
-                enter.getClassEnv(((JCTree.JCClassDecl) getEnclosingClassPath(getEnclosingMethodPath(methodTree)).getLeaf()).sym)
+                (JCTree.JCMethodDecl) methodTreePath.getLeaf(),
+                enter.getClassEnv(((JCTree.JCClassDecl) PathUtils.getEnclosingClassPath(methodTreePath).getLeaf()).sym)
         );
         attr.attribExpr(expression, env);
     }
@@ -153,26 +167,6 @@ public class TypeUtils {
                 ((JCTree.JCClassDecl) classTree).sym
         );
         attr.attribExpr(expression, env);
-    }
-
-    public static TreePath getEnclosingClassPath(TreePath path) {
-        while (path != null && !(path.getLeaf() instanceof ClassTree)) {
-            path = path.getParentPath();
-        }
-        if (path == null) {
-            throw new IllegalArgumentException("Path is not enclosed in class");
-        }
-        return path;
-    }
-
-    public static TreePath getEnclosingMethodPath(TreePath path) {
-        while (path != null && !(path.getLeaf() instanceof MethodTree)) {
-            path = path.getParentPath();
-        }
-        if (path == null) {
-            throw new IllegalArgumentException("Path is not enclosed in method");
-        }
-        return path;
     }
 
     private static String getOwnerNameFromMemberSelect(MemberSelectTree memberSelectTree, TreePath path) {
@@ -226,8 +220,8 @@ public class TypeUtils {
         return ((JCTree.JCExpression) tree).type;
     }
 
-    public static boolean isAssignable(Type fromType, Type toType) {
-        return types.isAssignable(fromType, toType);
+    public static boolean isAssignable(Type toType, Type fromType) {
+        return types.isAssignable(toType, fromType);
     }
 
     public static TypeTag geLiteralTypeTag(String literalAsString) {
@@ -276,7 +270,7 @@ public class TypeUtils {
             case CHAR -> literalAsString.charAt(1);
             case CLASS -> {
                 if (literalAsString.matches("\".*\"")) {
-                    yield  literalAsString.substring(1, literalAsString.length() - 1);
+                    yield literalAsString.substring(1, literalAsString.length() - 1);
                 }
                 throw new IllegalArgumentException("Unsupported literal: " + literalAsString);
             }
@@ -284,6 +278,22 @@ public class TypeUtils {
             case SHORT -> Short.parseShort(literalAsString);
             case BOT -> null;
             default -> throw new IllegalArgumentException("Unsupported literal: " + literalAsString);
+        };
+    }
+
+    public static TypeTag getUnboxedTypeTag(Type type) {
+        return switch (type.toString()) {
+            case "java.lang.Integer", "int" -> TypeTag.INT;
+            case "java.lang.Long", "long" -> TypeTag.LONG;
+            case "java.lang.Float", "float" -> TypeTag.FLOAT;
+            case "java.lang.Double", "double" -> TypeTag.DOUBLE;
+            case "java.lang.Boolean", "boolean" -> TypeTag.BOOLEAN;
+            case "java.lang.Void", "void" -> TypeTag.VOID;
+            case "java.lang.Byte", "byte" -> TypeTag.BYTE;
+            case "java.lang.Short", "short" -> TypeTag.SHORT;
+            case "java.lang.Character", "char" -> TypeTag.CHAR;
+            case null -> TypeTag.BOT;
+            default -> TypeTag.CLASS;
         };
     }
 }

@@ -17,6 +17,10 @@ public class PackageTree {
         this.trees = trees;
     }
 
+    public static PackageTree ofRoot(Trees trees) {
+        return new PackageTree(ElementUtils.getRootPackage(), trees);
+    }
+
     public <R, P> void accept(TreePathScanner<R, P> scanner, P arg) {
         classes.forEach(clazz -> scanner.scan(trees.getPath(clazz), arg));
     }

@@ -9,7 +9,7 @@ public class IdentifierExpression extends NamedExpression {
     }
 
     @Override
-    public JCTree.JCExpression toExpression() {
+    public JCTree.JCExpression toJcExpression() {
         return ExpressionMaker.makeIdent(name);
     }
 }

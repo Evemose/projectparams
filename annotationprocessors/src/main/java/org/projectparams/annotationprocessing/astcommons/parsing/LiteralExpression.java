@@ -11,6 +11,8 @@ public class LiteralExpression<T> implements Expression {
     private final T value;
     private final Type type;
 
+    public static final LiteralExpression<?> NULL = new LiteralExpression<>(null, String.class);
+
     public LiteralExpression(T value, Class<T> clazz) {
         this.value = value;
         if (!isLiteralType(clazz)) {
@@ -25,7 +27,7 @@ public class LiteralExpression<T> implements Expression {
     }
 
     @Override
-    public JCTree.JCExpression toExpression() {
+    public JCTree.JCExpression toJcExpression() {
         return ExpressionMaker.makeLiteral(type.getTag(), value);
     }
 }

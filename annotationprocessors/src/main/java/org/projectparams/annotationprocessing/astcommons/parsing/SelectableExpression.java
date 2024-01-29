@@ -7,4 +7,9 @@ public abstract class SelectableExpression extends NamedExpression {
         super(name);
         this.owner = owner;
     }
+
+    @Override
+    public Expression getRootOwner() {
+        return owner.getRootOwner();
+    }
 }

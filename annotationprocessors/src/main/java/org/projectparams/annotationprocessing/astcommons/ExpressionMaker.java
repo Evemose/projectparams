@@ -1,5 +1,6 @@
 package org.projectparams.annotationprocessing.astcommons;
 
+import com.sun.source.tree.StatementTree;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -94,4 +95,11 @@ public class ExpressionMaker {
         );
     }
 
+    public static JCTree.JCStatement makeAssignment(JCTree.JCExpression variable, JCTree.JCExpression expression) {
+        return treeMaker.Exec(treeMaker.Assign(variable, expression));
+    }
+
+    public static JCTree.JCBlock makeBlock(List<StatementTree> statements) {
+        return treeMaker.Block(0, statements.stream().map(statement -> (JCTree.JCStatement) statement).collect(List.collector()));
+    }
 }

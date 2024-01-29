@@ -5,9 +5,9 @@ import com.sun.source.tree.ImportTree;
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
+import org.projectparams.annotationprocessing.astcommons.PathUtils;
 import org.projectparams.annotationprocessing.utils.ElementUtils;
 
-import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ContextUtils {
-    public static Messager messager;
     public static List<String> getClassnamesInPackage(String packageName) {
         return ElementUtils.getPackageByName(packageName).getEnclosedElements().stream()
                 .filter(el -> el.getKind() == ElementKind.CLASS)
@@ -132,13 +131,34 @@ public class ContextUtils {
     }
 
     public static Set<ClassContext.Method> getMethodsInClass(TreePath classPath) {
-        var classSymbol = (Symbol.ClassSymbol) ((JCTree.JCClassDecl)classPath.getLeaf()).sym;
-        return classSymbol.getEnclosedElements().stream()
+        var decl = (JCTree.JCClassDecl) classPath.getLeaf();
+        var classSymbol = decl.sym;
+        var methods =  classSymbol.getEnclosedElements().stream()
                 .filter(el -> el.getKind() == ElementKind.METHOD)
                 .map(el -> new ClassContext.Method(
                         el.getSimpleName().toString(),
                         classSymbol.getQualifiedName().toString(),
                         el.getModifiers().contains(Modifier.STATIC)))
-                .collect(Collectors.toUnmodifiableSet());
+                .collect(Collectors.toSet());
+        if (decl.extending != null && !decl.mods.getFlags().contains(Modifier.STATIC)) {
+            methods.addAll(getMethodsInClass(PathUtils.getEnclosingClassPath(classPath)));
+        }
+        return methods;
+    }
+
+    public static Set<ClassContext.Field> getFieldsInClass(TreePath classPath) {
+        var decl = (JCTree.JCClassDecl) classPath.getLeaf();
+        var classSymbol = decl.sym;
+        var fields =  classSymbol.getEnclosedElements().stream()
+                .filter(el -> el.getKind() == ElementKind.FIELD)
+                .map(el -> new ClassContext.Field(
+                        el.getSimpleName().toString(),
+                        classSymbol.getQualifiedName().toString(),
+                        el.getModifiers().contains(Modifier.STATIC)))
+                .collect(Collectors.toSet());
+        if (decl.extending != null && !decl.mods.getFlags().contains(Modifier.STATIC)) {
+            fields.addAll(getFieldsInClass(PathUtils.getEnclosingClassPath(classPath)));
+        }
+        return fields;
     }
 }

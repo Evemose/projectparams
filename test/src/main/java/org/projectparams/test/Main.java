@@ -19,17 +19,18 @@ public class Main {
         var doubleBibus = Abobus.abobus(abobus.doubleBibus(new Main()), Abobus.akakus()).doubleBibus(new Main());
         var abobusSucus = new Abobus.Sucus().bibus();
         rovarus();
+        Main.bibus();
         System.out.println(" " + bibus);
         System.out.println(" " + doubleBibus);
         System.out.println(" " + sucus.bibus());
         System.out.println(sucus.bibus() + " " + sucus.bibus());
     }
 
-    private static float bibus(@DefaultValue Float someVar) {
+    private static float bibus(@DefaultValue("0") Float someVar) {
         return 3.4f;
     }
 
-    public static void rovarus(@DefaultValue("Akakus.A") Akakus akakus) {
+    public static void rovarus(@DefaultValue("abobus.new Bibus().new UltimaPopus(new Sucus(), 3.4f).ororos()") Abobus someVar) {
         System.out.println(" " + someVar);
     }
 

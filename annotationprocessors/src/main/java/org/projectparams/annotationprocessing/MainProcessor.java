@@ -10,10 +10,12 @@ import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Names;
 import org.projectparams.annotationprocessing.astcommons.ExpressionMaker;
+import org.projectparams.annotationprocessing.astcommons.PathUtils;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.context.CUContext;
 import org.projectparams.annotationprocessing.astcommons.context.ContextUtils;
 import org.projectparams.annotationprocessing.astcommons.parsing.MethodInvocationExpression;
+import org.projectparams.annotationprocessing.processors.defaultvalue.DefaultValueInjector;
 import org.projectparams.annotationprocessing.processors.managers.DefaultProcessorsManager;
 import org.projectparams.annotationprocessing.processors.managers.ProcessorsManager;
 import org.projectparams.annotationprocessing.utils.ElementUtils;
@@ -60,12 +62,11 @@ public class MainProcessor extends AbstractProcessor {
                     Attr.instance(javacProcessingEnv.getContext()),
                     Enter.instance(javacProcessingEnv.getContext()),
                     MemberEnter.instance(javacProcessingEnv.getContext()));
-            ElementUtils.init(processingEnv.getElementUtils());
             ExpressionMaker.init(treeMaker,
                     Names.instance(javacProcessingEnv.getContext()),
                     javacProcessingEnv.getMessager());
-            MethodInvocationExpression.messager = processingEnv.getMessager();
-            ContextUtils.messager = processingEnv.getMessager();
+            DefaultValueInjector.messager = processingEnv.getMessager();
+            PathUtils.init(trees);
         } catch (Throwable t) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
                     t.getMessage() + "\n" + Arrays.toString(t.getStackTrace()).replaceAll(",", "\n"));
@@ -78,6 +79,7 @@ public class MainProcessor extends AbstractProcessor {
             if (roundEnv.processingOver()) return false;
             if (rootPackage == null) {
                 rootPackage = ProcessingUtils.getRootPackage(roundEnv);
+                ElementUtils.init(processingEnv.getElementUtils(), (PackageElement) rootPackage);
                 this.processorsManager =
                         new DefaultProcessorsManager(trees, treeMaker,
                                 (PackageElement) rootPackage, processingEnv.getMessager());

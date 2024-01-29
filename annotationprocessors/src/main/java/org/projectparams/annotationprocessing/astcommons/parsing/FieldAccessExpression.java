@@ -9,7 +9,7 @@ public class FieldAccessExpression extends SelectableExpression {
     }
 
     @Override
-    public JCTree.JCExpression toExpression() {
-        return ExpressionMaker.makeFieldAccess(owner.toExpression(), name);
+    public JCTree.JCExpression toJcExpression() {
+        return ExpressionMaker.makeFieldAccess(owner.toJcExpression(), name);
     }
 }

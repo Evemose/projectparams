@@ -7,9 +7,16 @@ import java.util.Set;
 
 public record ClassContext(
         CUContext cuContext,
-        Set<Method> methods
+        Set<Method> methods,
+        Set<Field> fields
 ) {
     public record Method(
+            String name,
+            String className,
+            boolean isStatic
+    ) {}
+
+    public record Field(
             String name,
             String className,
             boolean isStatic
@@ -18,7 +25,8 @@ public record ClassContext(
     public static ClassContext from(TreePath classPath) {
         var cuContext = CUContext.from(classPath.getCompilationUnit());
         var methods = ContextUtils.getMethodsInClass(classPath);
-        return new ClassContext(cuContext, methods);
+        var fields = ContextUtils.getFieldsInClass(classPath);
+        return new ClassContext(cuContext, methods, fields);
     }
 
     public Optional<Method> getMatchingMethod(String methodName) {
@@ -33,5 +41,11 @@ public record ClassContext(
                     });
         }
         return matchingMethod;
+    }
+
+    public Optional<Field> getMatchingField(String fieldName) {
+        return fields.stream()
+                .filter(field -> field.name.equals(fieldName))
+                .findAny();
     }
 }

@@ -14,12 +14,10 @@ import java.lang.annotation.Annotation;
  * @param <T> Annotation that this processor processes.
  */
 public abstract class GlobalAnnotationProcessor<T extends Annotation> extends AbstractAnnotationProcessor<T> {
-    protected final PackageElement rootPackageElement;
     protected final PackageTree packageTree;
 
     public GlobalAnnotationProcessor(Trees trees, TreeMaker treeMaker, PackageElement rootPackageElement, Messager messager) {
         super(trees, treeMaker, messager);
-        this.rootPackageElement = rootPackageElement;
-        this.packageTree = new PackageTree(rootPackageElement, trees);
+        this.packageTree = PackageTree.ofRoot(trees);
     }
 }

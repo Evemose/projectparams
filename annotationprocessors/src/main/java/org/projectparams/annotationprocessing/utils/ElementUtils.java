@@ -14,10 +14,12 @@ import java.util.stream.Stream;
 
 public class ElementUtils {
     private static Elements elements;
+    private static PackageElement rootPackage;
 
     // initialized in org.projectparams.annotationprocessing.MainProcessor
-    public static void init(Elements elements) {
+    public static void init(Elements elements, PackageElement rootPackage) {
         ElementUtils.elements = elements;
+        ElementUtils.rootPackage = rootPackage;
     }
 
     public static PackageElement getPackageByName(String packageName) {
@@ -70,5 +72,9 @@ public class ElementUtils {
                 .flatMap(e -> getAllClassesInClass((TypeElement) e).stream())
                 .toList());
         return result;
+    }
+
+    public static PackageElement getRootPackage() {
+        return rootPackage;
     }
 }

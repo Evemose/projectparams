@@ -59,11 +59,11 @@ public class ExpressionFactory {
     }
 
     @SuppressWarnings("all")
-    public static Expression from(String expression,
-                                  @Nullable TypeTag typeTag,
-                                  TreePath enclosingInvocablePath) {
+    public static Expression createExpression(String expression,
+                                              @Nullable TypeTag typeTag,
+                                              TreePath enclosingInvocablePath) {
         if (expression == null) {
-            return new LiteralExpression<>(null, String.class);
+            return LiteralExpression.NULL;
         }
         expression = expression.strip();
         var type = Type.of(expression);
@@ -84,32 +84,32 @@ public class ExpressionFactory {
                 Expression owner = null;
                 if (lastDotIndex != -1) {
                     var ownerExpression = expression.substring(0, lastDotIndex);
-                    owner = from(ownerExpression, null, enclosingInvocablePath);
+                    owner = createExpression(ownerExpression, null, enclosingInvocablePath);
                 }
                 return new MethodInvocationExpression(name,
                         owner,
-                        args.stream().map(arg -> from(arg, null, enclosingInvocablePath)).toList(),
+                        args.stream().map(arg -> createExpression(arg, null, enclosingInvocablePath)).toList(),
                         enclosingInvocablePath);
             }
             case FIELD_ACCESS -> {
                 var lastDotIndex = expression.lastIndexOf('.');
                 var owner = expression.substring(0, lastDotIndex);
                 var name = expression.substring(lastDotIndex + 1);
-                return new FieldAccessExpression(name, from(owner, null, enclosingInvocablePath));
+                return new FieldAccessExpression(name, createExpression(owner, null, enclosingInvocablePath));
             }
             case NEW_CLASS -> {
                 var argsStartIndex = getArgsStartIndex(expression);
                 var args = getArgStrings(expression);
-                var name = expression.substring(expression.lastIndexOf("new ") + 4, argsStartIndex);
+                var name = expression.substring(expression.lastIndexOf("new ", argsStartIndex) + 4, argsStartIndex);
                 var lastDotIndex = expression.lastIndexOf('.', argsStartIndex - 1);
                 Expression owner = null;
                 if (lastDotIndex != -1) {
                     var ownerExpression = expression.substring(0, lastDotIndex);
-                    owner = from(ownerExpression, null, enclosingInvocablePath);
+                    owner = createExpression(ownerExpression, null, enclosingInvocablePath);
                 }
                 return new NewClassExpression(name,
                         owner,
-                        args.stream().map(arg -> from(arg, null, enclosingInvocablePath)).toList(),
+                        args.stream().map(arg -> createExpression(arg, null, enclosingInvocablePath)).toList(),
                         enclosingInvocablePath);
             }
             case IDENTIFIER -> {

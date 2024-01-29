@@ -8,6 +8,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.PackageElement;
 import javax.tools.Diagnostic;
 import java.util.Arrays;
 import java.util.List;
@@ -113,7 +114,7 @@ public class ProcessingUtils {
         return Optional.empty();
     }
 
-    public static Element getRootPackage(RoundEnvironment roundEnv) {
+    public static PackageElement getRootPackage(RoundEnvironment roundEnv) {
         var rootElementsOpt = roundEnv.getRootElements().stream().findAny();
         if (rootElementsOpt.isEmpty()) {
             throw new RuntimeException("Could not find root package");
@@ -122,7 +123,7 @@ public class ProcessingUtils {
         while (!rootElement.getEnclosingElement().getKind().equals(ElementKind.MODULE)) {
             rootElement = rootElement.getEnclosingElement();
         }
-        return rootElement;
+        return (PackageElement) rootElement;
     }
 
 }

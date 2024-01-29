@@ -46,7 +46,7 @@ public class MethodCallModifierVisitor extends AbstractVisitor<Void, InvocableIn
     }
 
     private void visitInvocable(InvocableTree invocation, InvocableInfo invocableInfo) {
-        messager.printMessage(Diagnostic.Kind.NOTE, "Visiting invocable: " + invocation);
+        //messager.printMessage(Diagnostic.Kind.NOTE, "Visiting invocation: " + invocation);
 
         if (!allFixedMethods.contains(invocation) &&
                 invocableInfo.matches(invocation)) {
@@ -59,7 +59,7 @@ public class MethodCallModifierVisitor extends AbstractVisitor<Void, InvocableIn
             }
             fixMethod(invocableInfo, invocation, args);
             fixedMethodsInIteration.add(invocation);
-            messager.printMessage(Diagnostic.Kind.NOTE, "Fixed method invocation: " + invocation);
+            messager.printMessage(Diagnostic.Kind.NOTE, "Fixed invocation: " + invocation);
         }
     }
 

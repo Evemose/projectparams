@@ -18,6 +18,10 @@ public class Abobus {
         return abobus2;
     }
 
+    public Abobus popus(@DefaultValue("3.4") float abobus) {
+        return new Abobus();
+    }
+
     protected boolean totos(@DefaultValue("true") boolean abobus) {
         return true;
     }
@@ -36,7 +40,7 @@ public class Abobus {
 
     public class Bibus extends Abobus {
 
-        public Bibus(@DefaultValue("someVar.MAX_VALUE") float abobus) {
+        public Bibus(@DefaultValue("someVar.MAX_VALUE") Float abobus) {
             super();
         }
         public Bibus ultima(@DefaultValue("3.4") float abobus,

@@ -17,28 +17,43 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public record InvocableInfo(String name,
-                            Set<String> possibleOwnerQualifiedNames,
-                            String returnTypeQualifiedName,
-                            List<String> parameterTypeQualifiedNames,
-                            Map<Integer, Expression> paramIndexToDefaultValue) {
+public record InvocableInfo(
+        ExecutableElement method,
+        String name,
+        Set<String> possibleOwnerQualifiedNames,
+        String returnTypeQualifiedName,
+        List<Parameter> parameters) {
 
     public static final String NULL = "superSecretDefaultValuePlaceholder";
 
     public static List<InvocableInfo> from(ExecutableElement method) {
-        var mainInvocable = new InvocableInfo(method.getSimpleName().toString(),
+        var mainInvocable = new InvocableInfo(
+                method,
+                method.getSimpleName().toString(),
                 method.getSimpleName().toString().equals("<init>") ?
                         Set.of(((TypeElement) method.getEnclosingElement()).getQualifiedName().toString())
                         : getPossibleOwnerQualifiedNames(method),
                 getReturnTypeQualifiedName(method),
-                method.getParameters().stream().map(parameter ->
-                        parameter.asType().toString()).toList(),
-                getDefaultValuesMap(method));
+                method.getParameters().stream().map(InvocableInfo::toParameter).toList());
         var result = new ArrayList<>(List.of(mainInvocable));
         if (method.getSimpleName().toString().equals("<init>")) {
             addThisAndSuperInvocable(result, method, mainInvocable);
         }
         return result;
+    }
+
+    private static Parameter toParameter(VariableElement parameter) {
+        var defaultValueAnn = parameter.getAnnotation(DefaultValue.class);
+        Expression defaultValue;
+        if (defaultValueAnn == null) {
+            defaultValue = null;
+        } else {
+            defaultValue = defaultValueAnn.value().equals(NULL) ? Expression.NULL
+                    : new Expression((Type) parameter.asType(), defaultValueAnn.value());
+        }
+        return new Parameter(parameter.getSimpleName().toString(),
+                (Type) parameter.asType(),
+                defaultValue);
     }
 
     private static void addThisAndSuperInvocable(ArrayList<InvocableInfo> result, ExecutableElement method, InvocableInfo mainInvocable) {
@@ -54,13 +69,21 @@ public record InvocableInfo(String name,
     }
 
     public InvocableInfo withName(String name) {
-        return new InvocableInfo(name, possibleOwnerQualifiedNames, returnTypeQualifiedName,
-                parameterTypeQualifiedNames, paramIndexToDefaultValue);
+        return new InvocableInfo(
+                method,
+                name,
+                possibleOwnerQualifiedNames,
+                returnTypeQualifiedName,
+                parameters);
     }
 
     public InvocableInfo withPossibleOwnerQualifiedNames(Set<String> possibleOwnerQualifiedNames) {
-        return new InvocableInfo(name, possibleOwnerQualifiedNames, returnTypeQualifiedName,
-                parameterTypeQualifiedNames, paramIndexToDefaultValue);
+        return new InvocableInfo(
+                method,
+                name,
+                possibleOwnerQualifiedNames,
+                returnTypeQualifiedName,
+                parameters);
     }
 
     private static Set<String> getPossibleOwnerQualifiedNames(ExecutableElement method) {
@@ -99,29 +122,11 @@ public record InvocableInfo(String name,
         }
     }
 
-    private static Map<Integer, Expression> getDefaultValuesMap(ExecutableElement method) {
-        return IntStream.range(0, method.getParameters().size())
-                .filter(index -> method.getParameters().get(index).getAnnotation(DefaultValue.class) != null)
-                .boxed()
-                .collect(Collectors.toMap(index -> index,
-                        index -> {
-                            var value = method.getParameters().get(index).getAnnotation(DefaultValue.class).value();
-                            if (value.equals(NULL)) {
-                                return new Expression(Type.noType, null);
-                            } else {
-                                return new Expression(TypeUtils.getTypeByName(
-                                        TypeUtils.getBoxedTypeName(
-                                                method.getParameters().get(index).asType().toString())),
-                                        value);
-                            }
-                        })
-                );
-    }
-
     public record Expression(
             Type type,
             String expression
     ) {
+        public static final Expression NULL = new Expression(Type.noType, null);
     }
 
     public boolean matches(InvocableTree invocation) {
@@ -136,23 +141,23 @@ public record InvocableInfo(String name,
     private boolean doesExistingArgsMatch(List<? extends ExpressionTree> args) {
         var currentArgs = args.stream().map(arg -> {
             if (((JCTree.JCExpression) arg).type == null) {
-                return "null";
+                return Type.noType;
             } else {
-                return TypeUtils.getBoxedTypeName(TypeUtils.getActualType(arg).toString());
+                return TypeUtils.getActualType(arg);
             }
-        }).toArray(String[]::new);
+        }).toArray(Type[]::new);
         return doesExistingArgsMatch(currentArgs);
     }
 
-    private boolean doesExistingArgsMatch(String[] argTypeNames) {
-        return IntStream.range(0, argTypeNames.length).allMatch(i ->
+    private boolean doesExistingArgsMatch(Type... argTypes) {
+        return IntStream.range(0, argTypes.length).allMatch(i ->
                 TypeUtils.isAssignable(
-                        TypeUtils.getTypeByName(TypeUtils.getBoxedTypeName(argTypeNames[i])),
-                        TypeUtils.getTypeByName(TypeUtils.getBoxedTypeName(parameterTypeQualifiedNames.get(i)))));
+                        TypeUtils.getBoxedType(argTypes[i]),
+                        TypeUtils.getBoxedType(parameters.get(i).type)));
     }
 
     public String toString() {
-        return String.join("|", possibleOwnerQualifiedNames) + "." + name + "(" + parameterTypeQualifiedNames.toString()
+        return String.join("|", possibleOwnerQualifiedNames) + "." + name + "(" + parameters.toString()
                 .replaceAll("[\\[\\]]", "") + "): " + returnTypeQualifiedName;
     }
 
@@ -164,11 +169,22 @@ public record InvocableInfo(String name,
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof InvocableInfo invocable) {
-            return Objects.equals(parameterTypeQualifiedNames, invocable.parameterTypeQualifiedNames)
+            return parameters.equals(invocable.parameters)
                     && name.equals(invocable.name) && returnTypeQualifiedName.equals(invocable.returnTypeQualifiedName)
                     && (Objects.equals(possibleOwnerQualifiedNames, invocable.possibleOwnerQualifiedNames));
         } else {
             return false;
+        }
+    }
+
+    public record Parameter(
+            String name,
+            Type type,
+            Expression defaultValue
+    ) {
+        @Override
+        public String toString() {
+            return name + (defaultValue != null ? "=" + defaultValue.expression() : "") + " : " + type;
         }
     }
 }

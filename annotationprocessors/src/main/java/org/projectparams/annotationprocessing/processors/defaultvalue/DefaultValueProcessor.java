@@ -4,6 +4,7 @@ import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.TreeMaker;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
 import org.projectparams.annotationprocessing.astcommons.visitors.CleanupVisitor;
+import org.projectparams.annotationprocessing.astcommons.visitors.PostModificationAttributionVisitor;
 import org.projectparams.annotationprocessing.astcommons.visitors.PrepareNewClassTreesVisitor;
 import org.projectparams.annotationprocessing.processors.GlobalAnnotationProcessor;
 import org.projectparams.annotationprocessing.processors.defaultvalue.argumentsuppliers.DefaultArgumentSupplier;
@@ -41,13 +42,19 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
                         methods.stream().flatMap(method ->
                                 InvocableInfo.from(method).stream()).toArray(InvocableInfo[]::new));
 
+        invocablePool.forEach(methodInfo -> {
+            if (!methodInfo.name().matches("(<init>)|(this)|(super)")) {
+                new DefaultValueInjector(methodInfo).inject();
+            }
+        });
+
         messager.printMessage(Diagnostic.Kind.NOTE, "Invocable pool: " + invocablePool + "\n\n\nStarting");
 
         do {
             allFixedMethods.addAll(fixedMethodsInIteration);
             fixedMethodsInIteration.clear();
             invocablePool.forEach(methodInfo -> {
-                messager.printMessage(Diagnostic.Kind.NOTE, "Method info: " + methodInfo);
+                //messager.printMessage(Diagnostic.Kind.NOTE, "Method info: " + methodInfo);
 
                 // modify
                 var modifier = new MethodCallModifierVisitor(fixedMethodsInIteration,
@@ -62,6 +69,9 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
                 packageTree.accept(cleanupVisitor, null);
             });
         } while (!fixedMethodsInIteration.isEmpty());
+
+        var postModificationAttributionVisitor = new PostModificationAttributionVisitor(treeMaker, trees, messager);
+        packageTree.accept(postModificationAttributionVisitor, null);
     }
 
     @Override

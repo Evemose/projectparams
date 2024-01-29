@@ -4,8 +4,37 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="Implemented NewClass as method default">
+    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="implemented enums as defaults">
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/PathUtils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors/PostModificationAttributionVisitor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueInjector.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/MainProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/MainProcessor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/ExpressionMaker.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/ExpressionMaker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/PackageTree.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/PackageTree.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/TypeUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/TypeUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/context/ClassContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/context/ClassContext.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/context/ContextUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/context/ContextUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/Expression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/Expression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ExpressionFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ExpressionFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/FieldAccessExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/FieldAccessExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/IdentifierExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/IdentifierExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/LiteralExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/LiteralExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/MethodInvocationExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/MethodInvocationExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/NamedExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/NamedExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/NewClassExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/NewClassExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/SelectableExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/SelectableExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors/CleanupVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors/CleanupVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors/PrepareNewClassTreesVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors/PrepareNewClassTreesVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/GlobalAnnotationProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/GlobalAnnotationProcessor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueProcessor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/InvocableInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/InvocableInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/argumentsuppliers/DefaultArgumentSupplier.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/argumentsuppliers/DefaultArgumentSupplier.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/visitors/MethodCallModifierVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/visitors/MethodCallModifierVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/utils/ElementUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/utils/ElementUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/utils/ProcessingUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/utils/ProcessingUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Abobus.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Abobus.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,9 +91,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Kotlin Script" />
-        <option value="AnnotationType" />
         <option value="Record" />
         <option value="Interface" />
+        <option value="AnnotationType" />
         <option value="Class" />
       </list>
     </option>
@@ -164,6 +193,9 @@
       <recent name="C:\projectparams\params\src\main\java\org\projectparams" />
       <recent name="C:\projectparams\params\src\main" />
       <recent name="C:\projectparams\params\src" />
+    </key>
+    <key name="MoveMembersDialog.RECENTS_KEY">
+      <recent name="org.projectparams.annotationprocessing.astcommons.PathUtils" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="org.projectparams.processors.processors" />
@@ -388,7 +420,10 @@
       <workItem from="1706345540037" duration="5407000" />
       <workItem from="1706362584761" duration="2714000" />
       <workItem from="1706396756279" duration="1954000" />
-      <workItem from="1706408537402" duration="3205000" />
+      <workItem from="1706408537402" duration="4704000" />
+      <workItem from="1706441921753" duration="13236000" />
+      <workItem from="1706520255579" duration="1481000" />
+      <workItem from="1706529495994" duration="7560000" />
     </task>
     <task id="LOCAL-00001" summary="split project into modules">
       <option name="closed" value="true" />
@@ -742,7 +777,15 @@
       <option name="project" value="LOCAL" />
       <updated>1706411554372</updated>
     </task>
-    <option name="localTasksCounter" value="45" />
+    <task id="LOCAL-00045" summary="implemented enums as defaults">
+      <option name="closed" value="true" />
+      <created>1706433406202</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1706433406202</updated>
+    </task>
+    <option name="localTasksCounter" value="46" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -779,7 +822,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixed issue with type inference by moving cleanup invocation to the end of methods modification process. Still have to discover why some methods matched earlier then should" />
     <MESSAGE value="fixed getReturnType()" />
     <MESSAGE value="optimized method modification a bit by removing redundant visitors instantiation" />
     <MESSAGE value="fixed order of method modification by enforcing more strict match policy (still need to implement identifier type retrieving)" />
@@ -804,7 +846,18 @@
     <MESSAGE value="implemented method invokes as params, need to add default value support in it though" />
     <MESSAGE value="implemented implicit this and static methods calls" />
     <MESSAGE value="Implemented NewClass as method default" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented NewClass as method default" />
+    <MESSAGE value="implemented enums as defaults" />
+    <option name="LAST_COMMIT_MESSAGE" value="implemented enums as defaults" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.NullPointerException" package="java.lang" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
