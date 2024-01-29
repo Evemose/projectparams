@@ -4,7 +4,6 @@ import com.sun.source.util.TreePath;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.ExpressionMaker;
 import org.projectparams.annotationprocessing.astcommons.PathUtils;
-import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
 
 
@@ -27,7 +26,7 @@ public class MethodInvocationExpression extends InvocableExpression {
 
     private JCTree.JCExpression getOwnerExpression() {
         if (owner == null) {
-            var classContext = ClassContext.from(PathUtils.getEnclosingClassPath(enclosingInvocationPath));
+            var classContext = ClassContext.classMember(PathUtils.getEnclosingClassPath(enclosingInvocationPath));
             var matchingMethod = classContext.getMatchingMethod(name);
             if (matchingMethod.isEmpty()) {
                 throw new IllegalArgumentException("No matching method found for " + name);

@@ -2,6 +2,7 @@ package org.projectparams.annotationprocessing.astcommons.context;
 
 import com.sun.source.util.TreePath;
 
+import javax.lang.model.element.ElementKind;
 import java.util.Optional;
 import java.util.Set;
 
@@ -10,19 +11,32 @@ public record ClassContext(
         Set<Method> methods,
         Set<Field> fields
 ) {
-    public record Method(
+    public interface ClassMember {
+        String name();
+        String className();
+        boolean isStatic();
+    }
+    public record Method (
             String name,
             String className,
             boolean isStatic
-    ) {}
+    ) implements ClassMember {}
 
     public record Field(
             String name,
             String className,
             boolean isStatic
-    ) {}
+    ) implements ClassMember {}
 
-    public static ClassContext from(TreePath classPath) {
+    public static ClassMember classMember(String name, String className, boolean isStatic, ElementKind kind) {
+        return switch (kind) {
+            case METHOD -> new Method(name, className, isStatic);
+            case FIELD -> new Field(name, className, isStatic);
+            default -> throw new IllegalArgumentException("Unexpected value: " + kind);
+        };
+    }
+
+    public static ClassContext classMember(TreePath classPath) {
         var cuContext = CUContext.from(classPath.getCompilationUnit());
         var methods = ContextUtils.getMethodsInClass(classPath);
         var fields = ContextUtils.getFieldsInClass(classPath);

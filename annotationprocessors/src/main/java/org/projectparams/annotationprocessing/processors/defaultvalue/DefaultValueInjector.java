@@ -2,7 +2,6 @@ package org.projectparams.annotationprocessing.processors.defaultvalue;
 
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.StatementTree;
-import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.ExpressionMaker;
 import org.projectparams.annotationprocessing.astcommons.PathUtils;
@@ -14,8 +13,6 @@ import org.projectparams.annotationprocessing.astcommons.parsing.LiteralExpressi
 
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.TypeElement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +41,7 @@ public class DefaultValueInjector {
             }
             var root = expression.getRootOwner();
             if (root instanceof IdentifierExpression ident) {
-                var classContext = ClassContext.from(PathUtils.getEnclosingClassPath(PathUtils.getElementPath(invocable)));
+                var classContext = ClassContext.classMember(PathUtils.getEnclosingClassPath(PathUtils.getElementPath(invocable)));
                 var matchingField = classContext.getMatchingField(ident.name());
                 if (matchingField.isPresent()) {
                     expression = ExpressionFactory.createExpression(
@@ -52,6 +49,14 @@ public class DefaultValueInjector {
                                     : "this.") + defaultValue.expression(),
                             TypeUtils.getUnboxedTypeTag(defaultValue.type()),
                             PathUtils.getElementPath(invocable));
+                } else {
+                    var matchingImportIdent = classContext.cuContext().getMatchingImportedOrStaticClass(ident.name());
+                    if (matchingImportIdent.isPresent()) {
+                        expression = ExpressionFactory.createExpression(
+                                matchingImportIdent.get(),
+                                TypeUtils.getUnboxedTypeTag(defaultValue.type()),
+                                PathUtils.getElementPath(invocable));
+                    }
                 }
             }
             var expressionAsJC = expression.toJcExpression();

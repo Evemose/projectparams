@@ -59,9 +59,15 @@ public class Abobus {
             public UltimaPopus ororos(@DefaultValue("3.4") float abobus) {
                 return this.new UltimaPopus(new Abobus());
             }
+            
+            public char bitoto(@DefaultValue("false") boolean abobus) {
+                return 'a';
+            }
 
         }
     }
+
+    public static final Abobus someVar = new Abobus();
 
     public static class Sucus {
         public Sucus(@DefaultValue("3.4") float abobus) {

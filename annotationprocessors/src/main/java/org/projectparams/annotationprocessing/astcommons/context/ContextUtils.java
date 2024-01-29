@@ -12,9 +12,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -33,24 +31,26 @@ public class ContextUtils {
                 .toList();
     }
 
-    public static List<String> getStaticClassMembersNames(String className) {
+    public static List<String> getStaticClassMembersNames(String className, ElementKind ...excludedKinds) {
+        var excludedKindsSet = Set.of(excludedKinds);
         return getStaticClassMembers(className).stream()
-                .map(el -> {
+                .<String>mapMulti((el, consumer) -> {
                     if (el.getKind() == ElementKind.CLASS) {
-                        return ((TypeElement) el).getQualifiedName().toString();
-                    } else {
-                        return className + '.' + el.getSimpleName().toString();
+                        consumer.accept(((TypeElement) el).getQualifiedName().toString());
+                    } else if (!excludedKindsSet.contains(el.getKind())) {
+                        consumer.accept(className + '.' + el.getSimpleName().toString());
                     }
                 })
                 .toList();
     }
 
-    public static List<String> getImportedClassNames(CompilationUnitTree compilationUnitTree) {
-        var explicitImports = new ArrayList<>(compilationUnitTree.getImports().stream()
+    public static Set<String> getImportedClassNames(CompilationUnitTree compilationUnitTree) {
+        var explicitImports = new HashSet<>(compilationUnitTree.getImports().stream()
                 .flatMap(imp ->
-                        imp.isStatic() ? mapStaticImportToImportedNames(imp) : mapImportToImportedNames(imp))
+                        imp.isStatic() ? mapStaticImportToImportedNames(imp, Symbol.MethodSymbol.class)
+                                : mapImportToImportedNames(imp))
                 .toList());
-        // implicit imports are classes in the same package as the compilation unit
+        // implicit imports are top-level classes in the same package as the compilation unit
         var implicitImports = ElementUtils.getPackageByName(compilationUnitTree.getPackageName().toString())
                 .getEnclosedElements().stream()
                 .filter(el -> el.getKind() == ElementKind.CLASS)
@@ -73,13 +73,25 @@ public class ContextUtils {
         throw new UnsupportedOperationException("Unsupported import type: " + imp.getQualifiedIdentifier().getClass());
     }
 
-    private static Stream<String> mapStaticImportToImportedNames(ImportTree imp) {
+    private static final Map<Class<?>, Set<ElementKind>> symbolTypeToElementKind = Map.of(
+            Symbol.ClassSymbol.class, Set.of(ElementKind.CLASS, ElementKind.ENUM, ElementKind.INTERFACE, ElementKind.ANNOTATION_TYPE),
+            Symbol.MethodSymbol.class, Set.of(ElementKind.METHOD),
+            Symbol.VarSymbol.class, Set.of(ElementKind.FIELD)
+    );
+
+    private static Stream<String> mapStaticImportToImportedNames(ImportTree imp, Class<?> ...excludedSymbolTypes) {
+        var excludedSymbolTypesSet = Set.of(excludedSymbolTypes);
         if (imp.getQualifiedIdentifier() instanceof JCTree.JCFieldAccess fieldAccess) {
             if (fieldAccess.getIdentifier().contentEquals("*")) {
-                return ContextUtils.getStaticClassMembersNames(fieldAccess.getExpression().toString()).stream();
+                return ContextUtils.getStaticClassMembersNames(fieldAccess.getExpression().toString(),
+                        excludedSymbolTypesSet.stream().flatMap(clazz -> symbolTypeToElementKind.get(clazz).stream())
+                                .toArray(ElementKind[]::new)).stream();
             } else {
                 if (fieldAccess.sym == null) {
                     fieldAccess.sym = fieldAccess.selected.type.tsym;
+                }
+                if (excludedSymbolTypesSet.contains(fieldAccess.sym.getClass())) {
+                    return Stream.empty();
                 }
                 return Stream.of(switch (fieldAccess.sym) {
                     case Symbol.ClassSymbol classSymbol -> classSymbol.getQualifiedName().toString();
@@ -95,70 +107,66 @@ public class ContextUtils {
         throw new UnsupportedOperationException("Unsupported static import type: " + imp.getQualifiedIdentifier().getClass());
     }
 
-    public static List<String> getImportedNestedClasses(CompilationUnitTree compilationUnitTree) {
-        return compilationUnitTree.getImports().stream()
-                .filter(ImportTree::isStatic)
-                .flatMap(imp -> {
-                    var importString = imp.getQualifiedIdentifier().toString();
-                    if (importString.endsWith("*")) {
-                        return getStaticClassMembers(importString.substring(0, importString.length() - 2))
-                                .stream()
-                                .filter(el -> el.getKind() == ElementKind.CLASS)
-                                .map(el -> ((TypeElement) el).getQualifiedName().toString());
-                    } else {
-                        return Stream.of(importString);
-                    }
-                })
-                .toList();
-    }
 
-    public static List<String> getImportedStaticMethods(CompilationUnitTree compilationUnitTree) {
-        return compilationUnitTree.getImports().stream()
-                .filter(ImportTree::isStatic)
-                .flatMap(imp -> {
-                    var importString = imp.getQualifiedIdentifier().toString();
-                    if (importString.endsWith("*")) {
-                        return getStaticClassMembers(importString.substring(0, importString.length() - 2))
-                                .stream()
-                                .filter(el -> el.getKind() == ElementKind.METHOD)
-                                .map(el -> ((Symbol.MethodSymbol) el).owner.getQualifiedName() + "."
-                                        + el.getSimpleName());
-                    } else {
-                        return Stream.of(importString);
-                    }
-                })
-                .toList();
+    public static Set<String> getImportedStaticMethods(CompilationUnitTree compilationUnitTree) {
+        return getImports(compilationUnitTree, ElementKind.METHOD);
     }
 
     public static Set<ClassContext.Method> getMethodsInClass(TreePath classPath) {
-        var decl = (JCTree.JCClassDecl) classPath.getLeaf();
-        var classSymbol = decl.sym;
-        var methods =  classSymbol.getEnclosedElements().stream()
-                .filter(el -> el.getKind() == ElementKind.METHOD)
-                .map(el -> new ClassContext.Method(
-                        el.getSimpleName().toString(),
-                        classSymbol.getQualifiedName().toString(),
-                        el.getModifiers().contains(Modifier.STATIC)))
+        return getMembersOfClass(classPath, ElementKind.METHOD).stream()
+                .map(el -> (ClassContext.Method) el)
                 .collect(Collectors.toSet());
-        if (decl.extending != null && !decl.mods.getFlags().contains(Modifier.STATIC)) {
-            methods.addAll(getMethodsInClass(PathUtils.getEnclosingClassPath(classPath)));
-        }
-        return methods;
     }
 
     public static Set<ClassContext.Field> getFieldsInClass(TreePath classPath) {
+        return getMembersOfClass(classPath, ElementKind.FIELD).stream()
+                .map(el -> (ClassContext.Field) el)
+                .collect(Collectors.toSet());
+    }
+
+    public static Set<ClassContext.ClassMember> getMembersOfClass(TreePath classPath, ElementKind kind) {
         var decl = (JCTree.JCClassDecl) classPath.getLeaf();
         var classSymbol = decl.sym;
-        var fields =  classSymbol.getEnclosedElements().stream()
-                .filter(el -> el.getKind() == ElementKind.FIELD)
-                .map(el -> new ClassContext.Field(
+        var elements =  classSymbol.getEnclosedElements().stream()
+                .filter(el -> el.getKind() == kind)
+                .map(el -> ClassContext.classMember(
                         el.getSimpleName().toString(),
                         classSymbol.getQualifiedName().toString(),
-                        el.getModifiers().contains(Modifier.STATIC)))
+                        el.getModifiers().contains(Modifier.STATIC),
+                        kind))
                 .collect(Collectors.toSet());
         if (decl.extending != null && !decl.mods.getFlags().contains(Modifier.STATIC)) {
-            fields.addAll(getFieldsInClass(PathUtils.getEnclosingClassPath(classPath)));
+            elements.addAll(getMembersOfClass(PathUtils.getEnclosingClassPath(classPath), kind));
         }
-        return fields;
+        return elements;
+    }
+
+    public static Set<String> getImportedFields(CompilationUnitTree compilationUnitTree) {
+        return getImports(compilationUnitTree, ElementKind.FIELD);
+    }
+
+    public static Set<String> getImports(CompilationUnitTree compilationUnitTree, ElementKind elementKind) {
+        return compilationUnitTree.getImports().stream()
+                .filter(ImportTree::isStatic)
+                .flatMap(imp -> {
+                    var importString = imp.getQualifiedIdentifier().toString();
+                    if (importString.endsWith("*")) {
+                        return getStaticClassMembers(importString.substring(0, importString.length() - 2))
+                                .stream()
+                                .filter(el -> el.getKind() == elementKind)
+                                .map(el -> ((Symbol.VarSymbol) el).owner.getQualifiedName() + "."
+                                        + el.getSimpleName());
+                    } else {
+                        var ident = (JCTree.JCFieldAccess) imp.getQualifiedIdentifier();
+                        if (ident.sym == null) {
+                            ident.sym = ident.selected.type.tsym;
+                        }
+                        var member = getStaticClassMembers(ident.selected.toString()).stream()
+                                .filter(el -> el.getKind() == elementKind && el.getSimpleName().toString().equals(ident.getIdentifier().toString()))
+                                .findAny();
+                        return member.stream().map(element -> importString);
+                    }
+                })
+                .collect(Collectors.toSet());
     }
 }
