@@ -1,11 +1,10 @@
-package org.projectparams.annotationprocessing.astcommons.parsing;
+package org.projectparams.annotationprocessing.astcommons.parsing.expressions;
 
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
-import org.projectparams.annotationprocessing.astcommons.ExpressionMaker;
+import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
+import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
-
-import java.lang.reflect.ParameterizedType;
 
 public class LiteralExpression<T> implements Expression {
     private final T value;
@@ -29,5 +28,10 @@ public class LiteralExpression<T> implements Expression {
     @Override
     public JCTree.JCExpression toJcExpression() {
         return ExpressionMaker.makeLiteral(type.getTag(), value);
+    }
+
+    @Override
+    public void convertInnerIdentifiersToQualified(ClassContext classContext) {
+        // Do nothing
     }
 }

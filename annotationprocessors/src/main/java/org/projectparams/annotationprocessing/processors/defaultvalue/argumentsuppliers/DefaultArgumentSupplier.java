@@ -5,8 +5,8 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.List;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
-import org.projectparams.annotationprocessing.astcommons.parsing.ExpressionFactory;
-import org.projectparams.annotationprocessing.astcommons.parsing.LiteralExpression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.LiteralExpression;
 import org.projectparams.annotationprocessing.exceptions.UnsupportedSignatureException;
 import org.projectparams.annotationprocessing.processors.defaultvalue.InvocableInfo;
 

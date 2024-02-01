@@ -2,12 +2,15 @@ package org.projectparams.test;
 
 import org.projectparams.annotations.DefaultValue;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import static org.projectparams.test.Abobus.Dodus;
-import static org.projectparams.test.Abobus.someVar;
 
 @SuppressWarnings("all")
 public class Main {
     private static final Abobus abobus = new Abobus();
+    private static boolean someVar = false;
 
     public static void main(String[] args) {
         var abobus = new Abobus();
@@ -31,12 +34,17 @@ public class Main {
         return 3.4f;
     }
 
-    public static void rovarus(@DefaultValue("someVar") Abobus someVar) {
+    public static void rovarus(@DefaultValue("Main.<Integer>akakus(3)") List<Integer> someVar) {
         System.out.println(" " + someVar);
+        System.out.println(someVar.getFirst().getClass());
     }
 
     public enum Akakus {
         A, B, C
+    }
+
+    public static <T> List<T> akakus(T t) {
+        return new ArrayList<T>(List.of(t));
     }
 
     public static class someVar{}

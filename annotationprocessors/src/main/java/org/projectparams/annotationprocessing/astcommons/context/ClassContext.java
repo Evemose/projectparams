@@ -28,7 +28,7 @@ public record ClassContext(
             boolean isStatic
     ) implements ClassMember {}
 
-    public static ClassMember classMember(String name, String className, boolean isStatic, ElementKind kind) {
+    public static ClassMember of(String name, String className, boolean isStatic, ElementKind kind) {
         return switch (kind) {
             case METHOD -> new Method(name, className, isStatic);
             case FIELD -> new Field(name, className, isStatic);
@@ -36,7 +36,7 @@ public record ClassContext(
         };
     }
 
-    public static ClassContext classMember(TreePath classPath) {
+    public static ClassContext of(TreePath classPath) {
         var cuContext = CUContext.from(classPath.getCompilationUnit());
         var methods = ContextUtils.getMethodsInClass(classPath);
         var fields = ContextUtils.getFieldsInClass(classPath);

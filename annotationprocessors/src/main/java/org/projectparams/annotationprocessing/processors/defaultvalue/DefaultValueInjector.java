@@ -3,17 +3,18 @@ package org.projectparams.annotationprocessing.processors.defaultvalue;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.StatementTree;
 import com.sun.tools.javac.tree.JCTree;
-import org.projectparams.annotationprocessing.astcommons.ExpressionMaker;
+import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
 import org.projectparams.annotationprocessing.astcommons.PathUtils;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
-import org.projectparams.annotationprocessing.astcommons.parsing.ExpressionFactory;
-import org.projectparams.annotationprocessing.astcommons.parsing.IdentifierExpression;
-import org.projectparams.annotationprocessing.astcommons.parsing.LiteralExpression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.IdentifierExpression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.LiteralExpression;
 
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.ExecutableElement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DefaultValueInjector {
@@ -39,26 +40,8 @@ public class DefaultValueInjector {
             if (expression instanceof LiteralExpression) {
                 continue;
             }
-            var root = expression.getRootOwner();
-            if (root instanceof IdentifierExpression ident) {
-                var classContext = ClassContext.classMember(PathUtils.getEnclosingClassPath(PathUtils.getElementPath(invocable)));
-                var matchingField = classContext.getMatchingField(ident.name());
-                if (matchingField.isPresent()) {
-                    expression = ExpressionFactory.createExpression(
-                            (matchingField.get().isStatic() ? matchingField.get().className() + '.'
-                                    : "this.") + defaultValue.expression(),
-                            TypeUtils.getUnboxedTypeTag(defaultValue.type()),
-                            PathUtils.getElementPath(invocable));
-                } else {
-                    var matchingImportIdent = classContext.cuContext().getMatchingImportedOrStaticClass(ident.name());
-                    if (matchingImportIdent.isPresent()) {
-                        expression = ExpressionFactory.createExpression(
-                                matchingImportIdent.get(),
-                                TypeUtils.getUnboxedTypeTag(defaultValue.type()),
-                                PathUtils.getElementPath(invocable));
-                    }
-                }
-            }
+            expression.convertInnerIdentifiersToQualified(ClassContext.of(PathUtils
+                    .getElementPath(invocableInfo.method().getEnclosingElement())));
             var expressionAsJC = expression.toJcExpression();
             statementsToInject.add(assignToVar(wrapInNonNullElseGet(expressionAsJC, param.name()), param.name()));
         }
@@ -82,6 +65,7 @@ public class DefaultValueInjector {
                 ExpressionMaker.makeFieldAccess(
                         ExpressionMaker.makeIdent("java.util.Objects"),
                         "requireNonNullElse"),
+                Collections.emptyList(),
                 List.of(ExpressionMaker.makeIdent(varName), expression)
                         .toArray(JCTree.JCExpression[]::new));
     }

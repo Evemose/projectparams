@@ -1,7 +1,7 @@
-package org.projectparams.annotationprocessing.astcommons.parsing;
+package org.projectparams.annotationprocessing.astcommons.parsing.expressions;
 
 import com.sun.tools.javac.tree.JCTree;
-import org.projectparams.annotationprocessing.astcommons.ExpressionMaker;
+import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
 
 public class FieldAccessExpression extends SelectableExpression {
     protected FieldAccessExpression(String name, Expression owner) {

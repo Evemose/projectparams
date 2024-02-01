@@ -1,11 +1,13 @@
-package org.projectparams.annotationprocessing.astcommons;
+package org.projectparams.annotationprocessing.astcommons.parsing.utils;
 
 import com.sun.source.tree.StatementTree;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.Names;
+import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 
 import javax.annotation.processing.Messager;
 
@@ -75,9 +77,10 @@ public class ExpressionMaker {
 
     public static JCTree.JCMethodInvocation makeMethodInvocation(
             JCTree.JCExpression methodSelect,
+            java.util.List<JCTree.JCExpression> typeArgs,
             JCTree.JCExpression... args) {
         return treeMaker.Apply(
-                List.nil(),
+                List.from(typeArgs),
                 methodSelect,
                 List.from(args)
         );
@@ -85,10 +88,11 @@ public class ExpressionMaker {
 
     public static JCTree.JCNewClass makeNewClass(JCTree.JCExpression enclosing,
                                                  String className,
+                                                 java.util.List<JCTree.JCExpression> typeArgs,
                                                  JCTree.JCExpression... args) {
         return treeMaker.NewClass(
                 enclosing,
-                List.nil(),
+                List.from(typeArgs),
                 makeIdent(className),
                 List.from(args),
                 null
@@ -101,5 +105,41 @@ public class ExpressionMaker {
 
     public static JCTree.JCBlock makeBlock(List<StatementTree> statements) {
         return treeMaker.Block(0, statements.stream().map(statement -> (JCTree.JCStatement) statement).collect(List.collector()));
+    }
+
+    public static JCTree.JCConditional makeConditional(JCTree.JCExpression condition,
+                                                       JCTree.JCExpression trueExpression,
+                                                       JCTree.JCExpression falseExpression) {
+        return treeMaker.Conditional(condition, trueExpression, falseExpression);
+    }
+
+    public static JCTree.JCExpression makeBinary(JCTree.Tag tag,
+                                                 JCTree.JCExpression left,
+                                                 JCTree.JCExpression right) {
+        return treeMaker.Binary(tag, left, right);
+    }
+
+    public static JCTree.JCExpression makeUnary(JCTree.Tag tag,
+                                                JCTree.JCExpression expression) {
+        return treeMaker.Unary(tag, expression);
+    }
+
+    public static JCTree.JCParens makeParens(JCTree.JCExpression expression) {
+        return treeMaker.Parens(expression);
+    }
+
+    public static JCTree.JCTypeCast makeTypeCast(JCTree.JCExpression expression, String typeName) {
+        var typeIdent = switch (typeName) {
+            case "short" -> treeMaker.TypeIdent(TypeTag.SHORT);
+            case "byte" -> treeMaker.TypeIdent(TypeTag.BYTE);
+            case "char" -> treeMaker.TypeIdent(TypeTag.CHAR);
+            case "boolean" -> treeMaker.TypeIdent(TypeTag.BOOLEAN);
+            case "float" -> treeMaker.TypeIdent(TypeTag.FLOAT);
+            case "double" -> treeMaker.TypeIdent(TypeTag.DOUBLE);
+            case "long" -> treeMaker.TypeIdent(TypeTag.LONG);
+            case "int" -> treeMaker.TypeIdent(TypeTag.INT);
+            default -> treeMaker.Ident(names.fromString(typeName));
+        };
+        return treeMaker.TypeCast(typeIdent, expression);
     }
 }

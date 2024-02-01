@@ -1,7 +1,9 @@
-package org.projectparams.annotationprocessing.astcommons.parsing;
+package org.projectparams.annotationprocessing.astcommons.parsing.expressions;
 
 public abstract class NamedExpression implements Expression {
-    protected final String name;
+
+    // not final because can be converted to qualified
+    protected String name;
 
     public String name() {
         return name;

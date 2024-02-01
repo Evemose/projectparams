@@ -129,7 +129,7 @@ public class ContextUtils {
         var classSymbol = decl.sym;
         var elements =  classSymbol.getEnclosedElements().stream()
                 .filter(el -> el.getKind() == kind)
-                .map(el -> ClassContext.classMember(
+                .map(el -> ClassContext.of(
                         el.getSimpleName().toString(),
                         classSymbol.getQualifiedName().toString(),
                         el.getModifiers().contains(Modifier.STATIC),
