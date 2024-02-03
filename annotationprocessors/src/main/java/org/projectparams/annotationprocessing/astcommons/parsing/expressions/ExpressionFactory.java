@@ -13,10 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-// TODO: implement type casting
-@SuppressWarnings("unused")
 public class ExpressionFactory {
+
     public static Messager messager;
+
     public enum Type {
         NEW_CLASS(createNewClassExpression()),
         METHOD_INVOCATION(createMethodInvocationExpression()),
@@ -37,39 +37,67 @@ public class ExpressionFactory {
 
         public static Type of(String expression) {
             expression = expression.strip();
-            if (expression.matches("\\(.+\\)") && !expression.matches("\\((\\w+\\s*(\\.)?)+\\).+")) {
+            if (isParenthesized(expression)) {
                 return PARENTHESIZED;
             }
-            if (expression.matches("[^(]+\\?.+:.+")) {
+            if (isTernary(expression)) {
                 return TERNARY;
             }
-            if (expression.matches(".+(\\+|-|\\*|/|%|&|\\||\\^|<<|>>|>>>|<|>|<=|>=|==|!=|&&|\\|\\||instanceof).+")
-            && !expression.matches(".+<(\\w|\\s|,|>|<)*>((\\w|\\s)+)?(\\(.*\\))?")) {
+            if (isBinary(expression)) {
                 return BINARY;
             }
-            if (expression.matches("(\\+|-|!|~|\\+\\+|--)\\(?.+\\)?")
-                    || expression.matches("\\(?.+\\)?(\\+\\+|--)")) {
+            if (isUnary(expression)) {
                 return UNARY;
             }
-            if (expression.matches("\\((\\w+\\s*(\\.)?)+\\).+")) {
+            if (isCast(expression)) {
                 return CAST;
             }
             if (expression.endsWith(")")) {
-                var argsStartIndex = ParsingUtils.getArgsStartIndex(expression);
-                expression = expression.substring(0, argsStartIndex);
-                expression = expression.substring(expression.lastIndexOf('.') + 1, expression.length()-1);
-                if (expression.startsWith("new ")) {
+                if (isNewClass(expression)) {
                     return NEW_CLASS;
                 }
                 return METHOD_INVOCATION;
             }
-            if (expression.matches("(\\d+(\\.\\d+)?[fdlFDL]?)|(true|false)|('.')|(\".*\")")) {
+            if (isLiteral(expression)) {
                 return LITERAL;
             }
             if (ParsingUtils.containsTopLevelDot(expression)) {
                 return FIELD_ACCESS;
             }
             return IDENTIFIER;
+        }
+
+        private static boolean isNewClass(String expression) {
+            var argsStartIndex = ParsingUtils.getArgsStartIndex(expression);
+            expression = expression.substring(0, argsStartIndex);
+            expression = expression.substring(expression.lastIndexOf('.') + 1, expression.length()-1);
+            return expression.startsWith("new ");
+        }
+
+        private static boolean isLiteral(String expression) {
+            return expression.matches("(\\d+(\\.\\d+)?[fdlFDL]?)|(true|false)|('.')|(\".*\")");
+        }
+
+        private static boolean isCast(String expression) {
+            return expression.matches("\\((\\w+\\s*(\\.)?)+\\).+");
+        }
+
+        private static boolean isUnary(String expression) {
+            return expression.matches("(\\+|-|!|~|\\+\\+|--)\\(?.+\\)?")
+                    || expression.matches("\\(?.+\\)?(\\+\\+|--)");
+        }
+
+        private static boolean isBinary(String expression) {
+            return expression.matches(".+(\\+|-|\\*|/|%|&|\\||\\^|<<|>>|>>>|<|>|<=|>=|==|!=|&&|\\|\\||instanceof).+")
+                    && !expression.matches(".+<(\\w|\\s|,|>|<)*>((\\w|\\s)+)?(\\(.*\\))?");
+        }
+
+        private static boolean isTernary(String expression) {
+            return expression.matches("[^(]+\\?.+:.+");
+        }
+
+        private static boolean isParenthesized(String expression) {
+            return expression.matches("\\(.+\\)") && !isCast(expression);
         }
     }
 
@@ -84,43 +112,9 @@ public class ExpressionFactory {
     public record CreateExpressionParams(String expression,
                                          @Nullable TypeTag typeTag,
                                          TreePath parsingContextPath) {
-        public CreateExpressionParams withExpression(String expression) {
-            return new CreateExpressionParams(expression, typeTag, parsingContextPath);
-        }
         // name seems odd, but it`s needed to recursively create expressions
         public CreateExpressionParams withExpressionAndNullTag(String expression) {
             return new CreateExpressionParams(expression, null, parsingContextPath);
-        }
-    }
-
-    public static class CreateExpressionParamsBuilder {
-        private String expression;
-        private TypeTag typeTag = null;
-        private TreePath parsingContextPath;
-
-        public CreateExpressionParamsBuilder expression(String expression) {
-            this.expression = expression;
-            return this;
-        }
-
-        public CreateExpressionParamsBuilder typeTag(TypeTag typeTag) {
-            this.typeTag = typeTag;
-            return this;
-        }
-
-        public CreateExpressionParamsBuilder parsingContextPath(TreePath parsingContextPath) {
-            this.parsingContextPath = parsingContextPath;
-            return this;
-        }
-
-        public CreateExpressionParams build() {
-            if (expression == null) {
-                throw new IllegalStateException("Expression cannot be null");
-            }
-            if (parsingContextPath == null) {
-                throw new IllegalStateException("Enclosing invocable path cannot be null");
-            }
-            return new CreateExpressionParams(expression, typeTag, parsingContextPath);
         }
     }
 
@@ -169,8 +163,6 @@ public class ExpressionFactory {
             }
             List<String> typeParameters = new ArrayList<>();
             if (typeArgsEndIndex != -1) {
-                var typeArgs = expression.substring(ParsingUtils.getTypeArgsStartIndex(expression) + 1,
-                        typeArgsEndIndex);
                 var typeArgsParts = ParsingUtils.getTypeArgStrings(expression);
                 for (var typeArg : typeArgsParts) {
                     typeParameters.add(typeArg.strip());
@@ -223,8 +215,6 @@ public class ExpressionFactory {
             }
             List<String> typeParameters = new ArrayList<>();
             if (typeArgsStartIndex != expression.length()) {
-                var typeArgs = expression.substring(typeArgsStartIndex + 1,
-                        expression.lastIndexOf('>', argsStartIndex));
                 var typeArgsParts = ParsingUtils.getTypeArgStrings(expression);
                 for (var typeArg : typeArgsParts) {
                     typeParameters.add(typeArg.strip());

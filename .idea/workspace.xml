@@ -4,28 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="aboba">
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/OperatorExpression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/ParametrizedExpression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/ParametrizedFieldAccessExpression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/ParametrizedIdentifierExpression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/utils/ParsingUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/TypeUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/TypeUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/BinaryExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/BinaryExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/ExpressionFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/ExpressionFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/FieldAccessExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/FieldAccessExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/InvocableExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/InvocableExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/NamedExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/NamedExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/UnaryExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/UnaryExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/utils/ExpressionMaker.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/utils/ExpressionMaker.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueInjector.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueInjector.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueProcessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/argumentsuppliers/DefaultArgumentSupplier.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/argumentsuppliers/DefaultArgumentSupplier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/params/src/main/java/org/projectparams/annotations/DefaultValue.java" beforeDir="false" afterPath="$PROJECT_DIR$/params/src/main/java/org/projectparams/annotations/DefaultValue.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/params/src/main/java/org/projectparams/annotations/Priority.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" afterDir="false" />
-    </list>
+    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="don`t really remember what I have done there" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -82,10 +61,10 @@
       <list>
         <option value="Kotlin Script" />
         <option value="Record" />
-        <option value="Interface" />
         <option value="AnnotationType" />
         <option value="Enum" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -432,7 +411,7 @@
       <workItem from="1706797786653" duration="173000" />
       <workItem from="1706895695683" duration="1522000" />
       <workItem from="1706899613193" duration="2063000" />
-      <workItem from="1706945962345" duration="10695000" />
+      <workItem from="1706945962345" duration="11108000" />
     </task>
     <task id="LOCAL-00001" summary="split project into modules">
       <option name="closed" value="true" />
@@ -818,7 +797,15 @@
       <option name="project" value="LOCAL" />
       <updated>1706794588411</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="don`t really remember what I did there">
+      <option name="closed" value="true" />
+      <created>1706957933860</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1706957933860</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -842,7 +829,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="master" />
+                        <option value="expressions-as-defaults" />
                       </list>
                     </value>
                   </entry>
@@ -855,7 +842,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="implemented basic CUContext, added support for constructor default values with simple class name (not qualified)" />
     <MESSAGE value="works fine, just need little polishing regarding static imports" />
     <MESSAGE value="works with static nested classes fine now, need to implement non-static" />
     <MESSAGE value="Added support for inner (non-static) classes" />
@@ -880,7 +866,8 @@
     <MESSAGE value="fixed errors with  method results as default values" />
     <MESSAGE value="implemented usage of statically imported classes and constants as defaults" />
     <MESSAGE value="aboba" />
-    <option name="LAST_COMMIT_MESSAGE" value="aboba" />
+    <MESSAGE value="don`t really remember what I have done there" />
+    <option name="LAST_COMMIT_MESSAGE" value="don`t really remember what I have done there" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
