@@ -3,6 +3,7 @@ package org.projectparams.annotationprocessing.processors.defaultvalue.arguments
 import com.sun.source.util.TreePath;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.List;
+import org.projectparams.annotationprocessing.astcommons.PathUtils;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
@@ -25,8 +26,12 @@ public class DefaultArgumentSupplier implements ArgumentSupplier {
             if (defaultValue == null) {
                 throw new UnsupportedSignatureException(invocableInfo.parameters().get(i).name(), i, invocableInfo);
             }
-            var expression = ExpressionFactory.createExpression(defaultValue.expression(),
-                    TypeUtils.getUnboxedTypeTag(defaultValue.type()), path);
+            var expression = ExpressionFactory.createExpression(
+                    new ExpressionFactory.CreateExpressionParams(
+                            defaultValue.expression(),
+                            TypeUtils.getUnboxedTypeTag(defaultValue.type()),
+                            path
+                    ));
             if (expression instanceof LiteralExpression) {
                 args.add(expression.toJcExpression());
             } else {

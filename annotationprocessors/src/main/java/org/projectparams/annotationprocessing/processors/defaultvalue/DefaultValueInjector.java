@@ -10,6 +10,7 @@ import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.IdentifierExpression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.LiteralExpression;
+import org.projectparams.annotationprocessing.utils.ElementUtils;
 
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.ExecutableElement;
@@ -34,9 +35,12 @@ public class DefaultValueInjector {
             if (defaultValue == null) {
                 continue;
             }
-            var expression = ExpressionFactory.createExpression(defaultValue.expression(),
-                    TypeUtils.getUnboxedTypeTag(defaultValue.type()),
-                    PathUtils.getElementPath(invocable));
+            var expression = ExpressionFactory.createExpression(
+                    new ExpressionFactory.CreateExpressionParams(
+                            defaultValue.expression(),
+                            TypeUtils.getUnboxedTypeTag(defaultValue.type()),
+                            PathUtils.getElementPath(invocable)
+                    ));
             if (expression instanceof LiteralExpression) {
                 continue;
             }

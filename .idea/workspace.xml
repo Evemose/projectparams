@@ -4,30 +4,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="implemented usage of statically imported classes and constants as defaults">
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/BinaryExpression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/CastExpression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/ParenthesizedExpression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/TernaryExpression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/UnaryExpression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/ExpressionFactoryTest.java" afterDir="false" />
+    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="aboba">
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/OperatorExpression.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/ParametrizedExpression.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/ParametrizedFieldAccessExpression.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/ParametrizedIdentifierExpression.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/utils/ParsingUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/MainProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/MainProcessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/ExpressionMaker.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/utils/ExpressionMaker.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/context/ClassContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/context/ClassContext.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/context/ContextUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/context/ContextUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/Expression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/Expression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ExpressionFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/ExpressionFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/FieldAccessExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/FieldAccessExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/IdentifierExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/IdentifierExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/InvocableExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/InvocableExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/LiteralExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/LiteralExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/MethodInvocationExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/MethodInvocationExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/NamedExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/NamedExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/NewClassExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/NewClassExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/SelectableExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/SelectableExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/TypeUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/TypeUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/BinaryExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/BinaryExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/ExpressionFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/ExpressionFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/FieldAccessExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/FieldAccessExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/InvocableExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/InvocableExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/NamedExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/NamedExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/UnaryExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/UnaryExpression.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/utils/ExpressionMaker.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/utils/ExpressionMaker.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueInjector.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueInjector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueProcessor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/argumentsuppliers/DefaultArgumentSupplier.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/argumentsuppliers/DefaultArgumentSupplier.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/params/src/main/java/org/projectparams/annotations/DefaultValue.java" beforeDir="false" afterPath="$PROJECT_DIR$/params/src/main/java/org/projectparams/annotations/DefaultValue.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/params/src/main/java/org/projectparams/annotations/Priority.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -88,6 +84,7 @@
         <option value="Record" />
         <option value="Interface" />
         <option value="AnnotationType" />
+        <option value="Enum" />
         <option value="Class" />
       </list>
     </option>
@@ -129,56 +126,56 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Application.Main (1).executor": "Run",
-    "Application.Main.executor": "Run",
-    "Downloaded.Files.Path.Enabled": "false",
-    "Gradle.ASMMethodCallsScannerTest.executor": "Run",
-    "Gradle.ASMMethodCallsScannerTest.testGetMethodCallsInsideClass.executor": "Run",
-    "Gradle.Build projectparams.executor": "Run",
-    "Gradle.ExpressionFactoryTest.testOf.executor": "Run",
-    "Gradle.MethodCallArgumentsInspectorTest.testVisitMethod.executor": "Run",
-    "Gradle.ParsedExpressionTest.executor": "Run",
-    "Gradle.ParsedExpressionTest.testFrom_ComplexExpression.executor": "Run",
-    "Gradle.ParsedExpressionTest.testFrom_FieldAccessExpression.executor": "Debug",
-    "Gradle.ParsedExpressionTest.testFrom_MethodInvocationExpression.executor": "Run",
-    "Gradle.ParsedExpressionTest.testFrom_NewClassExpression.executor": "Run",
-    "Gradle.Tests in 'projectparams.annotationprocessors'.executor": "Run",
-    "Gradle.Tests in 'projectparams.annotationprocessors.test'.executor": "Run",
-    "Gradle.Upgrade Gradle wrapper.executor": "Run",
-    "Gradle.projectparams [:Main.main()].executor": "Run",
-    "Gradle.projectparams [build].executor": "Run",
-    "Gradle.projectparams [clean].executor": "Run",
-    "Gradle.projectparams:test [:test:Main.main()].executor": "Run",
-    "Remote JVM Debug.Unnamed.executor": "Debug",
-    "Repository.Attach.Annotations": "false",
-    "Repository.Attach.JavaDocs": "false",
-    "Repository.Attach.Sources": "false",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "extract.method.default.visibility": "private",
-    "git-widget-placeholder": "expressions-as-defaults",
-    "ignore.virus.scanning.warn.message": "true",
-    "jdk.selected.JAVA_MODULE": "openjdk-21",
-    "kotlin-language-version-configured": "true",
-    "last_directory_selection": "C:/projectparams/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors",
-    "last_opened_file_path": "C:/projectparams",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "inlay.hints",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Application.Main (1).executor&quot;: &quot;Run&quot;,
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;Gradle.ASMMethodCallsScannerTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ASMMethodCallsScannerTest.testGetMethodCallsInsideClass.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Build projectparams.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ExpressionFactoryTest.testOf.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MethodCallArgumentsInspectorTest.testVisitMethod.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ParsedExpressionTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ParsedExpressionTest.testFrom_ComplexExpression.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ParsedExpressionTest.testFrom_FieldAccessExpression.executor&quot;: &quot;Debug&quot;,
+    &quot;Gradle.ParsedExpressionTest.testFrom_MethodInvocationExpression.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ParsedExpressionTest.testFrom_NewClassExpression.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Tests in 'projectparams.annotationprocessors'.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Tests in 'projectparams.annotationprocessors.test'.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Upgrade Gradle wrapper.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.projectparams [:Main.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.projectparams [build].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.projectparams [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.projectparams:test [:test:Main.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Remote JVM Debug.Unnamed.executor&quot;: &quot;Debug&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;extract.method.default.visibility&quot;: &quot;private&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;expressions-as-defaults&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;openjdk-21&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_directory_selection&quot;: &quot;C:/projectparams/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/projectparams&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;inlay.hints&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\projectparams" />
@@ -190,6 +187,7 @@
       <recent name="C:\projectparams\params\src" />
     </key>
     <key name="MoveMembersDialog.RECENTS_KEY">
+      <recent name="org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils" />
       <recent name="org.projectparams.annotationprocessing.astcommons.PathUtils" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
@@ -430,7 +428,11 @@
       <workItem from="1706731507117" duration="870000" />
       <workItem from="1706741350674" duration="28000" />
       <workItem from="1706789319770" duration="2675000" />
-      <workItem from="1706792387915" duration="1886000" />
+      <workItem from="1706792387915" duration="2018000" />
+      <workItem from="1706797786653" duration="173000" />
+      <workItem from="1706895695683" duration="1522000" />
+      <workItem from="1706899613193" duration="2063000" />
+      <workItem from="1706945962345" duration="10695000" />
     </task>
     <task id="LOCAL-00001" summary="split project into modules">
       <option name="closed" value="true" />
@@ -808,7 +810,15 @@
       <option name="project" value="LOCAL" />
       <updated>1706558852993</updated>
     </task>
-    <option name="localTasksCounter" value="48" />
+    <task id="LOCAL-00048" summary="aboba">
+      <option name="closed" value="true" />
+      <created>1706794588411</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1706794588411</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -845,7 +855,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixed order of method modification by enforcing more strict match policy (still need to implement identifier type retrieving)" />
     <MESSAGE value="implemented basic CUContext, added support for constructor default values with simple class name (not qualified)" />
     <MESSAGE value="works fine, just need little polishing regarding static imports" />
     <MESSAGE value="works with static nested classes fine now, need to implement non-static" />
@@ -870,7 +879,8 @@
     <MESSAGE value="implemented enums as defaults" />
     <MESSAGE value="fixed errors with  method results as default values" />
     <MESSAGE value="implemented usage of statically imported classes and constants as defaults" />
-    <option name="LAST_COMMIT_MESSAGE" value="implemented usage of statically imported classes and constants as defaults" />
+    <MESSAGE value="aboba" />
+    <option name="LAST_COMMIT_MESSAGE" value="aboba" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

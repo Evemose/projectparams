@@ -4,6 +4,7 @@ import org.projectparams.annotations.DefaultValue;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 import static org.projectparams.test.Abobus.Dodus;
 
@@ -34,7 +35,9 @@ public class Main {
         return 3.4f;
     }
 
-    public static void rovarus(@DefaultValue("Main.<Integer>akakus(3)") List<Integer> someVar) {
+    public static void rovarus(@DefaultValue("new Main().<Map<Integer, java.util.List<Integer>>>akakus(Map.of(3, List.of(6)))")
+                               List<Map<Integer, List<Integer>>>
+                                       someVar) {
         System.out.println(" " + someVar);
         System.out.println(someVar.getFirst().getClass());
     }

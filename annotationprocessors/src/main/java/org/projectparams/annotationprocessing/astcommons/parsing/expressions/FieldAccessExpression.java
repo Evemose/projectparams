@@ -7,7 +7,6 @@ public class FieldAccessExpression extends SelectableExpression {
     protected FieldAccessExpression(String name, Expression owner) {
         super(name, owner);
     }
-
     @Override
     public JCTree.JCExpression toJcExpression() {
         return ExpressionMaker.makeFieldAccess(owner.toJcExpression(), name);

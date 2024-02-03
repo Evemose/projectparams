@@ -7,7 +7,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.SOURCE)
-@Priority(1)
 public @interface DefaultValue {
     String value() default "superSecretDefaultValuePlaceholder";
 }

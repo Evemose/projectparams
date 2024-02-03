@@ -189,7 +189,7 @@ public class TypeUtils {
                     }
                 }
                 case JCTree.JCMethodDecl methodInvocation -> {
-                    var ownerType = methodInvocation.getReturnType().type;
+                    var ownerType = methodInvocation.type;
                     if (ownerType != null) {
                         ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
                     }

@@ -10,6 +10,6 @@ public abstract class NamedExpression implements Expression {
     }
 
     protected NamedExpression(String name) {
-        this.name = name;
+        this.name = name.trim();
     }
 }

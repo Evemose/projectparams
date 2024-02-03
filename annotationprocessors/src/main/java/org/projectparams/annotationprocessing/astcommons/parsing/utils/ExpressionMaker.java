@@ -23,17 +23,8 @@ public class ExpressionMaker {
         ExpressionMaker.messager = messager;
     }
 
-
-    @SuppressWarnings("unused")
-    private static Object wrappedLiteral(Object defaultValue) {
-        return switch (defaultValue) {
-            case Short s -> defaultValue + "S";
-            case Byte b -> defaultValue + "B";
-            case Character c -> "'" + defaultValue + "'";
-            case String s -> "\"" + defaultValue + "\"";
-            case Float v -> defaultValue + "F";
-            case null, default -> defaultValue;
-        };
+    public static JCTree.JCExpression makeTypeApply(JCTree.JCExpression expression, JCTree.JCExpression ...typeArguments) {
+        return treeMaker.TypeApply(expression, List.from(typeArguments));
     }
 
     public static JCTree.JCExpression makeLiteral(TypeTag tag, Object value) {

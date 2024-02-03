@@ -34,9 +34,6 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
         var fixedMethodsInIteration = new HashSet<InvocableTree>();
         var allFixedMethods = new HashSet<InvocableTree>();
 
-        var prepareNewClassTreesVisitor = new PrepareNewClassTreesVisitor(trees, messager);
-        packageTree.accept(prepareNewClassTreesVisitor, null);
-
         var invocablePool =
                 InvocableInfoPool.of(
                         methods.stream().flatMap(method ->
@@ -47,6 +44,9 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
                 new DefaultValueInjector(methodInfo).inject();
             }
         });
+
+        var prepareNewClassTreesVisitor = new PrepareNewClassTreesVisitor(trees, messager);
+        packageTree.accept(prepareNewClassTreesVisitor, null);
 
         messager.printMessage(Diagnostic.Kind.NOTE, "Invocable pool: " + invocablePool + "\n\n\nStarting");
 
