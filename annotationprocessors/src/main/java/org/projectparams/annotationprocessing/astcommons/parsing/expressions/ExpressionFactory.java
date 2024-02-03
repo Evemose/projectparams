@@ -27,6 +27,7 @@ public class ExpressionFactory {
         BINARY(createBinaryExpression()),
         UNARY(createUnaryExpression()),
         CAST(createCastExpression()),
+        ARRAY_ACCESS(createArrayAccess()),
         FIELD_ACCESS(createFieldAccessExpression());
 
         private final Function<CreateExpressionParams, Expression> expressionCreator;
@@ -61,10 +62,17 @@ public class ExpressionFactory {
             if (isLiteral(expression)) {
                 return LITERAL;
             }
+            if (isArrayAccess(expression)) {
+                return ARRAY_ACCESS;
+            }
             if (ParsingUtils.containsTopLevelDot(expression)) {
                 return FIELD_ACCESS;
             }
             return IDENTIFIER;
+        }
+
+        private static boolean isArrayAccess(String expression) {
+            return expression.endsWith("]");
         }
 
         private static boolean isNewClass(String expression) {
@@ -75,7 +83,7 @@ public class ExpressionFactory {
         }
 
         private static boolean isLiteral(String expression) {
-            return expression.matches("(\\d+(\\.\\d+)?[fdlFDL]?)|(true|false)|('.')|(\".*\")");
+            return expression.matches("(\\d+(\\.\\d*)?[fdlFDL]?)|(true|false)|('.')|(\".*\")");
         }
 
         private static boolean isCast(String expression) {
@@ -118,6 +126,19 @@ public class ExpressionFactory {
         }
     }
 
+    private static Function<CreateExpressionParams, Expression> createArrayAccess() {
+        return createParams -> {
+            var expression = createParams.expression();
+            var openingBracketIndex = ParsingUtils.getArrayIndexStartIndex(expression);
+            var array = expression.substring(0, openingBracketIndex);
+            var index = expression.substring(openingBracketIndex + 1, expression.length() - 1);
+            return new ArrayAccessExpression(
+                    createExpression(createParams.withExpressionAndNullTag(array)),
+                    createExpression(createParams.withExpressionAndNullTag(index))
+            );
+        };
+    }
+
     private static Function<CreateExpressionParams, Expression> createIdentifierExpression() {
         return createParams -> {
             var expression = createParams.expression();
@@ -134,6 +155,7 @@ public class ExpressionFactory {
             }
         };
     }
+
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static Function<CreateExpressionParams, Expression> createLiteralExpression() {
         return createParams -> {

@@ -2,8 +2,14 @@ package org.projectparams.test;
 
 import org.projectparams.annotations.DefaultValue;
 
-@SuppressWarnings("unused")
+@SuppressWarnings("all")
 public class Sucus extends Abobus {
+    public static final Main[] mains = new Main[3];
+    {
+        mains[0] = new Main();
+        mains[1] = new Main();
+        mains[2] = new Main();
+    }
     public Sucus(@DefaultValue("3.4") float abobus) {
         super(abobus);
     }

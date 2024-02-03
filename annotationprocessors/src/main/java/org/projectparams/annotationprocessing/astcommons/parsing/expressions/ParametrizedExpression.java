@@ -5,12 +5,11 @@ import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ParametrizedExpression implements Expression {
     private final List<Expression> typeArguments;
-    private final ParameterizableExpression plainExpression;
-    protected ParametrizedExpression(List<Expression> typeArguments, ParameterizableExpression plainExpression) {
+    private final ParameterizableObjectExpression plainExpression;
+    protected ParametrizedExpression(List<Expression> typeArguments, ParameterizableObjectExpression plainExpression) {
         this.typeArguments = typeArguments;
         this.plainExpression = plainExpression;
     }

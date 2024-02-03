@@ -2,12 +2,10 @@ package org.projectparams.annotationprocessing.astcommons.parsing.expressions;
 
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
-import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
-import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
 import java.util.List;
 
-public class ParametrizedFieldAccessExpression extends FieldAccessExpression implements ParameterizableExpression{
+public class ParametrizedFieldAccessExpression extends FieldAccessExpression implements ParameterizableObjectExpression {
     private final ParametrizedExpression parametrizedExpression;
     protected ParametrizedFieldAccessExpression(String name, Expression owner, List<Expression> typeArguments) {
         super(name, owner);

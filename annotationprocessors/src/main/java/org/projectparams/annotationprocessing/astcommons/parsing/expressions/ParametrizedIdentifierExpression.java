@@ -5,7 +5,7 @@ import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
 
 import java.util.List;
 
-public class ParametrizedIdentifierExpression extends IdentifierExpression implements ParameterizableExpression{
+public class ParametrizedIdentifierExpression extends IdentifierExpression implements ParameterizableObjectExpression {
     private final ParametrizedExpression parametrizedExpression;
     protected ParametrizedIdentifierExpression(String name, List<Expression> typeArguments) {
         super(name);

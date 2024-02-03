@@ -31,12 +31,13 @@ public class Main {
         System.out.println(sucus.bibus() + " " + sucus.bibus());
     }
 
-    private static float bibus(@DefaultValue("0") Float someVar) {
+    private static float bibus(@DefaultValue("0f") Float someVar) {
         return 3.4f;
     }
 
-    public static void rovarus(@DefaultValue("new Main().<Map<Integer, java.util.List<Integer>>>akakus(Map.of(3, List.of(6)))")
-                               List<Map<Integer, List<Integer>>>
+    public static void rovarus(@DefaultValue("Sucus.mains[Sucus.mains[1].getZero()]." +
+            "<Map<Integer, java.util.List<Float>>>akakus(Map.of(3, List.of((float)(double)6.d)))")
+                               List<Map<Integer, List<Float>>>
                                        someVar) {
         System.out.println(" " + someVar);
         System.out.println(someVar.getFirst().getClass());
@@ -51,5 +52,9 @@ public class Main {
     }
 
     public static class someVar{}
+
+    private static int getZero() {
+        return 0;
+    }
 
 }

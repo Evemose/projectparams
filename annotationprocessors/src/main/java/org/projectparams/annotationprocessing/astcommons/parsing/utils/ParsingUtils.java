@@ -246,6 +246,10 @@ public class ParsingUtils {
                 Math.min(typeArgsStartIndex, argsStartIndex));
     }
 
+    public static int getArrayIndexStartIndex(String expression) {
+        return getArgsStartIndexFromIndex(expression, '[', ']', expression.length() - 1);
+    }
+
     public static boolean containsTopLevelDot(String expression) {
         return getOwnerSeparatorIndex(expression) != -1;
     }

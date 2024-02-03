@@ -133,4 +133,8 @@ public class ExpressionMaker {
         };
         return treeMaker.TypeCast(typeIdent, expression);
     }
+
+    public static JCTree.JCExpression makeArrayAccess(JCTree.JCExpression array, JCTree.JCExpression index) {
+        return treeMaker.Indexed(array, index);
+    }
 }

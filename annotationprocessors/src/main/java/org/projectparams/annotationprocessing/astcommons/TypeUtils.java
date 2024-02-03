@@ -243,7 +243,7 @@ public class TypeUtils {
             }
             return TypeTag.INT;
         }
-        if (literalAsString.matches("\\d+(\\.\\d+)?[fFdD]?")) {
+        if (literalAsString.matches("\\d+(\\.\\d*)?[fFdD]?")) {
             if (literalAsString.endsWith("f") || literalAsString.endsWith("F")) {
                 return TypeTag.FLOAT;
             }
