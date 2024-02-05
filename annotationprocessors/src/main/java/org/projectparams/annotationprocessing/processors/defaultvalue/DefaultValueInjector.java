@@ -3,14 +3,12 @@ package org.projectparams.annotationprocessing.processors.defaultvalue;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.StatementTree;
 import com.sun.tools.javac.tree.JCTree;
-import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
 import org.projectparams.annotationprocessing.astcommons.PathUtils;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.IdentifierExpression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.LiteralExpression;
-import org.projectparams.annotationprocessing.utils.ElementUtils;
+import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
 
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.ExecutableElement;

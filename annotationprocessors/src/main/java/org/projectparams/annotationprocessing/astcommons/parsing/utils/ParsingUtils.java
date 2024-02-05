@@ -26,6 +26,9 @@ public class ParsingUtils {
     }
 
     public static int getArgsStartIndex(String expression) {
+        if (!expression.endsWith(")")) {
+            return -1;
+        }
         return getArgsStartIndexFromIndex(expression, '(', ')', expression.length() - 1);
     }
 
@@ -234,23 +237,60 @@ public class ParsingUtils {
     }
 
     public static int getOwnerSeparatorIndex(String expression) {
-        var typeArgsStartIndex = getTypeArgsStartIndex(expression);
-        if (typeArgsStartIndex == -1) {
-            typeArgsStartIndex = expression.length();
-        }
         var argsStartIndex = getArgsStartIndex(expression);
         if (argsStartIndex == -1) {
             argsStartIndex = expression.length();
         }
+        var typeArgsStartIndex = getTypeArgsStartIndex(expression);
+        if (typeArgsStartIndex == -1) {
+            typeArgsStartIndex = expression.length();
+        }
+        var arrayIndexStartIndex = getArrayInitializerStartIndex(expression);
+        if (arrayIndexStartIndex == -1) {
+            arrayIndexStartIndex = expression.length();
+        }
         return expression.lastIndexOf('.',
-                Math.min(typeArgsStartIndex, argsStartIndex));
+                Math.min(arrayIndexStartIndex, Math.min(typeArgsStartIndex, argsStartIndex)));
     }
 
     public static int getArrayIndexStartIndex(String expression) {
         return getArgsStartIndexFromIndex(expression, '[', ']', expression.length() - 1);
     }
 
+    public static int getArrayInitializerStartIndex(String expression) {
+        return getArgsStartIndexFromIndex(expression, '{', '}', expression.length() - 1);
+    }
+
     public static boolean containsTopLevelDot(String expression) {
         return getOwnerSeparatorIndex(expression) != -1;
+    }
+
+    public static List<String> getArrayDimensions(String expression) {
+        var dimensionsStartIndex = expression.indexOf('[');
+        if (dimensionsStartIndex == -1) {
+            throw new IllegalArgumentException("No array dimensions in " + expression);
+        }
+        var dimensions = new ArrayList<String>();
+        do {
+            var parenthesesCount = 0;
+            var i = dimensionsStartIndex;
+            for (; i < expression.length(); i++) {
+                var c = expression.charAt(i);
+                if (c == '[') {
+                    parenthesesCount++;
+                } else if (c == ']') {
+                    if (parenthesesCount == 1) {
+                        dimensions.add(expression.substring(dimensionsStartIndex + 1, i));
+                        break;
+                    }
+                    parenthesesCount--;
+                }
+            }
+            if (i == expression.length()) {
+                throw new IllegalArgumentException("Unbalanced parentheses in " + expression);
+            }
+            dimensionsStartIndex = expression.indexOf('[', i+1);
+        } while (dimensionsStartIndex != -1);
+        return dimensions;
     }
 }

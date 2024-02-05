@@ -120,7 +120,11 @@ public class ExpressionMaker {
     }
 
     public static JCTree.JCTypeCast makeTypeCast(JCTree.JCExpression expression, String typeName) {
-        var typeIdent = switch (typeName) {
+        return treeMaker.TypeCast(getTypeIdent(typeName), expression);
+    }
+
+    private static JCTree.JCExpression getTypeIdent(String typeName) {
+        return switch (typeName) {
             case "short" -> treeMaker.TypeIdent(TypeTag.SHORT);
             case "byte" -> treeMaker.TypeIdent(TypeTag.BYTE);
             case "char" -> treeMaker.TypeIdent(TypeTag.CHAR);
@@ -131,10 +135,15 @@ public class ExpressionMaker {
             case "int" -> treeMaker.TypeIdent(TypeTag.INT);
             default -> treeMaker.Ident(names.fromString(typeName));
         };
-        return treeMaker.TypeCast(typeIdent, expression);
     }
 
-    public static JCTree.JCExpression makeArrayAccess(JCTree.JCExpression array, JCTree.JCExpression index) {
+    public static JCTree.JCArrayAccess makeArrayAccess(JCTree.JCExpression array, JCTree.JCExpression index) {
         return treeMaker.Indexed(array, index);
+    }
+
+    public static JCTree.JCNewArray makeNewArray(String type,
+                                                 java.util.List<JCTree.JCExpression> dimensions,
+                                                 java.util.List<JCTree.JCExpression> initializers) {
+        return treeMaker.NewArray(getTypeIdent(type), List.from(dimensions), null);
     }
 }

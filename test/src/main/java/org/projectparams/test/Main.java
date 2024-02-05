@@ -2,9 +2,7 @@ package org.projectparams.test;
 
 import org.projectparams.annotations.DefaultValue;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
 
 import static org.projectparams.test.Abobus.Dodus;
 
@@ -24,6 +22,7 @@ public class Main {
         var doubleBibus = Abobus.abobus(abobus.doubleBibus(new Main()), Abobus.akakus()).doubleBibus(new Main());
         var abobusSucus = new Abobus.Sucus().bibus();
         rovarus();
+        bokak();
         Main.bibus();
         System.out.println(" " + bibus);
         System.out.println(" " + doubleBibus);
@@ -35,12 +34,16 @@ public class Main {
         return 3.4f;
     }
 
-    public static void rovarus(@DefaultValue("Sucus.mains[Sucus.mains[1].getZero()]." +
+    public static void rovarus(@DefaultValue("new Sucus().mains[Sucus.mains[1].getZero()]." +
             "<Map<Integer, java.util.List<Float>>>akakus(Map.of(3, List.of((float)(double)6.d)))")
                                List<Map<Integer, List<Float>>>
                                        someVar) {
         System.out.println(" " + someVar);
         System.out.println(someVar.getFirst().getClass());
+    }
+
+    public static void bokak(@DefaultValue("new int[10][Sucus.mains[0].getFive()]") int[][] someVar) {
+        System.out.println("bibus");
     }
 
     public enum Akakus {
@@ -55,6 +58,10 @@ public class Main {
 
     private static int getZero() {
         return 0;
+    }
+
+    private static int getFive() {
+        return 5;
     }
 
 }

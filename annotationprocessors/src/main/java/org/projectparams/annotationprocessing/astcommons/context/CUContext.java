@@ -29,7 +29,7 @@ public record CUContext(
 
     private Optional<String> getMatch(Collection<String> imports, String nameToMatch) {
         return imports.stream()
-                .filter(importedName -> importedName.endsWith(nameToMatch))
+                .filter(importedName -> importedName.endsWith('.' + nameToMatch))
                 .findAny();
     }
 

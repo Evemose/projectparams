@@ -76,15 +76,11 @@ public class CleanupVisitor extends AbstractVisitor<Void, Void> {
         for (var arg : args) {
             if (fixedVarTypeNames.containsKey(arg.toString())) {
                 arg.type = fixedVarTypeNames.get(arg.toString());
-                messager.printMessage(Diagnostic.Kind.NOTE, "Fixed new class arg type: " + invocation
-                        + " to " + fixedVarTypeNames.get(arg.toString()).toString());
                 break;
             } else {
                 for (var fixedMethod : allFixedMethods) {
                     if (fixedMethod.getWrapped() == arg) {
                         arg.type = fixedMethod.getReturnType();
-                        messager.printMessage(Diagnostic.Kind.NOTE, "Fixed new class arg type: " + invocation
-                                + " to " + fixedMethod.getReturnType().toString());
                         break;
                     }
                 }
@@ -105,8 +101,6 @@ public class CleanupVisitor extends AbstractVisitor<Void, Void> {
                 if (fixedMethod.getWrapped() == invocation.getEnclosingExpression()) {
                     TypeUtils.addConstructorOwnerTypeName(invocation, fixedMethod.getReturnType().toString()
                             + "." + asJC.getIdentifier().toString().replaceAll(".?<.*>.?", ""));
-                    messager.printMessage(Diagnostic.Kind.NOTE, "Fixed new class owner type: " + invocation
-                            + " to " + fixedMethod.getReturnType().toString());
                     break;
                 }
             }

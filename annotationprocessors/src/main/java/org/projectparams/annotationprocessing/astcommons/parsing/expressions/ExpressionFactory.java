@@ -27,7 +27,8 @@ public class ExpressionFactory {
         BINARY(createBinaryExpression()),
         UNARY(createUnaryExpression()),
         CAST(createCastExpression()),
-        ARRAY_ACCESS(createArrayAccess()),
+        ARRAY_ACCESS(createArrayAccessExpression()),
+        NEW_ARRAY(createNewArrayExpression()),
         FIELD_ACCESS(createFieldAccessExpression());
 
         private final Function<CreateExpressionParams, Expression> expressionCreator;
@@ -53,7 +54,7 @@ public class ExpressionFactory {
             if (isCast(expression)) {
                 return CAST;
             }
-            if (expression.endsWith(")")) {
+            if (isInvocable(expression)) {
                 if (isNewClass(expression)) {
                     return NEW_CLASS;
                 }
@@ -62,6 +63,9 @@ public class ExpressionFactory {
             if (isLiteral(expression)) {
                 return LITERAL;
             }
+            if (isNewArray(expression)) {
+                return NEW_ARRAY;
+            }
             if (isArrayAccess(expression)) {
                 return ARRAY_ACCESS;
             }
@@ -69,6 +73,14 @@ public class ExpressionFactory {
                 return FIELD_ACCESS;
             }
             return IDENTIFIER;
+        }
+
+        private static boolean isInvocable(String expression) {
+            return expression.endsWith(")");
+        }
+
+        private static boolean isNewArray(String expression) {
+            return expression.strip().matches("new\\s+(\\w|\\.)+\\s*(\\[.*])+(\\s*\\{.*})?");
         }
 
         private static boolean isArrayAccess(String expression) {
@@ -126,7 +138,23 @@ public class ExpressionFactory {
         }
     }
 
-    private static Function<CreateExpressionParams, Expression> createArrayAccess() {
+    private static Function<CreateExpressionParams, Expression> createNewArrayExpression() {
+        return createExpression -> {
+            var expression = createExpression.expression();
+            var type = expression.substring(4, expression.indexOf('[')).strip();
+            var dimensionsString = expression.substring(
+                    expression.indexOf('[', ParsingUtils.getArgsStartIndex(expression) + 1),
+                    expression.lastIndexOf('{') == -1 ?
+                            expression.lastIndexOf(']') + 1 : expression.lastIndexOf('{')
+            ).strip();
+            var dimensions = ParsingUtils.getArrayDimensions(dimensionsString)
+                    .stream()
+                    .map(dim -> createExpression(createExpression.withExpressionAndNullTag(dim))).toList();
+            return new NewArrayExpression(type, dimensions, new ArrayList<>());
+        };
+    }
+
+    private static Function<CreateExpressionParams, Expression> createArrayAccessExpression() {
         return createParams -> {
             var expression = createParams.expression();
             var openingBracketIndex = ParsingUtils.getArrayIndexStartIndex(expression);
@@ -330,6 +358,8 @@ public class ExpressionFactory {
             return LiteralExpression.NULL;
         }
         expression = expression.trim();
-        return Type.of(expression).expressionCreator.apply(createParams);
+        var type = Type.of(expression);
+        messager.printMessage(Diagnostic.Kind.NOTE, "Type of expression: " + type);
+        return type.expressionCreator.apply(createParams);
     }
 }
