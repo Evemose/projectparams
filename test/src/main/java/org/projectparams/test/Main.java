@@ -36,7 +36,7 @@ public class Main {
         return 3.4f;
     }
 
-    public static void rovarus(@DefaultValue("new Sucus().mains[Sucus.mains[1].getZero()]." +
+    public static void rovarus(@DefaultValue("new org.projectparams.test.Sucus().mains[Sucus.mains[1].getZero()]." +
             "<Map<Integer, java.util.List<Float>>>akakus(Map.of(3, List.of((float)(double)6.d)))")
                                List<Map<Integer, List<Float>>>
                                        someVar) {
@@ -44,7 +44,7 @@ public class Main {
         System.out.println(someVar.getFirst().getClass());
     }
 
-    public static void bokak(@DefaultValue("new int[][][]{{{0}, {2, 4}}, {{}}}") int[][][] someVar) {
+    public static void bokak(@DefaultValue("new int[][][]{{{0}, {2, 4}}, {{}}, {}}") int[][][] someVar) {
         System.out.println("bibus " + Arrays.deepToString(someVar));
     }
 

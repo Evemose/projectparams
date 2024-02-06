@@ -3,9 +3,9 @@ package org.projectparams.annotationprocessing.astcommons.parsing.utils;
 import com.sun.tools.javac.tree.JCTree;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class ParsingUtils {
     private static int getArgsStartIndexFromIndex(String expression, char openingPar, char closingPar, int fromIndex) {
@@ -238,20 +238,43 @@ public class ParsingUtils {
     }
 
     public static int getOwnerSeparatorIndex(String expression) {
-        var argsStartIndex = getArgsStartIndex(expression);
-        if (argsStartIndex == -1) {
-            argsStartIndex = expression.length();
+        var forwardWhitespacesCount = 0;
+        while (forwardWhitespacesCount < expression.length() && Character.isWhitespace(expression.charAt(forwardWhitespacesCount))) {
+            forwardWhitespacesCount++;
         }
-        var typeArgsStartIndex = getTypeArgsStartIndex(expression);
-        if (typeArgsStartIndex == -1) {
-            typeArgsStartIndex = expression.length();
+        expression = expression.strip();
+        if (expression.matches(".*\\Wnew\\s+(\\w+\\.?)+\\s*\\(.*\\)\\s*")
+        || expression.matches("^new\\s+(\\w+\\.?)+\\s*\\(.*\\)\\s*")) {
+            return getNewClassOwnerSeparatorIndex(expression);
         }
-        var arrayIndexStartIndex = getArrayInitializerStartIndex(expression);
-        if (arrayIndexStartIndex == -1) {
-            arrayIndexStartIndex = expression.length();
+        var rightBound = getTypeArgsStartIndex(expression);
+        if (rightBound == -1) {
+            rightBound = getArgsStartIndex(expression);
+            if (rightBound == -1) {
+                rightBound = getArrayInitializerStartIndex(expression);
+            }
         }
-        return expression.lastIndexOf('.',
-                Math.min(arrayIndexStartIndex, Math.min(typeArgsStartIndex, argsStartIndex)));
+        return expression.lastIndexOf('.', rightBound == -1 ? expression.length() : rightBound) + forwardWhitespacesCount;
+    }
+
+    public static int getNewClassOwnerSeparatorIndex(String expression) {
+        var selectedNewKeywordIndex = getSelectedNewKeywordIndex(expression);
+        return selectedNewKeywordIndex == -1 ? -1 : expression.lastIndexOf('.', selectedNewKeywordIndex);
+    }
+
+    public static int getSelectedNewKeywordIndex(String expression) {
+        var rightBound = getTypeArgsStartIndex(expression);
+        if (rightBound == -1) {
+            rightBound = getArgsStartIndex(expression);
+        }
+        expression = ' ' + expression;
+        rightBound++;
+        var matcher = Pattern.compile(new StringBuilder("W\\news\\").reverse().toString())
+                .matcher(new StringBuilder(expression.substring(0, rightBound)).reverse());
+        if (matcher.find()) {
+            return expression.length() - matcher.end() - 1;
+        }
+        return -1;
     }
 
     public static int getArrayIndexStartIndex(String expression) {

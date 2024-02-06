@@ -86,10 +86,8 @@ public class ExpressionFactory {
             if (!expression.endsWith(")")) {
                 return false;
             }
-            var argsStartIndex = ParsingUtils.getArgsStartIndex(expression);
-            expression = expression.substring(0, argsStartIndex);
-            expression = expression.substring(expression.lastIndexOf('.') + 1, expression.length()-1);
-            return expression.startsWith("new ");
+            expression = expression.substring(ParsingUtils.getOwnerSeparatorIndex(expression)+1).strip();
+            return expression.matches("^new\\s.*");
         }
 
         private static boolean isLiteral(String expression) {
@@ -145,13 +143,21 @@ public class ExpressionFactory {
         return new NewArrayExpression(type, dimensions, initializer);
     }
 
-    private static List<Expression> getInitializer(CreateExpressionParams createExpression, int initializerStartIndex, int dimsCount, String type) {
+    private static List<Expression> getInitializer(CreateExpressionParams createExpression,
+                                                   int initializerStartIndex,
+                                                   int dimsCount,
+                                                   String type) {
         List<Expression> initializer = null;
         if (initializerStartIndex != -1) {
             initializer = ParsingUtils.getArrayInitializerExpressions(createExpression.expression())
                     .stream()
                     .map(init -> {
                         if (init.trim().matches("\\{.*}")) {
+                            var arrayDims = dimsCount - 1;
+                            if (arrayDims < 1) {
+                                throw new IllegalArgumentException("Array initializer contains too many dimensions: "
+                                        + init + " in " + createExpression.expression());
+                            }
                             return createExpression(createExpression.withExpressionAndNullTag(
                                     "new %s".formatted(type) + "[]".repeat(dimsCount-1) + init));
                         }
@@ -220,7 +226,7 @@ public class ExpressionFactory {
         var ownerSeparatorIndex = ParsingUtils.getOwnerSeparatorIndex(expression);
         return new MethodInvocationExpression(expression.substring(
                 Math.max(ownerSeparatorIndex, expression.lastIndexOf('>', argsStartIndex)) + 1, argsStartIndex).strip(),
-                getOwner(createParams, ownerSeparatorIndex, expression),
+                getOwner(createParams),
                 ParsingUtils.getArgStrings(expression, '(', ')').stream().map(arg -> createExpression(createParams.withExpressionAndNullTag(arg))).toList(),
                     createParams.parsingContextPath(),
                 getTypeParameters(expression).stream().map(typeArg ->
@@ -239,13 +245,11 @@ public class ExpressionFactory {
         return typeParameters;
     }
 
-    private static Expression getOwner(CreateExpressionParams createParams, int ownerSeparatorIndex, String expression) {
-        Expression owner = null;
-        if (ownerSeparatorIndex != -1) {
-            var ownerExpression = expression.substring(0, ownerSeparatorIndex);
-            owner = createExpression(createParams.withExpressionAndNullTag(ownerExpression));
-        }
-        return owner;
+    private static Expression getOwner(CreateExpressionParams createParams) {
+        var expression = createParams.expression().strip();
+        var ownerSeparatorIndex = ParsingUtils.getOwnerSeparatorIndex(expression);
+        return ownerSeparatorIndex == -1 ? null : createExpression(createParams.withExpressionAndNullTag(
+                expression.substring(0, ownerSeparatorIndex)));
     }
 
     private static Expression createFieldAccessExpression(CreateExpressionParams createParams) {
@@ -266,15 +270,16 @@ public class ExpressionFactory {
 
     private static Expression createNewClassExpression(CreateExpressionParams createParams) {
         var expression = createParams.expression();
-        var argsStartIndex = ParsingUtils.getArgsStartIndex(expression);
-        var typeArgsStartIndex = ParsingUtils.getTypeArgsStartIndex(expression);
-        if (typeArgsStartIndex == -1) {
-            typeArgsStartIndex = expression.length();
+        var rightBound = ParsingUtils.getTypeArgsStartIndex(expression);
+        if (rightBound == -1) {
+            rightBound = ParsingUtils.getArgsStartIndex(expression);
+            if (rightBound == -1) {
+                rightBound = expression.length();
+            }
         }
         return new NewClassExpression(
-                expression.substring(expression.lastIndexOf("new ", argsStartIndex) + 4,
-                        Math.min(typeArgsStartIndex, argsStartIndex)),
-                getOwner(createParams, ParsingUtils.getOwnerSeparatorIndex(expression), expression),
+                expression.substring(ParsingUtils.getSelectedNewKeywordIndex(expression) + 3, rightBound).strip(),
+                getOwner(createParams),
                 ParsingUtils.getArgStrings(expression, '(', ')').stream().map(arg -> createExpression(createParams.withExpressionAndNullTag(arg))).toList(),
                 createParams.parsingContextPath(),
                 getTypeParameters(expression).stream().map(typeArg ->
