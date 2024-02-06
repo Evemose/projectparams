@@ -3,6 +3,7 @@ package org.projectparams.annotationprocessing.astcommons.parsing.utils;
 import com.sun.tools.javac.tree.JCTree;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -212,7 +213,7 @@ public class ParsingUtils {
                 }
             }
             if (parenthesesCount != 0) {
-                throw new IllegalArgumentException("Unbalanced parentheses in " + expression);
+                throw new IllegalArgumentException("Unbalanced parentheses in " + expression + " at " + argsString);
             }
             if (argBeginIndex == argsString.length()) {
                 throw new IllegalArgumentException("Empty argument in " + expression);
@@ -292,5 +293,14 @@ public class ParsingUtils {
             dimensionsStartIndex = expression.indexOf('[', i+1);
         } while (dimensionsStartIndex != -1);
         return dimensions;
+    }
+
+    public static List<String> getArrayInitializerExpressions(String expression) {
+        var arrayInitializerStartIndex = getArrayInitializerStartIndex(expression);
+        if (arrayInitializerStartIndex == -1) {
+            throw new IllegalArgumentException("No array initializer in " + expression);
+        }
+        return getArgStringsFromIndex(expression, '{', '}', expression.length() - 1);
+
     }
 }

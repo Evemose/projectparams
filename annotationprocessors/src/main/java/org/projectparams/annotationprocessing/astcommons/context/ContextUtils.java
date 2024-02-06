@@ -113,30 +113,34 @@ public class ContextUtils {
     }
 
     public static Set<ClassContext.Method> getMethodsInClass(TreePath classPath) {
-        return getMembersOfClass(classPath, ElementKind.METHOD).stream()
+        var decl = (JCTree.JCClassDecl) classPath.getLeaf();
+        return getMembersOfClass(classPath, ElementKind.METHOD, decl.mods.getFlags().contains(Modifier.STATIC)).stream()
                 .map(el -> (ClassContext.Method) el)
                 .collect(Collectors.toSet());
     }
 
     public static Set<ClassContext.Field> getFieldsInClass(TreePath classPath) {
-        return getMembersOfClass(classPath, ElementKind.FIELD).stream()
+        var decl = (JCTree.JCClassDecl) classPath.getLeaf();
+        return getMembersOfClass(classPath, ElementKind.FIELD, decl.mods.getFlags().contains(Modifier.STATIC)).stream()
                 .map(el -> (ClassContext.Field) el)
                 .collect(Collectors.toSet());
     }
 
-    public static Set<ClassContext.ClassMember> getMembersOfClass(TreePath classPath, ElementKind kind) {
+    public static Set<ClassContext.ClassMember> getMembersOfClass(TreePath classPath, ElementKind kind, boolean requireStatic) {
         var decl = (JCTree.JCClassDecl) classPath.getLeaf();
         var classSymbol = decl.sym;
         var elements =  classSymbol.getEnclosedElements().stream()
                 .filter(el -> el.getKind() == kind)
+                .filter(el -> !requireStatic || el.getModifiers().contains(Modifier.STATIC))
                 .map(el -> ClassContext.of(
                         el.getSimpleName().toString(),
                         classSymbol.getQualifiedName().toString(),
                         el.getModifiers().contains(Modifier.STATIC),
                         kind))
                 .collect(Collectors.toSet());
-        if (decl.extending != null && !decl.mods.getFlags().contains(Modifier.STATIC)) {
-            elements.addAll(getMembersOfClass(PathUtils.getEnclosingClassPath(classPath), kind));
+        if (decl.extending != null) {
+            elements.addAll(getMembersOfClass(PathUtils.getEnclosingClassPath(classPath),
+                    kind, decl.mods.getFlags().contains(Modifier.STATIC)));
         }
         return elements;
     }

@@ -10,6 +10,7 @@ import com.sun.tools.javac.util.Names;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 
 import javax.annotation.processing.Messager;
+import java.util.Objects;
 
 public class ExpressionMaker {
 
@@ -94,8 +95,12 @@ public class ExpressionMaker {
         return treeMaker.Exec(treeMaker.Assign(variable, expression));
     }
 
-    public static JCTree.JCBlock makeBlock(List<StatementTree> statements) {
-        return treeMaker.Block(0, statements.stream().map(statement -> (JCTree.JCStatement) statement).collect(List.collector()));
+    public static JCTree.JCBlock makeBlock(java.util.List<JCTree.JCStatement> statements) {
+        return treeMaker.Block(0, List.from(statements));
+    }
+
+    public static JCTree.JCStatement makeStatement(JCTree.JCExpression expression) {
+        return treeMaker.Exec(expression);
     }
 
     public static JCTree.JCConditional makeConditional(JCTree.JCExpression condition,
@@ -144,6 +149,14 @@ public class ExpressionMaker {
     public static JCTree.JCNewArray makeNewArray(String type,
                                                  java.util.List<JCTree.JCExpression> dimensions,
                                                  java.util.List<JCTree.JCExpression> initializers) {
-        return treeMaker.NewArray(getTypeIdent(type), List.from(dimensions), null);
+        var typeIdent = getTypeIdent(type);
+        for (int i = 0; i < dimensions.size()-1; i++) {
+            typeIdent = treeMaker.TypeArray(typeIdent);
+        }
+        return treeMaker.NewArray(
+                typeIdent,
+                dimensions.stream().allMatch(Objects::isNull) ? List.nil() : List.from(dimensions),
+                initializers == null ? null : List.from(initializers)
+        );
     }
 }

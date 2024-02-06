@@ -52,7 +52,7 @@ public class DefaultValueInjector {
         statementsToInject.addAll(prevStatements);
         var newStatements = com.sun.tools.javac.util.List.from(statementsToInject);
         var asJC = (JCTree.JCMethodDecl) methodTree;
-        asJC.body = ExpressionMaker.makeBlock(newStatements);
+        asJC.body = ExpressionMaker.makeBlock(newStatements.stream().map(JCTree.JCStatement.class::cast).toList());
         messager.printMessage(javax.tools.Diagnostic.Kind.NOTE, "Modified method tree: " + asJC);
     }
 

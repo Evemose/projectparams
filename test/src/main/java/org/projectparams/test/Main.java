@@ -21,6 +21,7 @@ public class Main {
         var bibus2 = new Dodus().bibus();
         var doubleBibus = Abobus.abobus(abobus.doubleBibus(new Main()), Abobus.akakus()).doubleBibus(new Main());
         var abobusSucus = new Abobus.Sucus().bibus();
+        var temp = new int[][]{};
         rovarus();
         bokak();
         Main.bibus();
@@ -29,6 +30,7 @@ public class Main {
         System.out.println(" " + sucus.bibus());
         System.out.println(sucus.bibus() + " " + sucus.bibus());
     }
+
 
     private static float bibus(@DefaultValue("0f") Float someVar) {
         return 3.4f;
@@ -42,8 +44,8 @@ public class Main {
         System.out.println(someVar.getFirst().getClass());
     }
 
-    public static void bokak(@DefaultValue("new int[10][Sucus.mains[0].getFive()]") int[][] someVar) {
-        System.out.println("bibus");
+    public static void bokak(@DefaultValue("new int[][][]{{{0}, {2, 4}}, {{}}}") int[][][] someVar) {
+        System.out.println("bibus " + Arrays.deepToString(someVar));
     }
 
     public enum Akakus {
