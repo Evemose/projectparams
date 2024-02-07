@@ -1,12 +1,10 @@
 package org.projectparams.annotationprocessing.astcommons.parsing.expressions;
 
-import com.sun.source.util.TreePath;
-import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.arrayaccess.ArrayAccessExpression;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
-import javax.annotation.Nullable;
 import javax.annotation.processing.Messager;
 import javax.tools.Diagnostic;
 import java.util.ArrayList;
@@ -87,7 +85,7 @@ public class ExpressionFactory {
                 return false;
             }
             expression = expression.substring(ParsingUtils.getOwnerSeparatorIndex(expression)+1).strip();
-            return expression.matches("^new\\s.*");
+            return expression.matches("^new\\s[^.]*");
         }
 
         private static boolean isLiteral(String expression) {
@@ -118,20 +116,6 @@ public class ExpressionFactory {
     }
 
     private ExpressionFactory() {
-    }
-
-    /**
-     * @param expression The string representation of the expression
-     * @param typeTag The type tag of the expression
-     * @param parsingContextPath The path to the enclosing invocable element (method, constructor, etc.)
-     */
-    public record CreateExpressionParams(String expression,
-                                         @Nullable TypeTag typeTag,
-                                         TreePath parsingContextPath) {
-        // name seems odd, but it`s needed to recursively create expressions
-        public CreateExpressionParams withExpressionAndNullTag(String expression) {
-            return new CreateExpressionParams(expression, null, parsingContextPath);
-        }
     }
 
     private static Expression createNewArrayExpression(CreateExpressionParams createExpression) {

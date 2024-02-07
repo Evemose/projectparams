@@ -4,10 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="implemented NewArrayExpression initializer">
+    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="implemented qualified names in NewClassExpression">
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/CreateExpressionParams.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/ExpressionType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/arrayaccess/ArrayAccessType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/ArrayAccessExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/arrayaccess/ArrayAccessExpression.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/ExpressionFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/ExpressionFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/MethodInvocationExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/MethodInvocationExpression.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/utils/ParsingUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/utils/ParsingUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueInjector.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueInjector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/argumentsuppliers/DefaultArgumentSupplier.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/argumentsuppliers/DefaultArgumentSupplier.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Abobus.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Abobus.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -178,6 +186,7 @@
       <recent name="org.projectparams.processors.processors" />
     </key>
     <key name="MoveInnerDialog.RECENTS_KEY">
+      <recent name="org.projectparams.annotationprocessing.astcommons.parsing.expressions" />
       <recent name="org.projectparams.annotationprocessing.astcommons.visitors" />
       <recent name="org.projectparams.annotationprocessing.processors.defaultvalue.visitors" />
     </key>
@@ -424,15 +433,10 @@
       <workItem from="1707177163118" duration="2013000" />
       <workItem from="1707230170282" duration="78000" />
       <workItem from="1707230506027" duration="593000" />
-      <workItem from="1707238699678" duration="7043000" />
-    </task>
-    <task id="LOCAL-00005" summary="i managed to get it working">
-      <option name="closed" value="true" />
-      <created>1705778378667</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1705778378667</updated>
+      <workItem from="1707238699678" duration="7077000" />
+      <workItem from="1707251406046" duration="15000" />
+      <workItem from="1707251893497" duration="4743000" />
+      <workItem from="1707262208066" duration="251000" />
     </task>
     <task id="LOCAL-00006" summary="i managed to get it working">
       <option name="closed" value="true" />
@@ -818,7 +822,15 @@
       <option name="project" value="LOCAL" />
       <updated>1707179583386</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="implemented qualified names in NewClassExpression">
+      <option name="closed" value="true" />
+      <created>1707246161397</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1707246161397</updated>
+    </task>
+    <option name="localTasksCounter" value="55" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -855,7 +867,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="implemented work with method static imports" />
     <MESSAGE value="implemented detection of subclasses as valid params + some refactor in getAllChildren and literal creation (added support for short and byte types)" />
     <MESSAGE value="fixed issue with boxed primitive classes. need to fix overrides detection" />
     <MESSAGE value="fixed overrides detection" />
@@ -880,7 +891,8 @@
     <MESSAGE value="implemented ArrayAccessExpression" />
     <MESSAGE value="implemented NewArrayExpression, currently without initializer" />
     <MESSAGE value="implemented NewArrayExpression initializer" />
-    <option name="LAST_COMMIT_MESSAGE" value="implemented NewArrayExpression initializer" />
+    <MESSAGE value="implemented qualified names in NewClassExpression" />
+    <option name="LAST_COMMIT_MESSAGE" value="implemented qualified names in NewClassExpression" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

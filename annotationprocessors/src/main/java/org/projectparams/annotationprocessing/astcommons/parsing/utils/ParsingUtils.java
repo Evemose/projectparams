@@ -238,15 +238,14 @@ public class ParsingUtils {
     }
 
     public static int getOwnerSeparatorIndex(String expression) {
+        if (expression.matches("^\\s*new\\s+(\\w+\\.?)+\\s*\\(.*\\)\\s*")) {
+            return -1;
+        }
         var forwardWhitespacesCount = 0;
         while (forwardWhitespacesCount < expression.length() && Character.isWhitespace(expression.charAt(forwardWhitespacesCount))) {
             forwardWhitespacesCount++;
         }
         expression = expression.strip();
-        if (expression.matches(".*\\Wnew\\s+(\\w+\\.?)+\\s*\\(.*\\)\\s*")
-        || expression.matches("^new\\s+(\\w+\\.?)+\\s*\\(.*\\)\\s*")) {
-            return getNewClassOwnerSeparatorIndex(expression);
-        }
         var rightBound = getTypeArgsStartIndex(expression);
         if (rightBound == -1) {
             rightBound = getArgsStartIndex(expression);
@@ -255,11 +254,6 @@ public class ParsingUtils {
             }
         }
         return expression.lastIndexOf('.', rightBound == -1 ? expression.length() : rightBound) + forwardWhitespacesCount;
-    }
-
-    public static int getNewClassOwnerSeparatorIndex(String expression) {
-        var selectedNewKeywordIndex = getSelectedNewKeywordIndex(expression);
-        return selectedNewKeywordIndex == -1 ? -1 : expression.lastIndexOf('.', selectedNewKeywordIndex);
     }
 
     public static int getSelectedNewKeywordIndex(String expression) {

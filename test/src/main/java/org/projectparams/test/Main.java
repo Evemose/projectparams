@@ -21,7 +21,6 @@ public class Main {
         var bibus2 = new Dodus().bibus();
         var doubleBibus = Abobus.abobus(abobus.doubleBibus(new Main()), Abobus.akakus()).doubleBibus(new Main());
         var abobusSucus = new Abobus.Sucus().bibus();
-        var temp = new int[][]{};
         rovarus();
         bokak();
         Main.bibus();
@@ -50,6 +49,10 @@ public class Main {
 
     public enum Akakus {
         A, B, C
+    }
+
+    private static void akoroyos(@DefaultValue("abobus.new Bibus()") Abobus.Bibus someVar) {
+        System.out.println(" " + someVar);
     }
 
     public static <T> List<T> akakus(T t) {

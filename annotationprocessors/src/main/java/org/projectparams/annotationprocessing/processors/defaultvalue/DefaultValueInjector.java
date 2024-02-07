@@ -6,6 +6,7 @@ import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.PathUtils;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.LiteralExpression;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
@@ -34,7 +35,7 @@ public class DefaultValueInjector {
                 continue;
             }
             var expression = ExpressionFactory.createExpression(
-                    new ExpressionFactory.CreateExpressionParams(
+                    new CreateExpressionParams(
                             defaultValue.expression(),
                             TypeUtils.getUnboxedTypeTag(defaultValue.type()),
                             PathUtils.getElementPath(invocable)

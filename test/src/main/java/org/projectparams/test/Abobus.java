@@ -65,6 +65,10 @@ public class Abobus {
             }
 
         }
+
+        public static class Sudodius {
+
+        }
     }
 
     public static final Abobus someVar = new Abobus();

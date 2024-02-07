@@ -23,7 +23,8 @@ public class MethodInvocationExpression extends InvocableExpression {
         return ExpressionMaker.makeMethodInvocation(
                 ExpressionMaker.makeFieldAccess(getOwnerExpression(), name),
                 typeParameters.stream().map(Expression::toJcExpression).toList(),
-                arguments.stream().map(Expression::toJcExpression).toArray(JCTree.JCExpression[]::new));
+                arguments.stream().map(Expression::toJcExpression).toArray(JCTree.JCExpression[]::new)
+        );
     }
 
     private JCTree.JCExpression getOwnerExpression() {
