@@ -1,7 +1,9 @@
-package org.projectparams.annotationprocessing.astcommons.parsing.expressions;
+package org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.binary;
 
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.OperatorExpression;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
 
 public class BinaryExpression extends OperatorExpression {

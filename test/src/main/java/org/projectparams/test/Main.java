@@ -55,6 +55,10 @@ public class Main {
         System.out.println(" " + someVar);
     }
 
+    private static void somavarus(@DefaultValue("5 + 3.4d") double someVar) {
+        System.out.println(" " + someVar);
+    }
+
     public static <T> List<T> akakus(T t) {
         return new ArrayList<T>(List.of(t));
     }

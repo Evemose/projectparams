@@ -1,6 +1,7 @@
 package org.projectparams.annotationprocessing.astcommons.parsing.utils;
 
 import com.sun.tools.javac.tree.JCTree;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.binary.BinaryExpressionType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,81 +74,14 @@ public class ParsingUtils {
         };
     }
 
-    public static JCTree.Tag extractBinaryOperator(String expression) {
-        expression = expression.strip();
-        var firstOperandEnd = getClosingParenthesesIndex(expression);
-        var substring = expression.substring(firstOperandEnd+1).trim();
-        if (substring.startsWith("+")) {
-            return JCTree.Tag.PLUS;
-        }
-        if (substring.startsWith("-")) {
-            return JCTree.Tag.MINUS;
-        }
-        if (substring.startsWith("*")) {
-            return JCTree.Tag.MUL;
-        }
-        if (substring.startsWith("/")) {
-            return JCTree.Tag.DIV;
-        }
-        if (substring.startsWith("%")) {
-            return JCTree.Tag.MOD;
-        }
-        if (substring.startsWith("&&")) {
-            return JCTree.Tag.AND;
-        }
-        if (substring.startsWith("||")) {
-            return JCTree.Tag.OR;
-        }
-        if (substring.startsWith("&")) {
-            return JCTree.Tag.BITAND;
-        }
-        if (substring.startsWith("|")) {
-            return JCTree.Tag.BITOR;
-        }
-        if (substring.startsWith("^")) {
-            return JCTree.Tag.BITXOR;
-        }
-        if (substring.startsWith("<<")) {
-            return JCTree.Tag.SL;
-        }
-        if (substring.startsWith(">>")) {
-            return JCTree.Tag.SR;
-        }
-        if (substring.startsWith(">>>")) {
-            return JCTree.Tag.USR;
-        }
-        if (substring.startsWith("<")) {
-            return JCTree.Tag.LT;
-        }
-        if (substring.startsWith(">")) {
-            return JCTree.Tag.GT;
-        }
-        if (substring.startsWith("<=")) {
-            return JCTree.Tag.LE;
-        }
-        if (substring.startsWith(">=")) {
-            return JCTree.Tag.GE;
-        }
-        if (substring.startsWith("==")) {
-            return JCTree.Tag.EQ;
-        }
-        if (substring.startsWith("!=")) {
-            return JCTree.Tag.NE;
-        }
-        if (substring.startsWith("instanceof")) {
-            return JCTree.Tag.TYPETEST;
-        }
-        throw new IllegalArgumentException("Unknown binary operator in " + expression);
-    }
-
-    public static int getClosingParenthesesIndex(String expression) {
+    public static int getClosingParenthesesIndex(String expression, int fromIndex, char openingPar, char closingPar) {
         var parenthesesCount = 0;
-        var i = 0;
+        var i = fromIndex;
         while (i < expression.length()) {
             var c = expression.charAt(i);
-            if (c == '(') {
+            if (c == openingPar) {
                 parenthesesCount++;
-            } else if (c == ')') {
+            } else if (c == closingPar) {
                 parenthesesCount--;
                 if (parenthesesCount == 0) {
                     return i;
@@ -158,33 +92,8 @@ public class ParsingUtils {
         return -1;
     }
 
-    public static JCTree.Tag extractUnaryOperator(String expression) {
-        expression = expression.strip();
-        if (expression.startsWith("++")) {
-            return JCTree.Tag.PREINC;
-        }
-        if (expression.startsWith("--")) {
-            return JCTree.Tag.PREDEC;
-        }
-        if (expression.startsWith("+")) {
-            return JCTree.Tag.POS;
-        }
-        if (expression.startsWith("-")) {
-            return JCTree.Tag.NEG;
-        }
-        if (expression.startsWith("!")) {
-            return JCTree.Tag.NOT;
-        }
-        if (expression.startsWith("~")) {
-            return JCTree.Tag.COMPL;
-        }
-        if (expression.endsWith("++")) {
-            return JCTree.Tag.POSTINC;
-        }
-        if (expression.endsWith("--")) {
-            return JCTree.Tag.POSTDEC;
-        }
-        throw new IllegalArgumentException("Unknown unary operator in " + expression);
+    public static int getClosingArgsParenthesesIndex(String expression, int fromIndex) {
+        return getClosingParenthesesIndex(expression, fromIndex, '(', ')');
     }
 
     private static List<String> getArgStringsFromIndex(String expression, char openingPar, char closingPar, int fromIndex) {
@@ -320,4 +229,5 @@ public class ParsingUtils {
         return getArgStringsFromIndex(expression, '{', '}', expression.length() - 1);
 
     }
+
 }

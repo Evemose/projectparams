@@ -8,6 +8,7 @@ import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUt
 import static org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory.createExpression;
 
 public class ArrayAccessType implements ExpressionType {
+    private static final ArrayAccessType INSTANCE = new ArrayAccessType();
     @Override
     public boolean matches(String expression) {
         return expression.matches(".*\\w+(\\[.*])+$");
@@ -23,5 +24,9 @@ public class ArrayAccessType implements ExpressionType {
                 createExpression(createParams.withExpressionAndNullTag(array)),
                 createExpression(createParams.withExpressionAndNullTag(index))
         );
+    }
+
+    public static ArrayAccessType getInstance() {
+        return INSTANCE;
     }
 }

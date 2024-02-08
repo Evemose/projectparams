@@ -3,10 +3,13 @@ package org.projectparams.annotationprocessing.astcommons.parsing.expressions;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.arrayaccess.ArrayAccessExpression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.binary.BinaryExpression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.binary.BinaryExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.unary.UnaryExpression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.unary.UnaryExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
 import javax.annotation.processing.Messager;
-import javax.tools.Diagnostic;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -298,7 +301,7 @@ public class ExpressionFactory {
 
     private static Expression createUnaryExpression(CreateExpressionParams createParams) {
         var expression = createParams.expression();
-        var operator = ParsingUtils.extractUnaryOperator(expression);
+        var operator = UnaryExpressionType.extractUnaryOperator(expression);
         String operand;
         if (operator == JCTree.Tag.POSTDEC || operator == JCTree.Tag.POSTINC) {
             operand = expression.substring(0, expression.length() - 2);
@@ -313,8 +316,8 @@ public class ExpressionFactory {
 
     private static Expression createBinaryExpression(CreateExpressionParams createParams) {
         var expression = createParams.expression();
-        var operator = ParsingUtils.extractBinaryOperator(expression);
-        var firstOperandEnd = ParsingUtils.getClosingParenthesesIndex(expression);
+        var operator = BinaryExpressionType.getInstance().extractBinaryOperator(expression);
+        var firstOperandEnd = ParsingUtils.getClosingArgsParenthesesIndex(expression, 0);
         if (firstOperandEnd == -1) {
             firstOperandEnd = expression.indexOf(ParsingUtils.getStringOfOperator(operator));
         }
@@ -328,13 +331,13 @@ public class ExpressionFactory {
 
     public static Expression createExpression(CreateExpressionParams createParams) {
         var expression = createParams.expression();
-        messager.printMessage(Diagnostic.Kind.NOTE, "Creating expression from " + expression);
+        //messager.printMessage(Diagnostic.Kind.NOTE, "Creating expression from " + expression);
         if (expression == null) {
             return LiteralExpression.NULL;
         }
         expression = expression.trim();
         var type = Type.of(expression);
-        messager.printMessage(Diagnostic.Kind.NOTE, "Type of expression: " + type);
+        //messager.printMessage(Diagnostic.Kind.NOTE, "Type of expression: " + type);
         return type.expressionCreator.apply(createParams);
     }
 }
