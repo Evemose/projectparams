@@ -50,7 +50,14 @@ public class UnaryExpressionType implements ExpressionType {
     public Expression parse(CreateExpressionParams createParams) {
         var expression = createParams.expression();
         var operator = extractUnaryOperator(expression);
-        var operand = ParsingUtils.getStringOfOperator(operator).strip();
+        String operand;
+        if (operator == JCTree.Tag.POSTDEC || operator == JCTree.Tag.POSTINC) {
+            operand = expression.substring(0, expression.length() - 2);
+        } else {
+            var stringOfOperator = ParsingUtils.getStringOfOperator(operator);
+            operand = expression.substring(expression.indexOf(stringOfOperator) +
+                    stringOfOperator.length()).strip();
+        }
         return new UnaryExpression(ExpressionFactory.createExpression(createParams
                 .withExpressionAndNullTag(operand)), operator);
     }
