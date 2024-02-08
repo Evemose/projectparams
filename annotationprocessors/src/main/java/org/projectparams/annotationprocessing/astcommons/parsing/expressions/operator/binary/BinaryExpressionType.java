@@ -91,7 +91,7 @@ public class BinaryExpressionType implements ExpressionType {
     }
 
     private int getOperatorIndex(String expression) {
-        var bracketsCount = new HashMap<>(Map.of('(', 0, '[', 0, '{', 0));
+        var bracketsCount = new HashMap<>(Map.of('(', 0, '[', 0, '{', 0, '<', 0));
         if (expression.charAt(0) == '(' || expression.charAt(0) == '[' || expression.charAt(0) == '{') {
             bracketsCount.merge(expression.charAt(0), 1, Integer::sum);
         }
@@ -108,9 +108,13 @@ public class BinaryExpressionType implements ExpressionType {
                 bracketsCount.merge('(', -1, Integer::sum);
             } else if (bracketsCount.values().stream().anyMatch(count -> count < 0)) {
                 return -1;
-            } else if (bracketsCount.values().stream().allMatch(Predicate.isEqual(0))
-            && isOperator(expression, i)) {
-                return i;
+            } else {
+                if (bracketsCount.values().stream().allMatch(Predicate.isEqual(0))
+                        && isOperator(expression, i)) {
+                    return i;
+                } else if (isTypeArgsBracket(expression, i)) {
+                    bracketsCount.merge(expression.charAt(i), expression.charAt(i) == '<' ? 1 : -1, Integer::sum);
+                }
             }
         }
         return -1;
@@ -148,8 +152,8 @@ public class BinaryExpressionType implements ExpressionType {
         } else {
             return false;
         }
-        return !after.isEmpty() && (before.isEmpty() || before.charAt(before.length() - 1) == '.' || after.charAt(0) == '.'
-                || after.charAt(0) == '(' || after.charAt(0) == '[');
+        return after.isEmpty() || before.isEmpty() || before.charAt(before.length() - 1) == '.' || after.charAt(0) == '.'
+                || after.charAt(0) == '(' || after.charAt(0) == '[';
     }
 
     private int getCorrespondingTypeArgBracket(String expression, int fromIndex, int step) {
@@ -188,7 +192,7 @@ public class BinaryExpressionType implements ExpressionType {
         }
         return new BinaryExpression(
                 ExpressionFactory.createExpression(createParams
-                        .withExpressionAndNullTag(expression.substring(0, operatorIndex).strip())),
+                        .withExpressionAndNullTag(expression.substring(0, operatorIndex-1).strip())),
                 ExpressionFactory.createExpression(createParams
                         .withExpressionAndNullTag(expression.substring(operatorIndex + 1).strip())),
                 extractBinaryOperator(expression, operatorIndex)

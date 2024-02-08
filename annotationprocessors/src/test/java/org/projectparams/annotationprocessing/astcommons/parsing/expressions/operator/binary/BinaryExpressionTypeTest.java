@@ -45,6 +45,7 @@ public class BinaryExpressionTypeTest {
             "--i",
             "i++",
             "i--",
+            "org.projectparams.test.Sucus().mains[Sucus.mains[1].getZero()].<Map<Integer, java.util.List<Float>>>akakus(Map.of(3, List.of((float)(double)6.d)))"
     })
     public void testMatchesNonBinaryExpression(String expression) {
         assertFalse(binaryExpressionType.matches(expression));

@@ -1,10 +1,11 @@
-package org.projectparams.annotationprocessing.astcommons.parsing.expressions;
+package org.projectparams.annotationprocessing.astcommons.parsing.expressions.cast;
 
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
 
-public class CastExpression implements Expression{
+public class CastExpression implements Expression {
     private final Expression castedExpression;
     private final String castedType;
 

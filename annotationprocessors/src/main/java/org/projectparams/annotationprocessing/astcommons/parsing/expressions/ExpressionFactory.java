@@ -3,6 +3,9 @@ package org.projectparams.annotationprocessing.astcommons.parsing.expressions;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.arrayaccess.ArrayAccessExpression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.arrayaccess.ArrayAccessType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.cast.CastExpression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.cast.CastExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.binary.BinaryExpression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.binary.BinaryExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.unary.UnaryExpression;
@@ -10,6 +13,7 @@ import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ope
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
 import javax.annotation.processing.Messager;
+import javax.tools.Diagnostic;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,10 +33,10 @@ public class ExpressionFactory {
         IDENTIFIER(ExpressionFactory::createIdentifierExpression),
         TERNARY(ExpressionFactory::createTernaryExpression),
         PARENTHESIZED(ExpressionFactory::createParenthesizedExpression),
-        BINARY(ExpressionFactory::createBinaryExpression),
-        UNARY(ExpressionFactory::createUnaryExpression),
-        CAST(ExpressionFactory::createCastExpression),
-        ARRAY_ACCESS(ExpressionFactory::createArrayAccessExpression),
+        BINARY(BinaryExpressionType.getInstance()::parse),
+        UNARY(UnaryExpressionType.getInstance()::parse),
+        CAST(CastExpressionType.getInstance()::parse),
+        ARRAY_ACCESS(ArrayAccessType.getInstance()::parse),
         NEW_ARRAY(ExpressionFactory::createNewArrayExpression),
         FIELD_ACCESS(ExpressionFactory::createFieldAccessExpression);
 
@@ -46,14 +50,14 @@ public class ExpressionFactory {
         private static final LinkedHashMap<Predicate<String>, Type> typePredicates = new LinkedHashMap<>() {{
             put(Type::isParenthesized, PARENTHESIZED);
             put(Type::isTernary, TERNARY);
-            put(Type::isBinary, BINARY);
-            put(Type::isUnary, UNARY);
-            put(Type::isCast, CAST);
+            put(BinaryExpressionType.getInstance()::matches, BINARY);
+            put(UnaryExpressionType.getInstance()::matches, UNARY);
+            put(CastExpressionType.getInstance()::matches, CAST);
             put(Type::isNewClass, NEW_CLASS);
             put(Type::isMethodInvocation, METHOD_INVOCATION);
             put(Type::isLiteral, LITERAL);
             put(Type::isNewArray, NEW_ARRAY);
-            put(Type::isArrayAccess, ARRAY_ACCESS);
+            put(ArrayAccessType.getInstance()::matches, ARRAY_ACCESS);
             put(Type::isFieldAccess, FIELD_ACCESS);
             put(s -> true, IDENTIFIER);
         }};
@@ -78,10 +82,6 @@ public class ExpressionFactory {
             return expression.strip().matches("new\\s+(\\w|\\.)+\\s*(\\[.*])+(\\s*\\{.*})?");
         }
 
-        private static boolean isArrayAccess(String expression) {
-            return expression.endsWith("]");
-        }
-
         private static boolean isNewClass(String expression) {
             expression = expression.strip();
             if (!expression.endsWith(")")) {
@@ -97,16 +97,6 @@ public class ExpressionFactory {
 
         private static boolean isCast(String expression) {
             return expression.matches("\\((\\w+\\s*(\\.)?)+\\).+");
-        }
-
-        private static boolean isUnary(String expression) {
-            return expression.matches("(\\+|-|!|~|\\+\\+|--)\\(?.+\\)?")
-                    || expression.matches("\\(?.+\\)?(\\+\\+|--)");
-        }
-
-        private static boolean isBinary(String expression) {
-            return expression.matches(".+(\\+|-|\\*|/|%|&|\\||\\^|<<|>>|>>>|<|>|<=|>=|==|!=|&&|\\|\\||instanceof).+")
-                    && !expression.matches(".+<(\\w|\\s|,|>|<)*>((\\w|\\s)+)?(\\(.*\\))?");
         }
 
         private static boolean isTernary(String expression) {
@@ -167,17 +157,6 @@ public class ExpressionFactory {
         return ParsingUtils.getArrayDimensions(dimensionsString)
                 .stream()
                 .map(dim -> createExpression(createExpression.withExpressionAndNullTag(dim))).toList();
-    }
-
-    private static Expression createArrayAccessExpression(CreateExpressionParams createParams) {
-        var expression = createParams.expression();
-        var openingBracketIndex = ParsingUtils.getArrayIndexStartIndex(expression);
-        var array = expression.substring(0, openingBracketIndex);
-        var index = expression.substring(openingBracketIndex + 1, expression.length() - 1);
-        return new ArrayAccessExpression(
-                createExpression(createParams.withExpressionAndNullTag(array)),
-                createExpression(createParams.withExpressionAndNullTag(index))
-        );
     }
 
     private static Expression createIdentifierExpression(CreateExpressionParams createParams) {
@@ -291,53 +270,15 @@ public class ExpressionFactory {
         );
     }
 
-    private static Expression createCastExpression(CreateExpressionParams createParams) {
-        var expression = createParams.expression();
-        return new CastExpression(
-                createExpression(createParams
-                        .withExpressionAndNullTag(expression.substring(expression.indexOf(')') + 1))),
-                expression.substring(expression.indexOf('(') + 1, expression.indexOf(')')));
-    }
-
-    private static Expression createUnaryExpression(CreateExpressionParams createParams) {
-        var expression = createParams.expression();
-        var operator = UnaryExpressionType.extractUnaryOperator(expression);
-        String operand;
-        if (operator == JCTree.Tag.POSTDEC || operator == JCTree.Tag.POSTINC) {
-            operand = expression.substring(0, expression.length() - 2);
-        } else {
-            operand = expression.substring(expression.indexOf(ParsingUtils.getStringOfOperator(operator)) + ParsingUtils.getStringOfOperator(operator).length());
-        }
-        return new UnaryExpression(
-                createExpression(createParams.withExpressionAndNullTag(operand)),
-                operator
-        );
-    }
-
-    private static Expression createBinaryExpression(CreateExpressionParams createParams) {
-        var expression = createParams.expression();
-        var operator = BinaryExpressionType.getInstance().extractBinaryOperator(expression);
-        var firstOperandEnd = ParsingUtils.getClosingArgsParenthesesIndex(expression, 0);
-        if (firstOperandEnd == -1) {
-            firstOperandEnd = expression.indexOf(ParsingUtils.getStringOfOperator(operator));
-        }
-        return new BinaryExpression(
-                createExpression(createParams.withExpressionAndNullTag(expression.substring(0, firstOperandEnd + 1))),
-                createExpression(createParams.withExpressionAndNullTag(
-                        expression.substring(expression.indexOf(ParsingUtils.getStringOfOperator(operator),
-                                firstOperandEnd + 1) + ParsingUtils.getStringOfOperator(operator).length()))),
-                operator);
-    }
-
     public static Expression createExpression(CreateExpressionParams createParams) {
         var expression = createParams.expression();
-        //messager.printMessage(Diagnostic.Kind.NOTE, "Creating expression from " + expression);
+        messager.printMessage(Diagnostic.Kind.NOTE, "Creating expression from " + expression);
         if (expression == null) {
             return LiteralExpression.NULL;
         }
         expression = expression.trim();
         var type = Type.of(expression);
-        //messager.printMessage(Diagnostic.Kind.NOTE, "Type of expression: " + type);
+        messager.printMessage(Diagnostic.Kind.NOTE, "Type of expression: " + type);
         return type.expressionCreator.apply(createParams);
     }
 }
