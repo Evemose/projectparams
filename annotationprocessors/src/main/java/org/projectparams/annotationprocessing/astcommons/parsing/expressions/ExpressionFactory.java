@@ -10,6 +10,7 @@ import org.projectparams.annotationprocessing.astcommons.parsing.expressions.nam
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.fieldaccess.ParametrizedFieldAccessExpression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.invocable.methodinvocation.MethodInvocationExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.invocable.newclass.NewClassExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.fieldaccess.FieldAccessExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.binary.BinaryExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.unary.UnaryExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.parenthezied.ParenthesizedExpressionType;
@@ -60,7 +61,7 @@ public class ExpressionFactory {
             put(Type::isLiteral, LITERAL);
             put(Type::isNewArray, NEW_ARRAY);
             put(ArrayAccessType.getInstance()::matches, ARRAY_ACCESS);
-            put(Type::isFieldAccess, FIELD_ACCESS);
+            put(FieldAccessExpressionType.getInstance()::matches, FIELD_ACCESS);
             put(s -> true, IDENTIFIER);
         }};
 
@@ -70,10 +71,6 @@ public class ExpressionFactory {
                     .map(Map.Entry::getValue)
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Unknown expression type: " + expression.strip()));
-        }
-
-        private static boolean isFieldAccess(String expression) {
-            return ParsingUtils.containsTopLevelDot(expression);
         }
 
         private static boolean isNewArray(String expression) {

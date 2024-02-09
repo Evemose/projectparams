@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FieldAccessExpressionTypeTest {
-    private final FieldAccessExpressionType fieldAccessExpressionType = new FieldAccessExpressionType();
+    private final FieldAccessExpressionType fieldAccessExpressionType = FieldAccessExpressionType.getInstance();
 
     @ParameterizedTest
     @ValueSource(strings = {

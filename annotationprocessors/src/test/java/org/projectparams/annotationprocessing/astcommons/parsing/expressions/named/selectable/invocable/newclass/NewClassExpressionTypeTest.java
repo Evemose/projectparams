@@ -16,7 +16,7 @@ class NewClassExpressionTypeTest {
             "new SomeClass<Generic>(param1, param2)",
             "owner.new SomeClass()",
             "methodCall().new SomeClass()",
-            "<T>methodCall().new SomeClass(param1, param2)",
+            "<T>methodCall().new SomeClass(param1, param2)"
     })
     void testMatches(String expression) {
         Assertions.assertTrue(newClassExpressionType.matches(expression));
@@ -24,14 +24,16 @@ class NewClassExpressionTypeTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-//            "newNotCorrectClass()",
-//            "noNewKeyword SomeClass()",
-//            "new SomeClass",
-//            "SomeClass<Generic>()",
-//            "new ClassWithoutParentheses",
-//            "fakenew SomeClass()",
-//            "(Cast) new SomeClass()",
+            "newNotCorrectClass()",
+            "noNewKeyword SomeClass()",
+            "new SomeClass",
+            "SomeClass<Generic>()",
+            "new ClassWithoutParentheses",
+            "fakenew SomeClass()",
+            "(Cast) new SomeClass()",
             "someBoolean ? new SomeClass() : new SomeClass()",
+            "new org.projectparams.test.Sucus().mains[Sucus.mains[1].getZero()]." +
+                    "<Map<Integer, java.util.List<Float>>>akakus(Map.of(3, List.of((float)(double)6.d)))",
     })
     void testNotMatches(String expression) {
         Assertions.assertFalse(newClassExpressionType.matches(expression));

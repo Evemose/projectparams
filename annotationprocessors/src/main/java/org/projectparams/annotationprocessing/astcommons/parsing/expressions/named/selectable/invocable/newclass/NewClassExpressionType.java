@@ -13,9 +13,9 @@ public class NewClassExpressionType implements ExpressionType {
         if (!expression.endsWith(")")) {
             return false;
         }
-        expression = expression.substring(ParsingUtils.getOwnerSeparatorIndex(expression)+1).strip();
-        return expression.matches("^new\\s+\\w(\\w|(\\s*\\.(?!(\\s*\\W))\\s*)|\\d)+" +
-                "(\\s*<\\s*(\\w|(\\s*\\.(?!(\\s*\\W))\\s*)|(\\s*,(?!(\\s*\\W))\\s*)|\\d)*>)?\\s*\\(.*\\)$");
+        return !ParsingUtils.containsTopLevelDot(expression) && expression.matches("new\\s.+")
+                || expression.substring(ParsingUtils.getOwnerSeparatorIndex(expression) + 1)
+                .strip().matches("new\\s.+");
     }
 
     @Override

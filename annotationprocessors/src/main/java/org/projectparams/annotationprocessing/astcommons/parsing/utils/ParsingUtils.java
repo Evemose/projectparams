@@ -6,6 +6,8 @@ import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
+// this class contains complex algorithmic logic and i strongly not recommend to try to optimize or refactor it
+// unless you are sure that you understand the logic and the purpose of the code
 public class ParsingUtils {
     public static int getCorrespondingOpeningParIndex(String expression, char openingPar, char closingPar, int fromIndex) {
         var i = fromIndex;
@@ -123,9 +125,6 @@ public class ParsingUtils {
     }
 
     public static int getOwnerSeparatorIndex(String expression) {
-        if (expression.matches("^\\s*new\\s+(\\w+\\.?)+\\s*\\(.*\\)\\s*")) {
-            return -1;
-        }
         return getMatchingTopLevelSymbolLastIndex(expression, equalsSymbolPredicate('.'));
     }
 
@@ -183,52 +182,39 @@ public class ParsingUtils {
 
     }
 
-    private static int getMatchingTopLevelSymbolIndex(String expression, BiPredicate<String, Integer> symbolPredicate, int fromIndex, int step) {
-        if (fromIndex >= expression.length() || fromIndex < 0) {
-            throw new IndexOutOfBoundsException("fromIndex " + fromIndex + " is out of bounds for " + expression);
-        }
-        var enclosersCount = new HashMap<>(Map.of('(', 0, '[', 0, '{', 0, '<', 0, '?', 0));
+
+    /**
+     * Returns the index of the matching top-level symbol in the given expression starting from the specified index.
+     * A top-level symbol is a symbol that is not enclosed in parentheses, brackets, braces, angle brackets or conditional expression.
+     * The method searches for the first matching symbol from the specified index to the end of the expression.
+     * The method should only be invoked for strings where any of listed above enclosers must be balanced.
+     *
+     * @param expression      the expression to search in
+     * @param symbolPredicate the predicate that determines if a symbol matches
+     * @param fromIndex       the index to start the search from (inclusive)
+     * @param direction       the direction to search in, true for forward, false for backward
+     * @return the index of the matching top-level symbol, or -1 if no match is found
+     * @throws IndexOutOfBoundsException if the starting index is out of bounds for the expression
+     * @throws IllegalArgumentException if the parentheses in the expression are unbalanced
+     */
+    private static int getMatchingTopLevelSymbolIndex(String expression, BiPredicate<String, Integer> symbolPredicate, int fromIndex, boolean direction) {
+        validateFromIndex(expression, fromIndex);
+        var enclosersCount = getEnclosersCountMap();
         boolean mutated;
         var couldBeChecked = false;
         Integer capture = null;
-        for (var i = step > 0 ? 0 : expression.length() - 1; i < expression.length() && i >= 0; i+=step) {
-            if (!couldBeChecked && (step > 0 && i >= fromIndex) || (step < 0 && i <= fromIndex)) {
-                couldBeChecked = true;
+        for (var i = 0; i < expression.length(); i++) {
+            couldBeChecked = couldBeChecked || updateCouldBeChecked(fromIndex, direction, i);
+            if (mayUpdateCapture(direction, capture)) {
+                capture = updateCapture(expression, symbolPredicate, couldBeChecked, enclosersCount, i);
             }
-            var c = expression.charAt(i);
-            mutated = false;
-            if (capture == null && couldBeChecked && isNotEnclosed(enclosersCount) && symbolPredicate.test(expression, i)) {
-                capture = i;
-            }
-            if (isOpeningPar(c) && (c != '<' || isTypeArgsBracket(expression, i)) || c == '?') {
-                enclosersCount.merge(c, 1, Integer::sum);
-                mutated = true;
-            } else if (c == ']' || c == '}') {
-                enclosersCount.merge((char) (c - 2), -1, Integer::sum);
-                mutated = true;
-            } else if (c == ')') {
-                // opening bracket has code 40, closing bracket has code 41,
-                // while other brackets have offset 2 between opening and closing bracket
-                // so this case is exceptional
-                enclosersCount.merge('(', -1, Integer::sum);
-                mutated = true;
-            } else if (c == '>' && isTypeArgsBracket(expression, i)) {
-                enclosersCount.merge('<', -1, Integer::sum);
-                mutated = true;
-            } else if (c == ':') {
-                if (i == 0 || i == expression.length() - 1){
-                    throw new IllegalArgumentException("Dangling colon in " + expression);
-                } else if (expression.charAt(i-1) != ':' && expression.charAt(i+1) != ':') { // exclude :: operator
-                    enclosersCount.merge('?', -1, Integer::sum);
-                    mutated = true;
-                }
-            }
-            if (step > 0 && enclosersCount.values().stream().anyMatch(val -> val < 0)
-                || step < 0 && enclosersCount.values().stream().anyMatch(val -> val > 0)) {
+            mutated = updateEnclosers(expression, i, enclosersCount);
+            if (enclosersCount.values().stream().anyMatch(val -> val < 0)) {
                 throw new IllegalArgumentException("Unbalanced parentheses in " + expression);
             }
             // need to check once more after modifying enclosers count in case matched symbol is encloser
-            if (capture == null && mutated && couldBeChecked && isNotEnclosed(enclosersCount) && symbolPredicate.test(expression, i)) {
+            if (mutated && mayUpdateCapture(direction, capture) && couldBeChecked
+                    && isNotEnclosed(enclosersCount) && symbolPredicate.test(expression, i)) {
                 capture = i;
             }
         }
@@ -236,6 +222,91 @@ public class ParsingUtils {
             return Objects.requireNonNullElse(capture, -1);
         }
         throw new IllegalArgumentException("Unbalanced parentheses in " + expression);
+    }
+
+    private static boolean mayUpdateCapture(boolean direction, Integer capture) {
+        return capture == null || !direction;
+    }
+
+    private static boolean updateEnclosers(String expression, int i, HashMap<Character, Integer> enclosersCount) {
+        var c = expression.charAt(i);
+        var mutated = false;
+        if (isOpeningPar(c) && (c != '<' || isTypeArgsBracket(expression, i)) || c == '?') {
+            enclosersCount.merge(c, 1, Integer::sum);
+            mutated = true;
+        } else if (c == ']' || c == '}') {
+            enclosersCount.merge((char) (c - 2), -1, Integer::sum);
+            mutated = true;
+            updateNewKeywordEnclCount(enclosersCount);
+        } else if (c == ')') {
+            // opening bracket has code 40, closing bracket has code 41,
+            // while other brackets have offset 2 between opening and closing bracket
+            // so this case is exceptional
+            enclosersCount.merge('(', -1, Integer::sum);
+            mutated = true;
+            updateNewKeywordEnclCount(enclosersCount);
+        } else if (c == '>' && isTypeArgsBracket(expression, i)) {
+            enclosersCount.merge('<', -1, Integer::sum);
+            mutated = true;
+        } else if (c == ':') {
+            mutated = updateConditionalEnclCount(expression, i, enclosersCount, mutated);
+        } else if (expression.startsWith("new", i) && enclosersCount.get('n') == 0) {
+            enclosersCount.merge('n', 1, Integer::sum);
+            mutated = true;
+        }
+        return mutated;
+    }
+
+    private static boolean updateConditionalEnclCount(String expression, int i, HashMap<Character, Integer> enclosersCount, boolean mutated) {
+        if (i == 0 || i == expression.length() - 1){
+            throw new IllegalArgumentException("Dangling colon in " + expression);
+        } else if (expression.charAt(i -1) != ':' && expression.charAt(i +1) != ':') { // exclude :: operator
+            enclosersCount.merge('?', -1, Integer::sum);
+            mutated = true;
+        }
+        return mutated;
+    }
+
+    private static void updateNewKeywordEnclCount(HashMap<Character, Integer> enclosersCount) {
+        if (enclosersCount.get('n') > 0 && doesEndNewKeywordStatement(enclosersCount)) {
+            enclosersCount.merge('n', -1, Integer::sum);
+        }
+    }
+
+    private static HashMap<Character, Integer> getEnclosersCountMap() {
+        return new HashMap<>(Map.of(
+                '(', 0,
+                '[', 0,
+                '{', 0,
+                '<', 0,
+                '?', 0, // conditional expression
+                'n', 0 // new keyword
+        ));
+    }
+
+    private static Integer updateCapture(String expression,
+                                         BiPredicate<String, Integer> symbolPredicate,
+                                         boolean couldBeChecked,
+                                         HashMap<Character, Integer> enclosersCount,
+                                         int i) {
+        if (couldBeChecked && isNotEnclosed(enclosersCount) && symbolPredicate.test(expression, i)) {
+            return i;
+        }
+        return null;
+    }
+
+    private static boolean updateCouldBeChecked(int fromIndex, boolean direction, int i) {
+        return direction ? i >= fromIndex : i <= fromIndex;
+    }
+
+    private static void validateFromIndex(String expression, int fromIndex) {
+        if (fromIndex >= expression.length() || fromIndex < 0) {
+            throw new IndexOutOfBoundsException("fromIndex " + fromIndex + " is out of bounds for " + expression);
+        }
+    }
+
+    private static boolean doesEndNewKeywordStatement(HashMap<Character, Integer> enclosersCount) {
+        return enclosersCount.entrySet().stream().filter(entry -> entry.getKey() != 'n').allMatch(entry -> entry.getValue() == 0);
     }
 
     private static boolean isNotEnclosed(HashMap<Character, Integer> enclosersCount) {
@@ -257,7 +328,7 @@ public class ParsingUtils {
      * @throws IllegalArgumentException if the parentheses in the expression are unbalanced
      */
     public static int getMatchingTopLevelSymbolIndex(String expression, BiPredicate<String, Integer> symbolPredicate, int fromIndex) {
-        return getMatchingTopLevelSymbolIndex(expression, symbolPredicate, fromIndex, 1);
+        return getMatchingTopLevelSymbolIndex(expression, symbolPredicate, fromIndex, true);
     }
 
     /**
@@ -273,7 +344,7 @@ public class ParsingUtils {
      * @throws IllegalArgumentException if the parentheses in the expression are unbalanced
      */
     public static int getMatchingTopLevelSymbolIndex(String expression, BiPredicate<String, Integer> symbolPredicate) {
-        return getMatchingTopLevelSymbolIndex(expression, symbolPredicate, 0, 1);
+        return getMatchingTopLevelSymbolIndex(expression, symbolPredicate, 0, true);
     }
 
     /**
@@ -289,7 +360,7 @@ public class ParsingUtils {
      * @throws IllegalArgumentException if the parentheses in the expression are unbalanced
      */
     public static int getMatchingTopLevelSymbolLastIndex(String expression, BiPredicate<String, Integer> symbolPredicate) {
-        return getMatchingTopLevelSymbolIndex(expression, symbolPredicate, expression.length()-1, -1);
+        return getMatchingTopLevelSymbolIndex(expression, symbolPredicate, expression.length()-1, false);
     }
 
     public static int countMatchingTopLevelSymbols(String expression, BiPredicate<String, Integer> symbolPredicate) {

@@ -8,7 +8,7 @@ public class MethodInvocationExpressionTypeTest {
 
     private static final MethodInvocationExpressionType methodInvocationExpressionType = MethodInvocationExpressionType.getInstance();
 
-    @ParameterizedTest(name = "should match the expression: {0}")
+    @ParameterizedTest
     @ValueSource(strings = {
             "methodInvocation()",
             "complex.methodInvocation(arg1, arg2)",
@@ -24,7 +24,7 @@ public class MethodInvocationExpressionTypeTest {
         Assertions.assertTrue(result);
     }
 
-    @ParameterizedTest(name = "should not match the expression: {0}")
+    @ParameterizedTest
     @ValueSource(strings = {
             "methodInvocationWithoutEndingParenthesis",
             "(parenthesizedExpressionTypeInstance)",
