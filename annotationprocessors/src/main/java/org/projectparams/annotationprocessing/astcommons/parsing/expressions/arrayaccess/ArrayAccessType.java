@@ -14,6 +14,7 @@ public class ArrayAccessType implements ExpressionType {
         return expression.matches(".*\\w+(\\[.*])+$");
     }
 
+    // TODO: add validation for array access expression
     @Override
     public Expression parse(CreateExpressionParams createParams) {
         var expression = createParams.expression();
@@ -25,6 +26,8 @@ public class ArrayAccessType implements ExpressionType {
                 createExpression(createParams.withExpressionAndNullTag(index))
         );
     }
+
+    private ArrayAccessType() {}
 
     public static ArrayAccessType getInstance() {
         return INSTANCE;

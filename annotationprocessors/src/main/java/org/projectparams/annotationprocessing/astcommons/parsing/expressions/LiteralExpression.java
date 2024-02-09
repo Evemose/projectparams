@@ -6,18 +6,25 @@ import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 
-public class LiteralExpression<T> implements Expression {
-    private final T value;
+import javax.annotation.Nullable;
+import java.util.Objects;
+
+public class LiteralExpression implements Expression {
+    private final Object value;
     private final Type type;
+    public static final LiteralExpression NULL = new LiteralExpression(null);
 
-    public static final LiteralExpression<?> NULL = new LiteralExpression<>(null, String.class);
-
-    public LiteralExpression(T value, Class<T> clazz) {
+    public LiteralExpression(Object value) {
         this.value = value;
-        if (!isLiteralType(clazz)) {
-            throw new IllegalArgumentException("Class " + clazz.getCanonicalName() + " is not a literal type");
+        if (value == null) {
+            // any primitive type will do
+            this.type = TypeUtils.getTypeByName("java.lang.String");
+            return;
         }
-        this.type = TypeUtils.getTypeByName(clazz.getCanonicalName());
+        if (!isLiteralType(value.getClass())) {
+            throw new IllegalArgumentException("Class " + value.getClass().getCanonicalName() + " is not a literal type");
+        }
+        this.type = TypeUtils.getTypeByName(value.getClass().getCanonicalName());
     }
 
     private static boolean isLiteralType(Class<?> type) {

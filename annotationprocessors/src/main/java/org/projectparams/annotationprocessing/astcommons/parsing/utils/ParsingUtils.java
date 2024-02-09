@@ -1,15 +1,13 @@
 package org.projectparams.annotationprocessing.astcommons.parsing.utils;
 
 import com.sun.tools.javac.tree.JCTree;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.binary.BinaryExpressionType;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Pattern;
+import java.util.*;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 public class ParsingUtils {
-    private static int getArgsStartIndexFromIndex(String expression, char openingPar, char closingPar, int fromIndex) {
+    public static int getCorrespondingOpeningParIndex(String expression, char openingPar, char closingPar, int fromIndex) {
         var i = fromIndex;
         var parenthesesCount = 0;
         while (i >= 0) {
@@ -31,7 +29,7 @@ public class ParsingUtils {
         if (!expression.endsWith(")")) {
             return -1;
         }
-        return getArgsStartIndexFromIndex(expression, '(', ')', expression.length() - 1);
+        return getCorrespondingOpeningParIndex(expression, '(', ')', expression.length() - 1);
     }
 
     public static int getTypeArgsStartIndex(String expression) {
@@ -39,7 +37,7 @@ public class ParsingUtils {
         if (argsStartIndex == -1) {
             argsStartIndex = expression.length() - 1;
         }
-        return getArgsStartIndexFromIndex(expression, '<', '>', argsStartIndex);
+        return getCorrespondingOpeningParIndex(expression, '<', '>', argsStartIndex);
     }
 
     public static String getStringOfOperator(JCTree.Tag operatorTag) {
@@ -74,35 +72,13 @@ public class ParsingUtils {
         };
     }
 
-    public static int getClosingParenthesesIndex(String expression, int fromIndex, char openingPar, char closingPar) {
-        var parenthesesCount = 0;
-        var i = fromIndex;
-        while (i < expression.length()) {
-            var c = expression.charAt(i);
-            if (c == openingPar) {
-                parenthesesCount++;
-            } else if (c == closingPar) {
-                parenthesesCount--;
-                if (parenthesesCount == 0) {
-                    return i;
-                }
-            }
-            i++;
-        }
-        return -1;
-    }
-
-    public static int getClosingArgsParenthesesIndex(String expression, int fromIndex) {
-        return getClosingParenthesesIndex(expression, fromIndex, '(', ')');
-    }
-
     private static List<String> getArgStringsFromIndex(String expression, char openingPar, char closingPar, int fromIndex) {
         try {
             if (expression.endsWith(openingPar + "" + closingPar)) {
                 return Collections.emptyList();
             }
             var argsString = expression.substring(
-                    getArgsStartIndexFromIndex(expression, openingPar, closingPar, fromIndex) + 1,
+                    getCorrespondingOpeningParIndex(expression, openingPar, closingPar, fromIndex) + 1,
                     expression.lastIndexOf(closingPar, fromIndex));
             var parenthesesCount = 0;
             var args = new ArrayList<String>();
@@ -150,50 +126,27 @@ public class ParsingUtils {
         if (expression.matches("^\\s*new\\s+(\\w+\\.?)+\\s*\\(.*\\)\\s*")) {
             return -1;
         }
-        var forwardWhitespacesCount = 0;
-        while (forwardWhitespacesCount < expression.length() && Character.isWhitespace(expression.charAt(forwardWhitespacesCount))) {
-            forwardWhitespacesCount++;
-        }
-        expression = expression.strip();
-        var rightBound = getTypeArgsStartIndex(expression);
-        if (rightBound == -1) {
-            rightBound = getArgsStartIndex(expression);
-            if (rightBound == -1) {
-                rightBound = getArrayInitializerStartIndex(expression);
-            }
-        }
-        return expression.lastIndexOf('.', rightBound == -1 ? expression.length() : rightBound) + forwardWhitespacesCount;
+        return getMatchingTopLevelSymbolLastIndex(expression, equalsSymbolPredicate('.'));
     }
 
     public static int getSelectedNewKeywordIndex(String expression) {
-        var rightBound = getTypeArgsStartIndex(expression);
-        if (rightBound == -1) {
-            rightBound = getArgsStartIndex(expression);
-        }
-        expression = ' ' + expression;
-        rightBound++;
-        var matcher = Pattern.compile(new StringBuilder("W\\news\\").reverse().toString())
-                .matcher(new StringBuilder(expression.substring(0, rightBound)).reverse());
-        if (matcher.find()) {
-            return expression.length() - matcher.end() - 1;
-        }
-        return -1;
+        return getMatchingTopLevelSymbolLastIndex(expression, (expr, index) -> expr.substring(index).startsWith("new"));
     }
 
     public static int getArrayIndexStartIndex(String expression) {
-        return getArgsStartIndexFromIndex(expression, '[', ']', expression.length() - 1);
+        return getCorrespondingOpeningParIndex(expression, '[', ']', expression.length() - 1);
     }
 
     public static int getArrayInitializerStartIndex(String expression) {
-        return getArgsStartIndexFromIndex(expression, '{', '}', expression.length() - 1);
+        return getCorrespondingOpeningParIndex(expression, '{', '}', expression.length() - 1);
     }
 
     public static boolean containsTopLevelDot(String expression) {
-        return getOwnerSeparatorIndex(expression) != -1;
+        return getMatchingTopLevelSymbolIndex(expression, equalsSymbolPredicate('.')) != -1;
     }
 
     public static List<String> getArrayDimensions(String expression) {
-        var dimensionsStartIndex = expression.indexOf('[');
+        var dimensionsStartIndex = expression.indexOf('[', ParsingUtils.getArgsStartIndex(expression) + 1);
         if (dimensionsStartIndex == -1) {
             throw new IllegalArgumentException("No array dimensions in " + expression);
         }
@@ -230,4 +183,165 @@ public class ParsingUtils {
 
     }
 
+    private static int getMatchingTopLevelSymbolIndex(String expression, BiPredicate<String, Integer> symbolPredicate, int fromIndex, int step) {
+        if (fromIndex >= expression.length() || fromIndex < 0) {
+            throw new IndexOutOfBoundsException("fromIndex " + fromIndex + " is out of bounds for " + expression);
+        }
+        var enclosersCount = new HashMap<>(Map.of('(', 0, '[', 0, '{', 0, '<', 0, '?', 0));
+        boolean mutated;
+        var couldBeChecked = false;
+        Integer capture = null;
+        for (var i = step > 0 ? 0 : expression.length() - 1; i < expression.length() && i >= 0; i+=step) {
+            if (!couldBeChecked && (step > 0 && i >= fromIndex) || (step < 0 && i <= fromIndex)) {
+                couldBeChecked = true;
+            }
+            var c = expression.charAt(i);
+            mutated = false;
+            if (capture == null && couldBeChecked && isNotEnclosed(enclosersCount) && symbolPredicate.test(expression, i)) {
+                capture = i;
+            }
+            if (isOpeningPar(c) && (c != '<' || isTypeArgsBracket(expression, i)) || c == '?') {
+                enclosersCount.merge(c, 1, Integer::sum);
+                mutated = true;
+            } else if (c == ']' || c == '}') {
+                enclosersCount.merge((char) (c - 2), -1, Integer::sum);
+                mutated = true;
+            } else if (c == ')') {
+                // opening bracket has code 40, closing bracket has code 41,
+                // while other brackets have offset 2 between opening and closing bracket
+                // so this case is exceptional
+                enclosersCount.merge('(', -1, Integer::sum);
+                mutated = true;
+            } else if (c == '>' && isTypeArgsBracket(expression, i)) {
+                enclosersCount.merge('<', -1, Integer::sum);
+                mutated = true;
+            } else if (c == ':') {
+                if (i == 0 || i == expression.length() - 1){
+                    throw new IllegalArgumentException("Dangling colon in " + expression);
+                } else if (expression.charAt(i-1) != ':' && expression.charAt(i+1) != ':') { // exclude :: operator
+                    enclosersCount.merge('?', -1, Integer::sum);
+                    mutated = true;
+                }
+            }
+            if (step > 0 && enclosersCount.values().stream().anyMatch(val -> val < 0)
+                || step < 0 && enclosersCount.values().stream().anyMatch(val -> val > 0)) {
+                throw new IllegalArgumentException("Unbalanced parentheses in " + expression);
+            }
+            // need to check once more after modifying enclosers count in case matched symbol is encloser
+            if (capture == null && mutated && couldBeChecked && isNotEnclosed(enclosersCount) && symbolPredicate.test(expression, i)) {
+                capture = i;
+            }
+        }
+        if (isNotEnclosed(enclosersCount)) {
+            return Objects.requireNonNullElse(capture, -1);
+        }
+        throw new IllegalArgumentException("Unbalanced parentheses in " + expression);
+    }
+
+    private static boolean isNotEnclosed(HashMap<Character, Integer> enclosersCount) {
+        return enclosersCount.values().stream().allMatch(Predicate.isEqual(0));
+    }
+
+
+    /**
+     * Returns the index of the matching top-level symbol in the given expression starting from the specified index.
+     * A top-level symbol is a symbol that is not enclosed in parentheses, brackets, braces, angle brackets or conditional expression.
+     * The method searches for the first matching symbol from the specified index to the end of the expression.
+     * The method should only be invoked for strings where any of listed above enclosers must be balanced.
+     *
+     * @param expression       the expression to search in
+     * @param symbolPredicate  the predicate that determines if a symbol matches
+     * @param fromIndex        the index to start the search from (inclusive)
+     * @return the index of the matching top-level symbol, or -1 if no match is found
+     * @throws IndexOutOfBoundsException if the starting index is out of bounds for the expression
+     * @throws IllegalArgumentException if the parentheses in the expression are unbalanced
+     */
+    public static int getMatchingTopLevelSymbolIndex(String expression, BiPredicate<String, Integer> symbolPredicate, int fromIndex) {
+        return getMatchingTopLevelSymbolIndex(expression, symbolPredicate, fromIndex, 1);
+    }
+
+    /**
+     * Returns the index of the matching top-level symbol in the given expression starting from the specified index.
+     * A top-level symbol is a symbol that is not enclosed in parentheses, brackets, braces, angle brackets or conditional expression.
+     * The method searches for the first matching symbol through whole expression from start to end of the expression.
+     * The method should only be invoked for strings where any of listed above enclosers must be balanced.
+     *
+     * @param expression      the expression to search in
+     * @param symbolPredicate the predicate that determines if a symbol matches
+     * @return the index of the matching top-level symbol, or -1 if no match is found
+     * @throws IndexOutOfBoundsException if the starting index is out of bounds for the expression
+     * @throws IllegalArgumentException if the parentheses in the expression are unbalanced
+     */
+    public static int getMatchingTopLevelSymbolIndex(String expression, BiPredicate<String, Integer> symbolPredicate) {
+        return getMatchingTopLevelSymbolIndex(expression, symbolPredicate, 0, 1);
+    }
+
+    /**
+     * Returns the index of the matching top-level symbol in the given expression starting from the specified index.
+     * A top-level symbol is a symbol that is not enclosed in parentheses, brackets, braces, angle brackets or conditional expression.
+     * The method searches for the first matching symbol from the end of expression to its start.
+     * The method should only be invoked for strings where any of listed above enclosers must be balanced.
+     *
+     * @param expression      the expression to search in
+     * @param symbolPredicate the predicate that determines if a symbol matches
+     * @return the index of the matching top-level symbol, or -1 if no match is found
+     * @throws IndexOutOfBoundsException if the starting index is out of bounds for the expression
+     * @throws IllegalArgumentException if the parentheses in the expression are unbalanced
+     */
+    public static int getMatchingTopLevelSymbolLastIndex(String expression, BiPredicate<String, Integer> symbolPredicate) {
+        return getMatchingTopLevelSymbolIndex(expression, symbolPredicate, expression.length()-1, -1);
+    }
+
+    public static int countMatchingTopLevelSymbols(String expression, BiPredicate<String, Integer> symbolPredicate) {
+        var count = 0;
+        var fromIndex = 0;
+        while (fromIndex != -1) {
+            fromIndex = getMatchingTopLevelSymbolIndex(expression, symbolPredicate, fromIndex);
+            if (fromIndex != -1) {
+                count++;
+                fromIndex++;
+            }
+        }
+        return count;
+    }
+
+    private static boolean isOpeningPar(char c) {
+        return c == '(' || c == '[' || c == '{' || c == '<';
+    }
+
+    public static boolean isTypeArgsBracket(String expression, int charIndex) {
+        if (expression.charAt(charIndex) == '<') {
+            var closeBracketIndex = expression.indexOf('>', charIndex);
+            if (closeBracketIndex == -1) {
+                return false;
+            }
+            var closeParIndex = expression.indexOf(')', charIndex);
+            return closeParIndex == -1 || closeParIndex > closeBracketIndex;
+        } else if (expression.charAt(charIndex) == '>') {
+            var openBracketIndex = expression.lastIndexOf('<', charIndex);
+            if (openBracketIndex == -1) {
+                return false;
+            }
+            var closeParIndex = expression.lastIndexOf(')', charIndex);
+            return closeParIndex == -1 || closeParIndex < openBracketIndex;
+        } else {
+            return false;
+        }
+    }
+
+    public static BiPredicate<String, Integer> equalsSymbolPredicate(char symbol) {
+        return (expr, index) -> expr.charAt(index) == symbol;
+    }
+
+    public static List<String> getTypeParameters(String expression) {
+        var typeParameters = new ArrayList<String>();
+        var typeArgsEndIndex = expression.lastIndexOf('>');
+        if (typeArgsEndIndex != -1) {
+            var typeArgsParts = getTypeArgStrings(expression);
+            for (var typeArg : typeArgsParts) {
+                typeParameters.add(typeArg.strip());
+            }
+        }
+        return typeParameters;
+    }
 }

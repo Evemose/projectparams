@@ -1,38 +1,40 @@
 package org.projectparams.annotationprocessing.astcommons.parsing.expressions;
 
-import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.arrayaccess.ArrayAccessExpression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.arrayaccess.ArrayAccessType;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.cast.CastExpression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.cast.CastExpressionType;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.binary.BinaryExpression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.conditional.ConditionalExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.ident.ParametrizedIdentifierExpression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.fieldaccess.FieldAccessExpression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.ident.IdentifierExpression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.fieldaccess.ParametrizedFieldAccessExpression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.invocable.methodinvocation.MethodInvocationExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.invocable.newclass.NewClassExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.binary.BinaryExpressionType;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.unary.UnaryExpression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.unary.UnaryExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.parenthezied.ParenthesizedExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionUtils;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
 import javax.annotation.processing.Messager;
 import javax.tools.Diagnostic;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.IntStream;
 
 public class ExpressionFactory {
 
     public static Messager messager;
 
     public enum Type {
-        NEW_CLASS(ExpressionFactory::createNewClassExpression),
-        METHOD_INVOCATION(ExpressionFactory::createMethodInvocationExpression),
+        NEW_CLASS(NewClassExpressionType.getInstance()::parse),
+        METHOD_INVOCATION(MethodInvocationExpressionType.getInstance()::parse),
         LITERAL(ExpressionFactory::createLiteralExpression),
         IDENTIFIER(ExpressionFactory::createIdentifierExpression),
-        TERNARY(ExpressionFactory::createTernaryExpression),
-        PARENTHESIZED(ExpressionFactory::createParenthesizedExpression),
+        TERNARY(ConditionalExpressionType.getInstance()::parse),
+        PARENTHESIZED(ParenthesizedExpressionType.getInstance()::parse),
         BINARY(BinaryExpressionType.getInstance()::parse),
         UNARY(UnaryExpressionType.getInstance()::parse),
         CAST(CastExpressionType.getInstance()::parse),
@@ -48,13 +50,13 @@ public class ExpressionFactory {
 
         // order of predicates is crucial
         private static final LinkedHashMap<Predicate<String>, Type> typePredicates = new LinkedHashMap<>() {{
-            put(Type::isParenthesized, PARENTHESIZED);
-            put(Type::isTernary, TERNARY);
+            put(ParenthesizedExpressionType.getInstance()::matches, PARENTHESIZED);
+            put(ConditionalExpressionType.getInstance()::matches, TERNARY);
             put(BinaryExpressionType.getInstance()::matches, BINARY);
             put(UnaryExpressionType.getInstance()::matches, UNARY);
             put(CastExpressionType.getInstance()::matches, CAST);
-            put(Type::isNewClass, NEW_CLASS);
-            put(Type::isMethodInvocation, METHOD_INVOCATION);
+            put(NewClassExpressionType.getInstance()::matches, NEW_CLASS);
+            put(MethodInvocationExpressionType.getInstance()::matches, METHOD_INVOCATION);
             put(Type::isLiteral, LITERAL);
             put(Type::isNewArray, NEW_ARRAY);
             put(ArrayAccessType.getInstance()::matches, ARRAY_ACCESS);
@@ -74,37 +76,12 @@ public class ExpressionFactory {
             return ParsingUtils.containsTopLevelDot(expression);
         }
 
-        private static boolean isMethodInvocation(String expression) {
-            return expression.endsWith(")");
-        }
-
         private static boolean isNewArray(String expression) {
             return expression.strip().matches("new\\s+(\\w|\\.)+\\s*(\\[.*])+(\\s*\\{.*})?");
         }
 
-        private static boolean isNewClass(String expression) {
-            expression = expression.strip();
-            if (!expression.endsWith(")")) {
-                return false;
-            }
-            expression = expression.substring(ParsingUtils.getOwnerSeparatorIndex(expression)+1).strip();
-            return expression.matches("^new\\s[^.]*");
-        }
-
         private static boolean isLiteral(String expression) {
             return expression.matches("(\\d+(\\.\\d*)?[fdlFDL]?)|(true|false)|('.')|(\".*\")");
-        }
-
-        private static boolean isCast(String expression) {
-            return expression.matches("\\((\\w+\\s*(\\.)?)+\\).+");
-        }
-
-        private static boolean isTernary(String expression) {
-            return expression.matches("[^(]+\\?.+:.+");
-        }
-
-        private static boolean isParenthesized(String expression) {
-            return expression.matches("\\(.+\\)") && !isCast(expression);
         }
     }
 
@@ -115,7 +92,7 @@ public class ExpressionFactory {
         var expression = createExpression.expression();
         var type = expression.substring(4, expression.indexOf('[')).strip();
         var initializerStartIndex = expression.indexOf('{');
-        var dimensions = getDimensions(createExpression, initializerStartIndex);
+        var dimensions = ExpressionUtils.getDimensions(createExpression, initializerStartIndex);
         var initializer = getInitializer(createExpression, initializerStartIndex, dimensions.size(), type);
         return new NewArrayExpression(type, dimensions, initializer);
     }
@@ -144,21 +121,6 @@ public class ExpressionFactory {
         return initializer;
     }
 
-    private static List<Expression> getDimensions(CreateExpressionParams createExpression, int initializerStartIndex) {
-        var expression = createExpression.expression();
-        if (initializerStartIndex != -1) {
-            return IntStream.range(0, (int) expression.chars().limit(expression.indexOf('{')).filter(ch -> ch == '[').count())
-                    .<Expression>mapToObj(i -> null)
-                    .toList();
-        }
-        var dimensionsString = expression.substring(
-                expression.indexOf('[', ParsingUtils.getArgsStartIndex(expression) + 1),
-                        expression.lastIndexOf(']') + 1).strip();
-        return ParsingUtils.getArrayDimensions(dimensionsString)
-                .stream()
-                .map(dim -> createExpression(createExpression.withExpressionAndNullTag(dim))).toList();
-    }
-
     private static Expression createIdentifierExpression(CreateExpressionParams createParams) {
         var expression = createParams.expression();
         if (expression.contains("<") || expression.contains(">")) {
@@ -175,7 +137,6 @@ public class ExpressionFactory {
         }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     private static Expression createLiteralExpression(CreateExpressionParams createParams) {
         var expression = createParams.expression().trim();
         var typeTag = createParams.typeTag();
@@ -183,39 +144,7 @@ public class ExpressionFactory {
             typeTag = TypeUtils.geLiteralTypeTag(expression);
         }
         var value = TypeUtils.literalValueFromStr(typeTag, expression);
-        return new LiteralExpression(value, value.getClass());
-    }
-
-    private static Expression createMethodInvocationExpression(CreateExpressionParams createParams) {
-        var expression = createParams.expression();
-        var argsStartIndex = ParsingUtils.getArgsStartIndex(expression);
-        var ownerSeparatorIndex = ParsingUtils.getOwnerSeparatorIndex(expression);
-        return new MethodInvocationExpression(expression.substring(
-                Math.max(ownerSeparatorIndex, expression.lastIndexOf('>', argsStartIndex)) + 1, argsStartIndex).strip(),
-                getOwner(createParams),
-                ParsingUtils.getArgStrings(expression, '(', ')').stream().map(arg -> createExpression(createParams.withExpressionAndNullTag(arg))).toList(),
-                    createParams.parsingContextPath(),
-                getTypeParameters(expression).stream().map(typeArg ->
-                            createExpression(createParams.withExpressionAndNullTag(typeArg))).toList());
-    }
-
-    private static ArrayList<String> getTypeParameters(String expression) {
-        var typeParameters = new ArrayList<String>();
-        var typeArgsEndIndex = expression.lastIndexOf('>');
-        if (typeArgsEndIndex != -1) {
-            var typeArgsParts = ParsingUtils.getTypeArgStrings(expression);
-            for (var typeArg : typeArgsParts) {
-                typeParameters.add(typeArg.strip());
-            }
-        }
-        return typeParameters;
-    }
-
-    private static Expression getOwner(CreateExpressionParams createParams) {
-        var expression = createParams.expression().strip();
-        var ownerSeparatorIndex = ParsingUtils.getOwnerSeparatorIndex(expression);
-        return ownerSeparatorIndex == -1 ? null : createExpression(createParams.withExpressionAndNullTag(
-                expression.substring(0, ownerSeparatorIndex)));
+        return new LiteralExpression(value);
     }
 
     private static Expression createFieldAccessExpression(CreateExpressionParams createParams) {
@@ -232,42 +161,6 @@ public class ExpressionFactory {
             return new FieldAccessExpression(expression.substring(ownerSeparatorIndex + 1),
                     createExpression(createParams.withExpressionAndNullTag(owner)));
         }
-    }
-
-    private static Expression createNewClassExpression(CreateExpressionParams createParams) {
-        var expression = createParams.expression();
-        var rightBound = ParsingUtils.getTypeArgsStartIndex(expression);
-        if (rightBound == -1) {
-            rightBound = ParsingUtils.getArgsStartIndex(expression);
-            if (rightBound == -1) {
-                rightBound = expression.length();
-            }
-        }
-        return new NewClassExpression(
-                expression.substring(ParsingUtils.getSelectedNewKeywordIndex(expression) + 3, rightBound).strip(),
-                getOwner(createParams),
-                ParsingUtils.getArgStrings(expression, '(', ')').stream().map(arg -> createExpression(createParams.withExpressionAndNullTag(arg))).toList(),
-                createParams.parsingContextPath(),
-                getTypeParameters(expression).stream().map(typeArg ->
-                        createExpression(createParams.withExpressionAndNullTag(typeArg))).toList());
-    }
-
-    private static Expression createTernaryExpression(CreateExpressionParams createParams) {
-        var expression = createParams.expression();
-        var questionMarkIndex = expression.indexOf('?');
-        var colonIndex = expression.indexOf(':');
-        return new TernaryExpression(
-                createExpression(createParams.withExpressionAndNullTag(expression.substring(0, questionMarkIndex))),
-                createExpression(createParams.withExpressionAndNullTag(expression.substring(questionMarkIndex + 1, colonIndex))),
-                createExpression(createParams.withExpressionAndNullTag(expression.substring(colonIndex + 1)))
-        );
-    }
-
-    private static Expression createParenthesizedExpression(CreateExpressionParams createParams) {
-        var expression = createParams.expression();
-        return new ParenthesizedExpression(
-                createExpression(createParams.withExpressionAndNullTag(expression.substring(1, expression.length() - 1)))
-        );
     }
 
     public static Expression createExpression(CreateExpressionParams createParams) {

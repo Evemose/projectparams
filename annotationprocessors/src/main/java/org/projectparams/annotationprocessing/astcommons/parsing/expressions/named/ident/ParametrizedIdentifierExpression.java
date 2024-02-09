@@ -1,13 +1,17 @@
-package org.projectparams.annotationprocessing.astcommons.parsing.expressions;
+package org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.ident;
 
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ParameterizableObjectExpression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ParametrizedExpression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.ident.IdentifierExpression;
 
 import java.util.List;
 
 public class ParametrizedIdentifierExpression extends IdentifierExpression implements ParameterizableObjectExpression {
     private final ParametrizedExpression parametrizedExpression;
-    protected ParametrizedIdentifierExpression(String name, List<Expression> typeArguments) {
+    public ParametrizedIdentifierExpression(String name, List<Expression> typeArguments) {
         super(name);
         this.parametrizedExpression = new ParametrizedExpression(typeArguments, this);
     }

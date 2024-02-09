@@ -1,13 +1,12 @@
-package org.projectparams.annotationprocessing.astcommons.parsing.expressions;
+package org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.ident;
 
 import com.sun.tools.javac.tree.JCTree;
-import org.projectparams.annotationprocessing.astcommons.PathUtils;
-import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.NamedExpression;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
 
 public class IdentifierExpression extends NamedExpression {
-    protected IdentifierExpression(String name) {
+    public IdentifierExpression(String name) {
         super(name);
     }
 

@@ -1,0 +1,34 @@
+package org.projectparams.annotationprocessing.astcommons.parsing.expressions.parenthezied;
+
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
+
+public class ParenthesizedExpressionType implements ExpressionType {
+    private static final ParenthesizedExpressionType INSTANCE = new ParenthesizedExpressionType();
+    @Override
+    public boolean matches(String expression) {
+        expression = expression.strip();
+        return expression.startsWith("(")
+                && expression.endsWith(")")
+                && ParsingUtils.getCorrespondingOpeningParIndex(expression, '(', ')', expression.length() - 1) == 0;
+    }
+
+    @Override
+    public Expression parse(CreateExpressionParams createParams) {
+        if (!matches(createParams.expression())) {
+            throw new IllegalArgumentException("Invalid parenthesized expression: " + createParams.expression());
+        }
+        var expression = createParams.expression().strip();
+        return new ParenthesizedExpression(
+                ExpressionFactory.createExpression(createParams
+                        .withExpressionAndNullTag(expression.substring(1, expression.length() - 1)))
+        );
+    }
+
+    public static ParenthesizedExpressionType getInstance() {
+        return INSTANCE;
+    }
+}

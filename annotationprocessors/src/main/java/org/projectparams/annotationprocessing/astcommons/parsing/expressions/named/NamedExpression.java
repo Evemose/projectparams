@@ -1,4 +1,6 @@
-package org.projectparams.annotationprocessing.astcommons.parsing.expressions;
+package org.projectparams.annotationprocessing.astcommons.parsing.expressions.named;
+
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 
 public abstract class NamedExpression implements Expression {
 

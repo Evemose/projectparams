@@ -48,7 +48,7 @@ public class UnaryExpressionType implements ExpressionType {
 
     @Override
     public Expression parse(CreateExpressionParams createParams) {
-        var expression = createParams.expression();
+        var expression = createParams.expression().strip();
         var operator = extractUnaryOperator(expression);
         String operand;
         if (operator == JCTree.Tag.POSTDEC || operator == JCTree.Tag.POSTINC) {

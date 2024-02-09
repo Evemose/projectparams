@@ -9,17 +9,15 @@ import java.util.List;
 public class ParametrizedExpression implements Expression {
     private final List<Expression> typeArguments;
     private final ParameterizableObjectExpression plainExpression;
-    protected ParametrizedExpression(List<Expression> typeArguments, ParameterizableObjectExpression plainExpression) {
+    public ParametrizedExpression(List<Expression> typeArguments, ParameterizableObjectExpression plainExpression) {
         this.typeArguments = typeArguments;
         this.plainExpression = plainExpression;
     }
 
     @Override
     public JCTree.JCExpression toJcExpression() {
-        var plainExpression = this.plainExpression.superToJcExpression();
-        var typeArguments =
-                this.typeArguments.stream().map(Expression::toJcExpression).toArray(JCTree.JCExpression[]::new);
-        return ExpressionMaker.makeTypeApply(plainExpression, typeArguments);
+        return ExpressionMaker.makeTypeApply(plainExpression.superToJcExpression(),
+                typeArguments.stream().map(Expression::toJcExpression).toArray(JCTree.JCExpression[]::new));
     }
 
     @Override

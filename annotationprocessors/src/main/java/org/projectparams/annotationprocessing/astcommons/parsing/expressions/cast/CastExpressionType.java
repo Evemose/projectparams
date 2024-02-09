@@ -9,12 +9,16 @@ public class CastExpressionType implements ExpressionType {
     private static final CastExpressionType INSTANCE = new CastExpressionType();
     @Override
     public boolean matches(String expression) {
-        return expression.matches("\\((\\w+(\\s*\\.\\s*)?)+\\).+");
+        expression = expression.strip();
+        return expression.matches("\\((\\w(\\w|\\d)+(\\s*\\.\\s*)?)+\\).+");
     }
 
     @Override
     public Expression parse(CreateExpressionParams createParams) {
-        var expression = createParams.expression();
+        if (!matches(createParams.expression())) {
+            throw new IllegalArgumentException("Invalid cast expression: " + createParams.expression());
+        }
+        var expression = createParams.expression().strip();
         return new CastExpression(
                 ExpressionFactory.createExpression(createParams
                         .withExpressionAndNullTag(expression.substring(expression.indexOf(')') + 1))),

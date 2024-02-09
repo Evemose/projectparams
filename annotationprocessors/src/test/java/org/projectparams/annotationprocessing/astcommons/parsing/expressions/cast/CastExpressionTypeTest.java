@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CastExpressionTypeTest {
+    private final CastExpressionType castExpressionType = CastExpressionType.getInstance();
 
     @ParameterizedTest
     @ValueSource(strings = {
@@ -14,10 +15,11 @@ class CastExpressionTypeTest {
             "(SomeClass)newObject",
             "(java.lang.Integer)methodCall()",
             "(java.util.Map)someVar",
+            "(ClasWithInner.InnerClass.AndNumber4.AndDefault)methodCall()",
             "(org.projectparams.SomeCustomClass)anotherMethodCall()"
     })
     void matchesTrueCases(String expression) {
-        CastExpressionType castExpressionType = CastExpressionType.getInstance();
+
         assertTrue(castExpressionType.matches(expression));
     }
 
@@ -31,7 +33,6 @@ class CastExpressionTypeTest {
             "(org.projectparams)"
     })
     void matchesFalseCases(String expression) {
-        CastExpressionType castExpressionType = CastExpressionType.getInstance();
         assertFalse(castExpressionType.matches(expression));
     }
 }
