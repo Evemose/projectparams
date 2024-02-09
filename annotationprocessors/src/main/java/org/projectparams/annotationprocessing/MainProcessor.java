@@ -60,9 +60,7 @@ public class MainProcessor extends AbstractProcessor {
                     Attr.instance(javacProcessingEnv.getContext()),
                     Enter.instance(javacProcessingEnv.getContext()),
                     MemberEnter.instance(javacProcessingEnv.getContext()));
-            ExpressionMaker.init(treeMaker,
-                    Names.instance(javacProcessingEnv.getContext()),
-                    javacProcessingEnv.getMessager());
+            ExpressionMaker.init(treeMaker, Names.instance(javacProcessingEnv.getContext()));
             DefaultValueInjector.messager = processingEnv.getMessager();
             PathUtils.init(trees);
             ExpressionFactory.messager = processingEnv.getMessager();

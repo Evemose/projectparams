@@ -2,22 +2,26 @@ package org.projectparams.annotationprocessing.astcommons.parsing.expressions.na
 
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.cast.CastExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.invocable.newclass.NewClassExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.parenthezied.ParenthesizedExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionUtils;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
-public class MethodInvocationExpressionType implements ExpressionType {
+public class MethodInvocationExpressionType extends AbstractExpressionType {
 
     private static final MethodInvocationExpressionType INSTANCE = new MethodInvocationExpressionType();
     @Override
-    public boolean matches(String expression) {
-        return expression.endsWith(")")
-                && !ParenthesizedExpressionType.getInstance().matches(expression)
-                && !CastExpressionType.getInstance().matches(expression)
-                && !NewClassExpressionType.getInstance().matches(expression);
+    public boolean matchesInner(String expression) {
+        return expression.endsWith(")");
+    }
+
+    @Override
+    public boolean isCovered(String expression) {
+        return  ParenthesizedExpressionType.getInstance().matches(expression)
+                || CastExpressionType.getInstance().matches(expression)
+                || NewClassExpressionType.getInstance().matches(expression);
     }
 
     @Override

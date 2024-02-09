@@ -3,13 +3,13 @@ package org.projectparams.annotationprocessing.astcommons.parsing.expressions.co
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
-public class ConditionalExpressionType implements ExpressionType {
+public class ConditionalExpressionType extends AbstractExpressionType {
     private static final ConditionalExpressionType INSTANCE = new ConditionalExpressionType();
     @Override
-    public boolean matches(String expression) {
+    public boolean matchesInner(String expression) {
         return ParsingUtils.countMatchingTopLevelSymbols(expression, ParsingUtils.equalsSymbolPredicate('?')) == 1
                 && ParsingUtils.countMatchingTopLevelSymbols(expression, ParsingUtils.equalsSymbolPredicate(':')) == 1;
     }

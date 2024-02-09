@@ -8,7 +8,7 @@ import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.LiteralExpression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.literal.LiteralExpression;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
 
 import javax.annotation.processing.Messager;

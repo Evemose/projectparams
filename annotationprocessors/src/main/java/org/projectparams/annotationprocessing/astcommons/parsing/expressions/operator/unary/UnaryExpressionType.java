@@ -4,10 +4,10 @@ import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
-public class UnaryExpressionType implements ExpressionType {
+public class UnaryExpressionType extends AbstractExpressionType {
     private static final UnaryExpressionType INSTANCE = new UnaryExpressionType();
     private UnaryExpressionType() {}
 
@@ -41,7 +41,7 @@ public class UnaryExpressionType implements ExpressionType {
     }
 
     @Override
-    public boolean matches(String expression) {
+    public boolean matchesInner(String expression) {
         return expression.matches("(\\+|-|!|~|\\+\\+|--)\\s*[^+-].*")
                 || expression.matches(".+(\\+\\+|--)");
     }

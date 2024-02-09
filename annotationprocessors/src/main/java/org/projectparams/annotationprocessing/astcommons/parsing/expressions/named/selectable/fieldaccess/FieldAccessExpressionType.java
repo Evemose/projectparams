@@ -3,13 +3,13 @@ package org.projectparams.annotationprocessing.astcommons.parsing.expressions.na
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.arrayaccess.ArrayAccessType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.cast.CastExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionUtils;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
-public class FieldAccessExpressionType implements ExpressionType {
+public class FieldAccessExpressionType extends AbstractExpressionType {
 
     private static final FieldAccessExpressionType INSTANCE = new FieldAccessExpressionType();
 
@@ -21,12 +21,16 @@ public class FieldAccessExpressionType implements ExpressionType {
     }
 
     @Override
-    public boolean matches(String expression) {
+    public boolean matchesInner(String expression) {
         expression = expression.strip();
-        return ParsingUtils.containsTopLevelDot(expression)
-                && !expression.endsWith(")")
-                && !CastExpressionType.getInstance().matches(expression)
-                && !ArrayAccessType.getInstance().matches(expression);
+        return ParsingUtils.containsTopLevelDot(expression);
+    }
+
+    @Override
+    protected boolean isCovered(String expression) {
+        return expression.endsWith(")")
+                || CastExpressionType.getInstance().matches(expression)
+                || ArrayAccessType.getInstance().matches(expression);
     }
 
     @Override

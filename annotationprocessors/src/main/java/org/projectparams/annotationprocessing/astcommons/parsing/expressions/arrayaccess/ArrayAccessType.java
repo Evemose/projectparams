@@ -2,15 +2,15 @@ package org.projectparams.annotationprocessing.astcommons.parsing.expressions.ar
 
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
 import static org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory.createExpression;
 
-public class ArrayAccessType implements ExpressionType {
+public class ArrayAccessType extends AbstractExpressionType {
     private static final ArrayAccessType INSTANCE = new ArrayAccessType();
     @Override
-    public boolean matches(String expression) {
+    public boolean matchesInner(String expression) {
         return expression.matches(".*\\w+(\\[.*])+$");
     }
 

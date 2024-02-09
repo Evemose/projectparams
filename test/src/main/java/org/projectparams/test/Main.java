@@ -37,8 +37,7 @@ public class Main {
 
     public static void rovarus(@DefaultValue("new org.projectparams.test.Sucus().mains[Sucus.mains[1].getZero()]." +
             "<Map<Integer, java.util.List<Float>>>akakus(Map.of(3, List.of((float)(double)6.d)))")
-                               List<Map<Integer, List<Float>>>
-                                       someVar) {
+                               List<Map<Integer, List<Float>>> someVar) {
         System.out.println(" " + someVar);
         System.out.println(someVar.getFirst().getClass());
     }

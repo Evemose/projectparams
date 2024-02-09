@@ -3,13 +3,13 @@ package org.projectparams.annotationprocessing.astcommons.parsing.expressions.pa
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
-public class ParenthesizedExpressionType implements ExpressionType {
+public class ParenthesizedExpressionType extends AbstractExpressionType {
     private static final ParenthesizedExpressionType INSTANCE = new ParenthesizedExpressionType();
     @Override
-    public boolean matches(String expression) {
+    public boolean matchesInner(String expression) {
         expression = expression.strip();
         return expression.startsWith("(")
                 && expression.endsWith(")")

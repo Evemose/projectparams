@@ -3,14 +3,13 @@ package org.projectparams.annotationprocessing.astcommons.parsing.expressions.ca
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 
-public class CastExpressionType implements ExpressionType {
+public class CastExpressionType extends AbstractExpressionType {
     private static final CastExpressionType INSTANCE = new CastExpressionType();
     @Override
-    public boolean matches(String expression) {
-        expression = expression.strip();
-        return expression.matches("\\((\\w(\\w|\\d)+(\\s*\\.\\s*)?)+\\).+");
+    public boolean matchesInner(String expression) {
+        return expression.strip().matches("\\((\\w(\\w|\\d)+(\\s*\\.\\s*)?)+\\).+");
     }
 
     @Override

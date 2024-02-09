@@ -1,14 +1,15 @@
 package org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.invocable.newclass;
 
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.*;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.conditional.ConditionalExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionUtils;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
-public class NewClassExpressionType implements ExpressionType {
+public class NewClassExpressionType extends AbstractExpressionType {
     private static final NewClassExpressionType INSTANCE = new NewClassExpressionType();
     @Override
-    public boolean matches(String expression) {
+    public boolean matchesInner(String expression) {
         expression = expression.strip();
         if (!expression.endsWith(")")) {
             return false;

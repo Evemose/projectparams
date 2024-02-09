@@ -17,11 +17,9 @@ public class ExpressionMaker {
     private static TreeMaker treeMaker;
     @SuppressWarnings("unused")
     private static Names names;
-    private static Messager messager;
-    public static void init(TreeMaker treeMaker, Names names, Messager messager) {
+    public static void init(TreeMaker treeMaker, Names names) {
         ExpressionMaker.treeMaker = treeMaker;
         ExpressionMaker.names = names;
-        ExpressionMaker.messager = messager;
     }
 
     public static JCTree.JCExpression makeTypeApply(JCTree.JCExpression expression, JCTree.JCExpression ...typeArguments) {

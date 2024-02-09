@@ -141,7 +141,13 @@ public class ParsingUtils {
     }
 
     public static boolean containsTopLevelDot(String expression) {
-        return getMatchingTopLevelSymbolIndex(expression, equalsSymbolPredicate('.')) != -1;
+        return getMatchingTopLevelSymbolIndex(expression, equalsSymbolPredicate('.')
+                .and(ParsingUtils::isNotPartOfLiteral)) != -1;
+    }
+
+    private static boolean isNotPartOfLiteral(String expr, int idx) {
+        expr = expr.strip();
+        return idx > 0 && !expr.matches("\\d{"+idx+"}\\.\\d*[fFdD]?");
     }
 
     public static List<String> getArrayDimensions(String expression) {
@@ -206,7 +212,7 @@ public class ParsingUtils {
         for (var i = 0; i < expression.length(); i++) {
             couldBeChecked = couldBeChecked || updateCouldBeChecked(fromIndex, direction, i);
             if (mayUpdateCapture(direction, capture)) {
-                capture = updateCapture(expression, symbolPredicate, couldBeChecked, enclosersCount, i);
+                capture = updateCapture(expression, symbolPredicate, couldBeChecked, enclosersCount, i).orElse(capture);
             }
             mutated = updateEnclosers(expression, i, enclosersCount);
             if (enclosersCount.values().stream().anyMatch(val -> val < 0)) {
@@ -250,9 +256,18 @@ public class ParsingUtils {
             mutated = true;
         } else if (c == ':') {
             mutated = updateConditionalEnclCount(expression, i, enclosersCount, mutated);
-        } else if (expression.startsWith("new", i) && enclosersCount.get('n') == 0) {
+        } else if (expression.matches(".{"+i+"}new\\s.*") && enclosersCount.get('n') == 0) {
             enclosersCount.merge('n', 1, Integer::sum);
             mutated = true;
+        } else if (c == '"') {
+            if (i == 0 || expression.charAt(i - 1) != '\\') {
+                if (enclosersCount.get(c) == 0) {
+                    enclosersCount.merge(c, 1, Integer::sum);
+                } else {
+                    enclosersCount.merge(c, -1, Integer::sum);
+                }
+                mutated = true;
+            }
         }
         return mutated;
     }
@@ -279,20 +294,21 @@ public class ParsingUtils {
                 '[', 0,
                 '{', 0,
                 '<', 0,
+                '"', 0,
                 '?', 0, // conditional expression
                 'n', 0 // new keyword
         ));
     }
 
-    private static Integer updateCapture(String expression,
+    private static Optional<Integer> updateCapture(String expression,
                                          BiPredicate<String, Integer> symbolPredicate,
                                          boolean couldBeChecked,
                                          HashMap<Character, Integer> enclosersCount,
                                          int i) {
         if (couldBeChecked && isNotEnclosed(enclosersCount) && symbolPredicate.test(expression, i)) {
-            return i;
+            return Optional.of(i);
         }
-        return null;
+        return Optional.empty();
     }
 
     private static boolean updateCouldBeChecked(int fromIndex, boolean direction, int i) {
@@ -300,6 +316,9 @@ public class ParsingUtils {
     }
 
     private static void validateFromIndex(String expression, int fromIndex) {
+        if (fromIndex == 0 && expression.isEmpty()) {
+            return;
+        }
         if (fromIndex >= expression.length() || fromIndex < 0) {
             throw new IndexOutOfBoundsException("fromIndex " + fromIndex + " is out of bounds for " + expression);
         }

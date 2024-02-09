@@ -4,10 +4,10 @@ import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
-public class BinaryExpressionType implements ExpressionType {
+public class BinaryExpressionType extends AbstractExpressionType {
     private static final BinaryExpressionType INSTANCE = new BinaryExpressionType();
 
     private BinaryExpressionType() {}
@@ -79,7 +79,7 @@ public class BinaryExpressionType implements ExpressionType {
     }
 
     @Override
-    public boolean matches(String expression) {
+    public boolean matchesInner(String expression) {
         return ParsingUtils.getMatchingTopLevelSymbolIndex(expression, this::isOperator) != -1;
     }
 
