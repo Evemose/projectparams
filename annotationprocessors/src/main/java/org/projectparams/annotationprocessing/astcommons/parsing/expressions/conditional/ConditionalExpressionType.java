@@ -9,9 +9,11 @@ import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUt
 public class ConditionalExpressionType extends AbstractExpressionType {
     private static final ConditionalExpressionType INSTANCE = new ConditionalExpressionType();
     @Override
-    public boolean matchesInner(String expression) {
+    protected boolean matchesInner(String expression) {
         return ParsingUtils.countMatchingTopLevelSymbols(expression, ParsingUtils.equalsSymbolPredicate('?')) == 1
-                && ParsingUtils.countMatchingTopLevelSymbols(expression, ParsingUtils.equalsSymbolPredicate(':')) == 1;
+                && ParsingUtils.countMatchingTopLevelSymbols(expression, ParsingUtils.equalsSymbolPredicate(':')
+                .and((expr, idx) -> idx == 0 || idx == expr.length() - 1
+                        || expr.charAt(idx-1) != ':' && expr.charAt(idx+1) != ':')) == 1;
     }
 
     @Override

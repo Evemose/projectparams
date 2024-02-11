@@ -14,10 +14,14 @@ public class ConditionalExpressionTypeTest {
             "x ? y ? a : b : z",
             "x ? (y ? a : (b ? c : d)) : z",
             "(x ? y : z) ? a : b",
-            "x ? (y > z ? a : b) : (c < d ? e : f)", 
+            "x ? (y > z ? a : b) : (c < d ? e : f)",
             "(x+y) ? ((a*b)/c ? d-e : f+g) : z-a",
             "a ? ((b && c) ? d : e) : f",
-            "g ? (h ? (i ? j : k) : l) : m"
+            "g ? (h ? (i ? j : k) : l) : m",
+            "new org.projectparams.test.Sucus().mains[Sucus.mains[1].getZero()]." +
+            "<Map<Integer, List<Float>>>akakus(Map.of(3, List.of((float)(double)6.d))).isEmpty() ? " +
+                    "!(true ? false : true) ? akakus() : List.of(new HashMap<>(Map.of(3, List.of((float)(double)6.d))))" +
+                    ": List.of(new HashMap<>(Map.of(3, List.of((float)(double)6.d))))"
     })
     public void testMatchesTrue(String input) {
         assertTrue(conditionalExpressionType.matches(input));

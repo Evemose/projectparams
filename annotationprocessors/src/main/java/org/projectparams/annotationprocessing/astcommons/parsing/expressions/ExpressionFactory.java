@@ -20,7 +20,7 @@ public class ExpressionFactory {
             return LiteralExpression.NULL;
         }
         var type = ExpressionUtils.getType(createParams);
-        messager.printMessage(Diagnostic.Kind.NOTE, "Type of expression: " + type);
+        messager.printMessage(Diagnostic.Kind.NOTE, "Type of expression: " + type.getClass().getSimpleName());
         return type.parse(createParams);
     }
 }

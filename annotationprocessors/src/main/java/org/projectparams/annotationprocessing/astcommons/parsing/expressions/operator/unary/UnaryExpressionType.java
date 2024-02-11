@@ -5,6 +5,7 @@ import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Cre
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.conditional.ConditionalExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
 public class UnaryExpressionType extends AbstractExpressionType {
@@ -41,9 +42,14 @@ public class UnaryExpressionType extends AbstractExpressionType {
     }
 
     @Override
-    public boolean matchesInner(String expression) {
+    protected boolean matchesInner(String expression) {
         return expression.matches("(\\+|-|!|~|\\+\\+|--)\\s*[^+-].*")
                 || expression.matches(".+(\\+\\+|--)");
+    }
+
+    @Override
+    protected boolean isCovered(String expression) {
+        return ConditionalExpressionType.getInstance().matches(expression);
     }
 
     @Override

@@ -9,9 +9,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * This class is used to run tests on the ArrayAccessType class's methods.
  */
-public class ArrayAccessTypeTest {
+public class ArrayAccessExpressionTypeTest {
 
-    ArrayAccessType arrayAccessType = ArrayAccessType.getInstance();
+    ArrayAccessExpressionType arrayAccessType = ArrayAccessExpressionType.getInstance();
 
 
     @ParameterizedTest

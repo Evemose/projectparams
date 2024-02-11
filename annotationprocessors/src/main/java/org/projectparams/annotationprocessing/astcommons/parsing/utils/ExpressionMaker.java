@@ -15,7 +15,6 @@ import java.util.Objects;
 public class ExpressionMaker {
 
     private static TreeMaker treeMaker;
-    @SuppressWarnings("unused")
     private static Names names;
     public static void init(TreeMaker treeMaker, Names names) {
         ExpressionMaker.treeMaker = treeMaker;
@@ -40,9 +39,7 @@ public class ExpressionMaker {
             value = (boolean)value ? 1 : 0;
         }
         var literal = treeMaker.Literal(tag, value);
-        literal.type = TypeUtils.getTypeByName(
-                tag == TypeTag.BOOLEAN ? "java.lang.Boolean" : value.getClass().getCanonicalName()
-        );
+        literal.type = TypeUtils.getTypeByName(tag == TypeTag.BOOLEAN ? "boolean" : value.getClass().getCanonicalName());
         return literal;
     }
 

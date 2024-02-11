@@ -188,8 +188,8 @@ public class TypeUtils {
                         ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
                     }
                 }
-                case JCTree.JCMethodDecl methodInvocation -> {
-                    var ownerType = methodInvocation.type;
+                case JCTree.JCMethodDecl methodDecl -> {
+                    var ownerType = methodDecl.type;
                     if (ownerType != null) {
                         ownerQualifiedName = TypeUtils.getBoxedTypeName(ownerType.toString());
                     }
@@ -260,7 +260,7 @@ public class TypeUtils {
         if (literalAsString == null) {
             return null;
         }
-        literalAsString = literalAsString.replaceAll("[lLfFbBsSdD]", "");
+        literalAsString = literalAsString.replaceAll("[lLfFbBsSdD]$", "").strip();
         return switch (tag) {
             case INT -> Integer.parseInt(literalAsString);
             case LONG -> Long.parseLong(literalAsString);

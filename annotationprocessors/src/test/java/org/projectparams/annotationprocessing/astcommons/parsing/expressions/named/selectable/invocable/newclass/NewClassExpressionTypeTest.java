@@ -10,10 +10,10 @@ class NewClassExpressionTypeTest {
 
     @ParameterizedTest(name = "testMatches - Parametrized Test for {0}")
     @ValueSource(strings = {
-//            "new SomeClass()",
-//            "new SomeClass(param1, param2)",
-//            "new SomeClass<Generic>()",
-//            "new SomeClass<Generic>(param1, param2)",
+            "new SomeClass()",
+            "new SomeClass(param1, param2)",
+            "new SomeClass<Generic>()",
+            "new SomeClass<Generic>(param1, param2)",
             "owner.new SomeClass()",
             "abobus.new Bibus()",
             "methodCall().new SomeClass()",
@@ -27,9 +27,7 @@ class NewClassExpressionTypeTest {
     @ValueSource(strings = {
             "newNotCorrectClass()",
             "noNewKeyword SomeClass()",
-            "new SomeClass",
             "SomeClass<Generic>()",
-            "new ClassWithoutParentheses",
             "fakenew SomeClass()",
             "(Cast) new SomeClass()",
             "someBoolean ? new SomeClass() : new SomeClass()",

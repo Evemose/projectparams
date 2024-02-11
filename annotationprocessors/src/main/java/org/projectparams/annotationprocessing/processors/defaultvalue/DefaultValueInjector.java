@@ -46,7 +46,7 @@ public class DefaultValueInjector {
             expression.convertInnerIdentifiersToQualified(ClassContext.of(PathUtils
                     .getElementPath(invocableInfo.method().getEnclosingElement())));
             var expressionAsJC = expression.toJcExpression();
-            statementsToInject.add(assignToVar(wrapInNonNullElseGet(expressionAsJC, param.name()), param.name()));
+            statementsToInject.add(assignToVar(wrapInNonNullElse(expressionAsJC, param.name()), param.name()));
         }
         var methodTree = (MethodTree) PathUtils.getElementPath(invocable).getLeaf();
         var prevStatements = methodTree.getBody().getStatements();
@@ -63,7 +63,7 @@ public class DefaultValueInjector {
                 expression);
     }
 
-    private JCTree.JCExpression wrapInNonNullElseGet(JCTree.JCExpression expression, String varName) {
+    private JCTree.JCExpression wrapInNonNullElse(JCTree.JCExpression expression, String varName) {
         return ExpressionMaker.makeMethodInvocation(
                 ExpressionMaker.makeFieldAccess(
                         ExpressionMaker.makeIdent("java.util.Objects"),

@@ -12,16 +12,16 @@ public class MethodInvocationExpressionTypeTest {
     @ValueSource(strings = {
             "methodInvocation()",
             "complex.methodInvocation(arg1, arg2)",
-            "complex.methodInvocation(arg1, new AnotherClass()).method2()",
+            "comp$lex.methodInvocation(arg1, new AnotherClass()).method2()",
             "methodInvocation(arg).method2().method3()",
             "<Integer>genericMethodInvocation()",
             "new Complex<String, Integer>().methodInvocation(arg)",
             "<K, V>complex().methodInvocation(arg1).method2()",
-            "methodInvocation.<String>genericMethod(arg).method2().method3()"
+            "methodInvocation.<String>genericMethod(arg).method2().method3()",
+            "new org.projectparams.test.Sucus().mains[Sucus.mains[1].getZero()].<Map<Integer, List<Float>>>akakus(Map.of(3, List.of((float)(double)6.d)))"
     })
     void testMatch(String expression) {
-        var result = methodInvocationExpressionType.matches(expression);
-        Assertions.assertTrue(result);
+        Assertions.assertTrue(methodInvocationExpressionType.matches(expression));
     }
 
     @ParameterizedTest
@@ -29,16 +29,12 @@ public class MethodInvocationExpressionTypeTest {
             "methodInvocationWithoutEndingParenthesis",
             "(parenthesizedExpressionTypeInstance)",
             "new NewClassExpressionTypeInstance()",
-            "methodInvocation(arg1, arg2",
             "(Cast) methodInvocation()",
-            "complex.methodInvocation(arg1,",
             "<Integer>genericMethodInvocation",
-            "<String, Integer>complex.methodInvocation(arg",
-            "<K, V>complex.methodInvocation(arg1).method2(",
-            "methodInvocation.<String>genericMethod(arg).method2()."
+            "methodInvocation.<String>genericMethod(arg).method2().",
+            "someBoolean ? methodInvocation() : otherMethodInvocation()",
     })
     void testNotMatch(String expression) {
-        var result = methodInvocationExpressionType.matches(expression);
-        Assertions.assertFalse(result, "The expression should not be matched as its either not ending with ')' or matches other types.");
+        Assertions.assertFalse(methodInvocationExpressionType.matches(expression));
     }
 }

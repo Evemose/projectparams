@@ -4,36 +4,38 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="refactored ParsingUtils.getMatchingTopLevelSymbolIndex method and fixed a few bugs">
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/ExpressionType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/literal/LiteralExpressionType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/named/ident/IdentifierExpressionType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/newarray/NewArrayExpressionType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/literal/LiteralExpressionTypeTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/named/ident/IdentifierExpressionTypeTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/newarray/NewArrayExpressionTypeTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/utils/ParsingUtilsTest.java" afterDir="false" />
+    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="finished converting to type detection using polymorphism and removed enums">
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors/ReevaluateTreePositionsVisitor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/run_annproc_debug.bat" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/MainProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/MainProcessor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/TypeUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/TypeUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/invocabletree/AbstractInvocableTree.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/invocabletree/AbstractInvocableTree.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/ExpressionFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/ExpressionFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/ExpressionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/AbstractExpressionType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/LiteralExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/literal/LiteralExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/NewArrayExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/newarray/NewArrayExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/arrayaccess/ArrayAccessType.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/arrayaccess/ArrayAccessType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/arrayaccess/ArrayAccessType.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/arrayaccess/ArrayAccessExpressionType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/cast/CastExpressionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/cast/CastExpressionType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/conditional/ConditionalExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/conditional/ConditionalExpression.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/conditional/ConditionalExpressionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/conditional/ConditionalExpressionType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/named/ident/IdentifierExpressionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/named/ident/IdentifierExpressionType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/named/selectable/fieldaccess/FieldAccessExpressionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/named/selectable/fieldaccess/FieldAccessExpressionType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/named/selectable/invocable/methodinvocation/MethodInvocationExpressionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/named/selectable/invocable/methodinvocation/MethodInvocationExpressionType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/named/selectable/invocable/newclass/NewClassExpressionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/named/selectable/invocable/newclass/NewClassExpressionType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/newarray/NewArrayExpressionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/newarray/NewArrayExpressionType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/operator/binary/BinaryExpressionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/operator/binary/BinaryExpressionType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/operator/unary/UnaryExpressionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/operator/unary/UnaryExpressionType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/parenthezied/ParenthesizedExpressionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/parenthezied/ParenthesizedExpressionType.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/utils/ExpressionMaker.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/utils/ExpressionMaker.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/utils/ExpressionUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/utils/ExpressionUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/utils/ParsingUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/utils/ParsingUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors/CleanupVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors/CleanupVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors/PrepareNewClassTreesVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors/PrepareNewClassTreesVisitor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueInjector.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueInjector.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/argumentsuppliers/DefaultArgumentSupplier.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/argumentsuppliers/DefaultArgumentSupplier.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/DefaultValueProcessor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/arrayaccess/ArrayAccessTypeTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/arrayaccess/ArrayAccessExpressionTypeTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/conditional/ConditionalExpressionTypeTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/conditional/ConditionalExpressionTypeTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/named/selectable/fieldaccess/FieldAccessExpressionTypeTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/named/selectable/fieldaccess/FieldAccessExpressionTypeTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/named/selectable/invocable/methodinvocation/MethodInvocationExpressionTypeTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/named/selectable/invocable/methodinvocation/MethodInvocationExpressionTypeTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/named/selectable/invocable/newclass/NewClassExpressionTypeTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/named/selectable/invocable/newclass/NewClassExpressionTypeTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/operator/unary/UnaryExpressionTypeTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/operator/unary/UnaryExpressionTypeTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -52,6 +54,9 @@
         <task path="$PROJECT_DIR$">
           <activation />
         </task>
+        <task path="$PROJECT_DIR$/test">
+          <activation />
+        </task>
         <projects_view>
           <tree_state>
             <expand>
@@ -62,23 +67,13 @@
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="projectparams" type="f1a62948:ProjectNode" />
-                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="projectparams" type="f1a62948:ProjectNode" />
-                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
-                <item name="compileClasspath" type="62daadca:ExternalSystemViewDefaultContributor$DependencyScopeExternalSystemNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="projectparams" type="f1a62948:ProjectNode" />
-                <item name="Run Configurations" type="7b0102dc:RunConfigurationsNode" />
+                <item name="test" type="2d1252cf:ModuleNode" />
               </path>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="projectparams" type="f1a62948:ProjectNode" />
                 <item name="test" type="2d1252cf:ModuleNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
               </path>
             </expand>
             <select />
@@ -158,9 +153,10 @@
     "Gradle.IdentifierExpressionTypeTest.executor": "Run",
     "Gradle.IdentifierExpressionTypeTest.shouldMatchValidIdentifiers.executor": "Run",
     "Gradle.LiteralExpressionTypeTest.executor": "Run",
+    "Gradle.LiteralExpressionTypeTest.testMatchesInner_expectFalse.executor": "Run",
     "Gradle.MethodCallArgumentsInspectorTest.testVisitMethod.executor": "Run",
     "Gradle.MethodInvocationExpressionTypeTest.executor": "Run",
-    "Gradle.MethodInvocationExpressionTypeTest.testMatch.executor": "Run",
+    "Gradle.MethodInvocationExpressionTypeTest.testMatch.executor": "Debug",
     "Gradle.NewArrayExpressionTypeTest.executor": "Run",
     "Gradle.NewClassExpressionTypeTest.executor": "Run",
     "Gradle.NewClassExpressionTypeTest.testMatches.executor": "Run",
@@ -186,7 +182,13 @@
     "Gradle.projectparams [:Main.main()].executor": "Run",
     "Gradle.projectparams [build].executor": "Run",
     "Gradle.projectparams [clean].executor": "Run",
+    "Gradle.projectparams:test [--no-daemon clean build].executor": "Run",
     "Gradle.projectparams:test [:test:Main.main()].executor": "Run",
+    "Gradle.projectparams:test [build].executor": "Run",
+    "Gradle.projectparams:test [clean build --no-daemon].executor": "Run",
+    "Gradle.projectparams:test [clean build].executor": "Run",
+    "Gradle.projectparams:test [clean].executor": "Run",
+    "Remote JVM Debug.APT.executor": "Debug",
     "Remote JVM Debug.Unnamed.executor": "Debug",
     "Repository.Attach.Annotations": "false",
     "Repository.Attach.JavaDocs": "false",
@@ -194,6 +196,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Shell Script.Unnamed.executor": "Run",
     "extract.method.default.visibility": "private",
     "git-widget-placeholder": "expressions-as-defaults",
     "ignore.virus.scanning.warn.message": "true",
@@ -201,7 +204,7 @@
     "kotlin-language-version-configured": "true",
     "last.edited.regexp": "Sample Text",
     "last_directory_selection": "C:/projectparams/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors",
-    "last_opened_file_path": "C:/projectparams",
+    "last_opened_file_path": "C:/projectparams/test",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -211,7 +214,7 @@
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
     "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "ml.llm.AIAssistantPromptsLibrary",
+    "settings.editor.selected.configurable": "ml.llm.LLMProjectConfigurable",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -244,7 +247,7 @@
       <recent name="org.projectparams.annotationprocessing.processors.defaultvalue.visitors" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.Tests in 'org.projectparams.annotationprocessing.astcommons.parsing'">
+  <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="org.projectparams.test.Main" />
       <module name="projectparams.test.main" />
@@ -254,11 +257,21 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+      <extension name="net.ashald.envfile">
+        <option name="IS_ENABLED" value="false" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+        </ENTRIES>
+      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ParsingUtilsTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="MethodInvocationExpressionTypeTest.testMatch" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -271,55 +284,7 @@
           <list>
             <option value=":annotationprocessors:test" />
             <option value="--tests" />
-            <option value="&quot;org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtilsTest&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <method v="2" />
-    </configuration>
-    <configuration name="ParsingUtilsTest.testNotContainsTopLevelDot" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":annotationprocessors:test" />
-            <option value="--tests" />
-            <option value="&quot;org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtilsTest.testNotContainsTopLevelDot&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <method v="2" />
-    </configuration>
-    <configuration name="ParsingUtilsTest.whenSymbolMatches_getMatchingTopLevelSymbolLastIndex_ReturnsCorrectIndex" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":annotationprocessors:test" />
-            <option value="--tests" />
-            <option value="&quot;org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtilsTest.whenSymbolMatches_getMatchingTopLevelSymbolLastIndex_ReturnsCorrectIndex&quot;" />
+            <option value="&quot;org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.invocable.methodinvocation.MethodInvocationExpressionTypeTest.testMatch&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -354,20 +319,95 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
+    <configuration name="projectparams:test [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/test" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="build" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="projectparams:test [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/test" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="clean" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="APT" type="Remote">
+      <module name="projectparams.test" />
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="5005" />
+      <option name="AUTO_RESTART" value="false" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="5005" />
+        <option name="LOCAL" value="false" />
+      </RunnerSettings>
+      <method v="2" />
+    </configuration>
+    <configuration name="Unnamed" type="ShConfigurationType" nameIsGenerated="true">
+      <option name="SCRIPT_TEXT" value="gradle --no-daemon &quot;-Dorg.gradle.debug=true&quot; clean build" />
+      <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
+      <option name="SCRIPT_PATH" value="" />
+      <option name="SCRIPT_OPTIONS" value="" />
+      <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
+      <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="INDEPENDENT_INTERPRETER_PATH" value="true" />
+      <option name="INTERPRETER_PATH" value="powershell.exe" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="EXECUTE_IN_TERMINAL" value="true" />
+      <option name="EXECUTE_SCRIPT_FILE" value="false" />
+      <envs />
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="Application.Main" />
-      <item itemvalue="Gradle.ParsingUtilsTest" />
-      <item itemvalue="Gradle.ParsingUtilsTest.testNotContainsTopLevelDot" />
-      <item itemvalue="Gradle.ParsingUtilsTest.whenSymbolMatches_getMatchingTopLevelSymbolLastIndex_ReturnsCorrectIndex" />
+      <item itemvalue="Gradle.projectparams:test [build]" />
+      <item itemvalue="Gradle.projectparams:test [clean]" />
+      <item itemvalue="Gradle.MethodInvocationExpressionTypeTest.testMatch" />
       <item itemvalue="Gradle.Tests in 'org.projectparams.annotationprocessing.astcommons.parsing'" />
+      <item itemvalue="Remote JVM Debug.APT" />
+      <item itemvalue="Shell Script.Unnamed" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.Tests in 'org.projectparams.annotationprocessing.astcommons.parsing'" />
-        <item itemvalue="Gradle.ParsingUtilsTest.whenSymbolMatches_getMatchingTopLevelSymbolLastIndex_ReturnsCorrectIndex" />
-        <item itemvalue="Gradle.ParsingUtilsTest.testNotContainsTopLevelDot" />
-        <item itemvalue="Gradle.ParsingUtilsTest" />
+        <item itemvalue="Gradle.projectparams:test [build]" />
+        <item itemvalue="Gradle.projectparams:test [clean]" />
         <item itemvalue="Application.Main" />
+        <item itemvalue="Gradle.Tests in 'org.projectparams.annotationprocessing.astcommons.parsing'" />
+        <item itemvalue="Gradle.MethodInvocationExpressionTypeTest.testMatch" />
       </list>
     </recent_temporary>
   </component>
@@ -496,15 +536,15 @@
       <workItem from="1707322189897" duration="1476000" />
       <workItem from="1707396218554" duration="39409000" />
       <workItem from="1707443179214" duration="175000" />
-      <workItem from="1707487586199" duration="23506000" />
-    </task>
-    <task id="LOCAL-00012" summary="fixed some bugs">
-      <option name="closed" value="true" />
-      <created>1705979610559</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1705979610559</updated>
+      <workItem from="1707487586199" duration="25917000" />
+      <workItem from="1707585887632" duration="11611000" />
+      <workItem from="1707598553912" duration="1928000" />
+      <workItem from="1707613868806" duration="2065000" />
+      <workItem from="1707615965262" duration="521000" />
+      <workItem from="1707616602662" duration="283000" />
+      <workItem from="1707616896843" duration="3478000" />
+      <workItem from="1707659602141" duration="7860000" />
+      <workItem from="1707675888938" duration="5769000" />
     </task>
     <task id="LOCAL-00013" summary="fixed some bugs">
       <option name="closed" value="true" />
@@ -890,7 +930,15 @@
       <option name="project" value="LOCAL" />
       <updated>1707500153177</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <task id="LOCAL-00061" summary="finished converting to type detection using polymorphism and removed enums">
+      <option name="closed" value="true" />
+      <created>1707513960165</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1707513960166</updated>
+    </task>
+    <option name="localTasksCounter" value="62" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -927,7 +975,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="implemented expression parsing into informative type" />
     <MESSAGE value="began implementing expression making by moving out makeExpression" />
     <MESSAGE value="quick fix" />
     <MESSAGE value="implemented makeFieldAccess, introduced IDENTIFIER_OR_FIELD_ACCESS for unresolved parsing situations" />
@@ -952,7 +999,8 @@
     <MESSAGE value="implemented cast expression type" />
     <MESSAGE value="implemented few new expression types and added test coverage" />
     <MESSAGE value="refactored ParsingUtils.getMatchingTopLevelSymbolIndex method and fixed a few bugs" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactored ParsingUtils.getMatchingTopLevelSymbolIndex method and fixed a few bugs" />
+    <MESSAGE value="finished converting to type detection using polymorphism and removed enums" />
+    <option name="LAST_COMMIT_MESSAGE" value="finished converting to type detection using polymorphism and removed enums" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -965,16 +1013,11 @@
           <properties class="java.lang.IllegalArgumentException" package="java.lang" />
           <option name="timeStamp" value="13" />
         </breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/named/selectable/invocable/newclass/NewClassExpressionTypeTest.java</url>
-          <line>22</line>
-          <option name="timeStamp" value="27" />
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="GradleRunConfiguration">
-        <watch expression="codeSnippet.length()" language="JAVA" />
+        <watch expression="expression.charAt(i)" language="JAVA" />
       </configuration>
     </watches-manager>
   </component>

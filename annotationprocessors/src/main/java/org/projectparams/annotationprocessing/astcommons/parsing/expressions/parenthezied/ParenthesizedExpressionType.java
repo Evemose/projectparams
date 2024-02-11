@@ -9,7 +9,7 @@ import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUt
 public class ParenthesizedExpressionType extends AbstractExpressionType {
     private static final ParenthesizedExpressionType INSTANCE = new ParenthesizedExpressionType();
     @Override
-    public boolean matchesInner(String expression) {
+    protected boolean matchesInner(String expression) {
         expression = expression.strip();
         return expression.startsWith("(")
                 && expression.endsWith(")")

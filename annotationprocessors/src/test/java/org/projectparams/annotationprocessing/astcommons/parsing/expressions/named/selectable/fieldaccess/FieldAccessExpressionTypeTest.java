@@ -30,6 +30,8 @@ public class FieldAccessExpressionTypeTest {
             "test.method[0]",
             "test.method<>()",
             "new Access.Test()",
+            "3.4d",
+            "3.4"
     })
     public void testNotMatches(String expression) {
         assertFalse(fieldAccessExpressionType.matches(expression));

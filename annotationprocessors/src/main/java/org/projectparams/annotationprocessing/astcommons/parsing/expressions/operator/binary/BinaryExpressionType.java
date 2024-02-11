@@ -79,7 +79,7 @@ public class BinaryExpressionType extends AbstractExpressionType {
     }
 
     @Override
-    public boolean matchesInner(String expression) {
+    protected boolean matchesInner(String expression) {
         return ParsingUtils.getMatchingTopLevelSymbolIndex(expression, this::isOperator) != -1;
     }
 

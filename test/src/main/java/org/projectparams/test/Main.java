@@ -31,12 +31,14 @@ public class Main {
     }
 
 
-    private static float bibus(@DefaultValue("0f") Float someVar) {
+    private static float bibus(@DefaultValue("0f") float someVar) {
         return 3.4f;
     }
 
     public static void rovarus(@DefaultValue("new org.projectparams.test.Sucus().mains[Sucus.mains[1].getZero()]." +
-            "<Map<Integer, java.util.List<Float>>>akakus(Map.of(3, List.of((float)(double)6.d)))")
+            "<Map<Integer, List<Float>>>akakus(Map.of(3, List.of((float)(double)6.d))).isEmpty() ? " +
+            "!(true ? false : true) ? <Map<Integer, List<Float>>>akakus(Map.of(10, List.of(0.55f))) : List.of(new HashMap<>(Map.of(3, List.of((float)(double)6.d))))" +
+            ": List.of(new HashMap<>(Map.of(3, List.of((float)(double)6.d))))")
                                List<Map<Integer, List<Float>>> someVar) {
         System.out.println(" " + someVar);
         System.out.println(someVar.getFirst().getClass());
@@ -45,6 +47,7 @@ public class Main {
     public static void bokak(@DefaultValue("new int[][][]{{{0}, {2, 4}}, {{}}, {}}") int[][][] someVar) {
         System.out.println("bibus " + Arrays.deepToString(someVar));
     }
+
 
     public enum Akakus {
         A, B, C

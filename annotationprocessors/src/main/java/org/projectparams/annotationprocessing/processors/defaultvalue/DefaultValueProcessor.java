@@ -3,10 +3,7 @@ package org.projectparams.annotationprocessing.processors.defaultvalue;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.TreeMaker;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
-import org.projectparams.annotationprocessing.astcommons.visitors.CleanupVisitor;
-import org.projectparams.annotationprocessing.astcommons.visitors.LoggingVisitor;
-import org.projectparams.annotationprocessing.astcommons.visitors.PostModificationAttributionVisitor;
-import org.projectparams.annotationprocessing.astcommons.visitors.PrepareNewClassTreesVisitor;
+import org.projectparams.annotationprocessing.astcommons.visitors.*;
 import org.projectparams.annotationprocessing.processors.GlobalAnnotationProcessor;
 import org.projectparams.annotationprocessing.processors.defaultvalue.argumentsuppliers.DefaultArgumentSupplier;
 import org.projectparams.annotationprocessing.processors.defaultvalue.visitors.MethodCallModifierVisitor;
@@ -46,8 +43,8 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
             }
         });
 
-        var prepareNewClassTreesVisitor = new PrepareNewClassTreesVisitor(trees, messager);
-        packageTree.accept(prepareNewClassTreesVisitor, null);
+        var reevaluateTreePositionsVisitor = new ReevaluateTreePositionsVisitor(trees, messager);
+        packageTree.accept(reevaluateTreePositionsVisitor, null);
 
         messager.printMessage(Diagnostic.Kind.NOTE, "Invocable pool: " + invocablePool + "\n\n\nStarting");
 
@@ -55,16 +52,12 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
             allFixedMethods.addAll(fixedMethodsInIteration);
             fixedMethodsInIteration.clear();
             invocablePool.forEach(methodInfo -> {
-                //messager.printMessage(Diagnostic.Kind.NOTE, "Method info: " + methodInfo);
-
-                // modify
                 var modifier = new MethodCallModifierVisitor(fixedMethodsInIteration,
                         trees,
                         argumentSupplier,
                         messager,
                         allFixedMethods);
                 packageTree.accept(modifier, methodInfo);
-
 
                 var cleanupVisitor = new CleanupVisitor(allFixedMethods, trees, messager, treeMaker);
                 packageTree.accept(cleanupVisitor, null);

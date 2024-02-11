@@ -21,7 +21,8 @@ public class ConditionalExpression implements Expression {
         return ExpressionMaker.makeConditional(
                 condition.toJcExpression(),
                 ifTrue.toJcExpression(),
-                ifFalse.toJcExpression());
+                ifFalse.toJcExpression()
+        );
     }
 
     @Override

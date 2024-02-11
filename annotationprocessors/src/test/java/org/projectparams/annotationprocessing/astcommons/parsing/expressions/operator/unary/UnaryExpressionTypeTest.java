@@ -21,9 +21,25 @@ public class UnaryExpressionTypeTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"5**", "5//", "var**", "var//", "+", "-",
-                            "++", "--", "!", "~", "**method()", "(+var)",
-                            "//object.method", "(*)", "/-(method()++)","(++arr[index])"})
+    @ValueSource(strings = {
+            "5**",
+            "5//",
+            "var**",
+            "var//",
+            "+",
+            "-",
+            "++",
+            "--",
+            "!",
+            "~",
+            "**method()",
+            "(+var)",
+            "//object.method",
+            "(*)",
+            "/-(method()++)",
+            "(++arr[index])",
+            "!(someBoolean) ? 5 : 3",
+    })
     void testMatchesWithInvalidExpressions(String expression) {
         Assertions.assertFalse(unaryExpressionType.matches(expression));
     }

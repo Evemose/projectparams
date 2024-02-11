@@ -21,7 +21,7 @@ public class IdentifierExpressionType extends AbstractExpressionType {
     private IdentifierExpressionType() {}
 
     @Override
-    public boolean matchesInner(String expression) {
+    protected boolean matchesInner(String expression) {
         expression = expression.strip();
         // that`s faster way to exclude any non-identifiers then calling their type matchers
         // equivalent to:

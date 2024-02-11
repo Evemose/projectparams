@@ -7,11 +7,11 @@ import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUt
 
 import static org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory.createExpression;
 
-public class ArrayAccessType extends AbstractExpressionType {
-    private static final ArrayAccessType INSTANCE = new ArrayAccessType();
+public class ArrayAccessExpressionType extends AbstractExpressionType {
+    private static final ArrayAccessExpressionType INSTANCE = new ArrayAccessExpressionType();
     @Override
-    public boolean matchesInner(String expression) {
-        return expression.matches(".*\\w+(\\[.*])+$");
+    protected boolean matchesInner(String expression) {
+        return expression.matches(".*[a-zA-Z_][\\w.$]*\\s*(\\[.*])+$");
     }
 
     // TODO: add validation for array access expression
@@ -27,9 +27,9 @@ public class ArrayAccessType extends AbstractExpressionType {
         );
     }
 
-    private ArrayAccessType() {}
+    private ArrayAccessExpressionType() {}
 
-    public static ArrayAccessType getInstance() {
+    public static ArrayAccessExpressionType getInstance() {
         return INSTANCE;
     }
 }

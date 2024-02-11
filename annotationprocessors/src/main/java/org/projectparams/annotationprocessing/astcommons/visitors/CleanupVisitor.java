@@ -1,21 +1,21 @@
 package org.projectparams.annotationprocessing.astcommons.visitors;
 
-import com.sun.source.tree.*;
+import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.NewClassTree;
+import com.sun.source.tree.Tree;
+import com.sun.source.tree.VariableTree;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
-import org.projectparams.annotationprocessing.astcommons.PathUtils;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
-import org.projectparams.annotationprocessing.astcommons.invocabletree.MethodInvocableTree;
-import org.projectparams.annotationprocessing.utils.ReflectionUtils;
 
 import javax.annotation.processing.Messager;
-import javax.lang.model.element.Name;
 import javax.lang.model.type.TypeKind;
 import javax.tools.Diagnostic;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 

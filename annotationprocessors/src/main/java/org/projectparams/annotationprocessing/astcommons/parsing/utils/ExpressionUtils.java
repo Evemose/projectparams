@@ -4,7 +4,7 @@ import org.projectparams.annotationprocessing.astcommons.parsing.ExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.arrayaccess.ArrayAccessType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.arrayaccess.ArrayAccessExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.cast.CastExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.conditional.ConditionalExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.literal.LiteralExpressionType;
@@ -28,7 +28,7 @@ public class ExpressionUtils {
             NewArrayExpressionType.getInstance(),
             MethodInvocationExpressionType.getInstance(),
             NewClassExpressionType.getInstance(),
-            ArrayAccessType.getInstance(),
+            ArrayAccessExpressionType.getInstance(),
             BinaryExpressionType.getInstance(),
             UnaryExpressionType.getInstance(),
             CastExpressionType.getInstance(),

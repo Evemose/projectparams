@@ -82,6 +82,9 @@ public class ParsingUtils {
             var argsString = expression.substring(
                     getCorrespondingOpeningParIndex(expression, openingPar, closingPar, fromIndex) + 1,
                     expression.lastIndexOf(closingPar, fromIndex));
+            if (argsString.isBlank()) {
+                return Collections.emptyList();
+            }
             var parenthesesCount = 0;
             var args = new ArrayList<String>();
             var argBeginIndex = 0;
@@ -108,7 +111,7 @@ public class ParsingUtils {
             args.add(argsString.substring(argBeginIndex));
             return args;
         } catch (IndexOutOfBoundsException e) {
-            throw new IllegalArgumentException("Unbalanced parentheses in " + expression + ": " + e.getMessage());
+            throw new IllegalArgumentException("Unbalanced parentheses in " + expression, e);
         }
     }
 
@@ -146,8 +149,7 @@ public class ParsingUtils {
     }
 
     private static boolean isNotPartOfLiteral(String expr, int idx) {
-        expr = expr.strip();
-        return idx > 0 && !expr.matches("\\d{"+idx+"}\\.\\d*[fFdD]?");
+        return idx > 0 && !expr.matches(".{"+idx+"}\\.(\\d|[fFdD])\\d*[fFdD]?.*");
     }
 
     public static List<String> getArrayDimensions(String expression) {
@@ -208,13 +210,14 @@ public class ParsingUtils {
         var enclosersCount = getEnclosersCountMap();
         boolean mutated;
         var couldBeChecked = false;
+        var newKeywordEnclState = new HashSet<>(enclosersCount.entrySet());
         Integer capture = null;
         for (var i = 0; i < expression.length(); i++) {
             couldBeChecked = couldBeChecked || updateCouldBeChecked(fromIndex, direction, i);
             if (mayUpdateCapture(direction, capture)) {
                 capture = updateCapture(expression, symbolPredicate, couldBeChecked, enclosersCount, i).orElse(capture);
             }
-            mutated = updateEnclosers(expression, i, enclosersCount);
+            mutated = updateEnclosers(expression, i, enclosersCount, newKeywordEnclState);
             if (enclosersCount.values().stream().anyMatch(val -> val < 0)) {
                 throw new IllegalArgumentException("Unbalanced parentheses in " + expression);
             }
@@ -227,14 +230,18 @@ public class ParsingUtils {
         if (isNotEnclosed(enclosersCount)) {
             return Objects.requireNonNullElse(capture, -1);
         }
-        throw new IllegalArgumentException("Unbalanced parentheses in " + expression);
+        throw new IllegalArgumentException("Unclosed enclosing expressions in " + expression
+                + ". Non-empty enclosers: " + enclosersCount.entrySet().stream().filter(e -> e.getValue() != 0).toList());
     }
 
     private static boolean mayUpdateCapture(boolean direction, Integer capture) {
         return capture == null || !direction;
     }
 
-    private static boolean updateEnclosers(String expression, int i, HashMap<Character, Integer> enclosersCount) {
+    private static boolean updateEnclosers(String expression,
+                                           int i,
+                                           HashMap<Character, Integer> enclosersCount,
+                                           Set<Map.Entry<Character, Integer>> newKeywordEnclState) {
         var c = expression.charAt(i);
         var mutated = false;
         if (isOpeningPar(c) && (c != '<' || isTypeArgsBracket(expression, i)) || c == '?') {
@@ -243,14 +250,14 @@ public class ParsingUtils {
         } else if (c == ']' || c == '}') {
             enclosersCount.merge((char) (c - 2), -1, Integer::sum);
             mutated = true;
-            updateNewKeywordEnclCount(enclosersCount);
+            updateNewKeywordEnclCount(enclosersCount, newKeywordEnclState);
         } else if (c == ')') {
             // opening bracket has code 40, closing bracket has code 41,
             // while other brackets have offset 2 between opening and closing bracket
             // so this case is exceptional
             enclosersCount.merge('(', -1, Integer::sum);
             mutated = true;
-            updateNewKeywordEnclCount(enclosersCount);
+            updateNewKeywordEnclCount(enclosersCount, newKeywordEnclState);
         } else if (c == '>' && isTypeArgsBracket(expression, i)) {
             enclosersCount.merge('<', -1, Integer::sum);
             mutated = true;
@@ -258,6 +265,8 @@ public class ParsingUtils {
             mutated = updateConditionalEnclCount(expression, i, enclosersCount, mutated);
         } else if (expression.matches(".{"+i+"}new\\s.*") && enclosersCount.get('n') == 0) {
             enclosersCount.merge('n', 1, Integer::sum);
+            newKeywordEnclState.clear();
+            newKeywordEnclState.addAll(enclosersCount.entrySet());
             mutated = true;
         } else if (c == '"') {
             if (i == 0 || expression.charAt(i - 1) != '\\') {
@@ -282,8 +291,8 @@ public class ParsingUtils {
         return mutated;
     }
 
-    private static void updateNewKeywordEnclCount(HashMap<Character, Integer> enclosersCount) {
-        if (enclosersCount.get('n') > 0 && doesEndNewKeywordStatement(enclosersCount)) {
+    private static void updateNewKeywordEnclCount(HashMap<Character, Integer> enclosersCount, Set<Map.Entry<Character, Integer>> newKeywordEnclState) {
+        if (enclosersCount.get('n') > 0 && doesEndNewKeywordStatement(enclosersCount, newKeywordEnclState)) {
             enclosersCount.merge('n', -1, Integer::sum);
         }
     }
@@ -324,8 +333,10 @@ public class ParsingUtils {
         }
     }
 
-    private static boolean doesEndNewKeywordStatement(HashMap<Character, Integer> enclosersCount) {
-        return enclosersCount.entrySet().stream().filter(entry -> entry.getKey() != 'n').allMatch(entry -> entry.getValue() == 0);
+    private static boolean doesEndNewKeywordStatement(HashMap<Character, Integer> enclosersCount,
+                                                      Set<Map.Entry<Character, Integer>> newKeywordEnclState) {
+        return enclosersCount.entrySet().containsAll(newKeywordEnclState)
+                && newKeywordEnclState.containsAll(enclosersCount.entrySet());
     }
 
     private static boolean isNotEnclosed(HashMap<Character, Integer> enclosersCount) {
@@ -425,13 +436,16 @@ public class ParsingUtils {
 
     public static List<String> getTypeParameters(String expression) {
         var typeParameters = new ArrayList<String>();
-        var typeArgsEndIndex = expression.lastIndexOf('>');
-        if (typeArgsEndIndex != -1) {
+        if (hasTypeArgs(expression)) {
             var typeArgsParts = getTypeArgStrings(expression);
             for (var typeArg : typeArgsParts) {
                 typeParameters.add(typeArg.strip());
             }
         }
         return typeParameters;
+    }
+
+    private static boolean hasTypeArgs(String expression) {
+        return getMatchingTopLevelSymbolLastIndex(expression, ParsingUtils::isTypeArgsBracket) > getOwnerSeparatorIndex(expression);
     }
 }

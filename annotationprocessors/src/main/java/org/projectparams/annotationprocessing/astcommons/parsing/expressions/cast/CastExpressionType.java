@@ -8,8 +8,8 @@ import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Abs
 public class CastExpressionType extends AbstractExpressionType {
     private static final CastExpressionType INSTANCE = new CastExpressionType();
     @Override
-    public boolean matchesInner(String expression) {
-        return expression.strip().matches("\\((\\w(\\w|\\d)+(\\s*\\.\\s*)?)+\\).+");
+    protected boolean matchesInner(String expression) {
+        return expression.strip().matches("\\(([a-zA-Z_][\\w.$]*(\\s*\\.\\s*)?)+\\).+");
     }
 
     @Override

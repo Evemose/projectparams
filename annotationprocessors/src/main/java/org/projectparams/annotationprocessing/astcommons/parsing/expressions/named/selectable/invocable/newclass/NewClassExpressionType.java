@@ -3,13 +3,14 @@ package org.projectparams.annotationprocessing.astcommons.parsing.expressions.na
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.conditional.ConditionalExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionUtils;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
 public class NewClassExpressionType extends AbstractExpressionType {
     private static final NewClassExpressionType INSTANCE = new NewClassExpressionType();
     @Override
-    public boolean matchesInner(String expression) {
+    protected boolean matchesInner(String expression) {
         expression = expression.strip();
         if (!expression.endsWith(")")) {
             return false;
@@ -17,6 +18,11 @@ public class NewClassExpressionType extends AbstractExpressionType {
         return !ParsingUtils.containsTopLevelDot(expression) && expression.matches("new\\s.+")
                 || expression.substring(ParsingUtils.getOwnerSeparatorIndex(expression) + 1)
                 .strip().matches("new\\s.+");
+    }
+
+    @Override
+    protected boolean isCovered(String expression) {
+        return ConditionalExpressionType.getInstance().matches(expression);
     }
 
     @Override

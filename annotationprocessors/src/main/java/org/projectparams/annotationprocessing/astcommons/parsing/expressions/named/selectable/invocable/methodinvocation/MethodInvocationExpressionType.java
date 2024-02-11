@@ -4,6 +4,7 @@ import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Cre
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.cast.CastExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.conditional.ConditionalExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.invocable.newclass.NewClassExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.parenthezied.ParenthesizedExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionUtils;
@@ -13,20 +14,22 @@ public class MethodInvocationExpressionType extends AbstractExpressionType {
 
     private static final MethodInvocationExpressionType INSTANCE = new MethodInvocationExpressionType();
     @Override
-    public boolean matchesInner(String expression) {
-        return expression.endsWith(")");
+    protected boolean matchesInner(String expression) {
+        return expression.matches(".{"+(ParsingUtils.getOwnerSeparatorIndex(expression)+1)
+                +"}\\s*(<.*>)?\\s*[a-zA-Z_]([\\w$](\\s*\\.\\s*)?)*\\(.*\\)$");
     }
 
     @Override
     public boolean isCovered(String expression) {
-        return  ParenthesizedExpressionType.getInstance().matches(expression)
+        return ParenthesizedExpressionType.getInstance().matches(expression)
                 || CastExpressionType.getInstance().matches(expression)
+                || ConditionalExpressionType.getInstance().matches(expression)
                 || NewClassExpressionType.getInstance().matches(expression);
     }
 
     @Override
     public Expression parse(CreateExpressionParams createParams) {
-        var expression = createParams.expression();
+        var expression = createParams.expression().strip();
         var argsStartIndex = ParsingUtils.getArgsStartIndex(expression);
         var ownerSeparatorIndex = ParsingUtils.getOwnerSeparatorIndex(expression);
         return new MethodInvocationExpression(

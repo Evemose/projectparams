@@ -57,6 +57,6 @@ public class NewArrayExpressionType extends AbstractExpressionType {
 
     @Override
     protected boolean matchesInner(String expression) {
-        return expression.strip().matches("new\\s+(\\w|\\.)+\\s*(\\[.*])+(\\s*\\{.*})?");
+        return expression.strip().matches("new\\s+[a-zA-Z_][\\w.$]*\\s*(\\[.*])+(\\s*\\{.*})?");
     }
 }
