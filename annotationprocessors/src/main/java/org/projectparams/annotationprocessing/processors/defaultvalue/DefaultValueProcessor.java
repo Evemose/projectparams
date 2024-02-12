@@ -38,12 +38,12 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
                                 InvocableInfo.from(method).stream()).toArray(InvocableInfo[]::new));
 
         invocablePool.forEach(methodInfo -> {
-            if (!methodInfo.name().matches("(<init>)|(this)|(super)")) {
+            if (!methodInfo.name().matches("(this)|(super)")) {
                 new DefaultValueInjector(methodInfo).inject();
             }
         });
 
-        var reevaluateTreePositionsVisitor = new ReevaluateTreePositionsVisitor(trees, messager);
+        var reevaluateTreePositionsVisitor = new ReevaluateTreePositionsVisitor();
         packageTree.accept(reevaluateTreePositionsVisitor, null);
 
         messager.printMessage(Diagnostic.Kind.NOTE, "Invocable pool: " + invocablePool + "\n\n\nStarting");

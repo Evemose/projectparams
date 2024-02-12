@@ -1,21 +1,18 @@
 package org.projectparams.annotationprocessing.astcommons.visitors;
 
 import com.sun.source.tree.*;
+import com.sun.source.util.TreePathScanner;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.JCTree;
 
 import javax.annotation.processing.Messager;
 import java.util.*;
 
-public class ReevaluateTreePositionsVisitor extends AbstractVisitor<Void, Void> {
-    public ReevaluateTreePositionsVisitor(Trees trees, Messager messager) {
-        super(trees, messager);
-    }
+public class ReevaluateTreePositionsVisitor extends TreePathScanner<Void, Void> {
 
     @Override
     public Void visitClass(ClassTree tree, Void aVoid) {
-        var classPosition = getPos(tree);
-        updatePositions(classPosition, tree.getMembers());
+        updatePositions(getPos(tree), tree.getMembers());
         return super.visitClass(tree, aVoid);
     }
 
