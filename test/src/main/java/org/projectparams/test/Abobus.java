@@ -4,6 +4,7 @@ import org.projectparams.annotations.DefaultValue;
 
 @SuppressWarnings("all")
 public class Abobus {
+    private static final Float someFloat = 3.4f;
     public Abobus(@DefaultValue("3.4") float abobus, @DefaultValue("32") short abobus2) {
     }
 
@@ -40,8 +41,8 @@ public class Abobus {
 
     public class Bibus extends Abobus {
 
-        public Bibus(@DefaultValue("someVar.MAX_VALUE") Float abobus) {
-            super();
+        public Bibus(@DefaultValue("someFloat.MAX_VALUE") Float abobus) {
+            super(abobus);
         }
         public Bibus ultima(@DefaultValue("3.4") float abobus,
                             @DefaultValue("true") boolean abobus2,

@@ -58,20 +58,21 @@ public class DefaultValueInjector {
 
     }
 
-    private static List<Tree> modifyConstructorBody(MethodTree methodTree, StatementTree ...statementsToInject) {
+    private List<StatementTree> modifyConstructorBody(MethodTree methodTree, StatementTree ...statementsToInject) {
         var prevStatements = methodTree.getBody().getStatements();
-        var newStatements = new ArrayList<Tree>();
+        var newStatements = new ArrayList<StatementTree>();
         if (callsOtherConstructor(prevStatements)) {
             var constrCall = (JCTree.JCMethodInvocation) ((JCTree.JCExpressionStatement) prevStatements.getFirst()).getExpression();
             for (var statement : statementsToInject) {
-                var varName = ((JCTree.JCVariableDecl) statement).name.toString();
-                constrCall.args.stream().filter(arg -> arg instanceof JCTree.JCIdent ident
-                        && ident.name.toString().equals(varName))
-                        .findFirst()
-                        .ifPresent(arg ->
-                                constrCall.args.set(constrCall.args.indexOf(arg), (JCTree.JCExpression) ((VariableTree) statement).getInitializer()));
+                var varName = getVarName(statement);
+                var indexOfVar = constrCall.args.stream().map(JCTree::toString).toList().indexOf(varName);
+                if (indexOfVar != -1) {
+                    var tempArgs = new ArrayList<>(constrCall.args);
+                    tempArgs.set(indexOfVar, getRhs(statement));
+                    constrCall.args = com.sun.tools.javac.util.List.from(tempArgs);
+                }
             }
-            newStatements.add(constrCall);
+            newStatements.add(ExpressionMaker.makeExpressionStatement(constrCall));
             prevStatements = prevStatements.subList(1, prevStatements.size());
         }
         newStatements.addAll(Arrays.asList(statementsToInject));
@@ -79,7 +80,7 @@ public class DefaultValueInjector {
         return newStatements;
     }
 
-    private static boolean callsOtherConstructor(List<? extends Tree> prevStatements) {
+    private boolean callsOtherConstructor(List<? extends Tree> prevStatements) {
         if (!prevStatements.isEmpty()) {
             var firstStatement = prevStatements.getFirst();
             if (firstStatement instanceof JCTree.JCExpressionStatement statement
@@ -91,8 +92,16 @@ public class DefaultValueInjector {
         return false;
     }
 
-    private static void modifyMethodBody(MethodTree methodTree, StatementTree ...statementsToInject) {
-        List<Tree> newStatements = new ArrayList<>();
+    private static String getVarName(StatementTree statement) {
+        return ((JCTree.JCIdent)((JCTree.JCAssign) ((JCTree.JCExpressionStatement) statement).expr).lhs).name.toString();
+    }
+
+    private static JCTree.JCExpression getRhs(StatementTree statement) {
+        return ((JCTree.JCAssign) ((JCTree.JCExpressionStatement) statement).expr).rhs;
+    }
+
+    private void modifyMethodBody(MethodTree methodTree, StatementTree ...statementsToInject) {
+        List<StatementTree> newStatements = new ArrayList<>();
         if (methodTree.getName().contentEquals("<init>")) {
             newStatements = modifyConstructorBody(methodTree, statementsToInject);
         } else {
@@ -105,9 +114,9 @@ public class DefaultValueInjector {
     }
 
     private StatementTree assignToVar(JCTree.JCExpression expression, String varName) {
-        return ExpressionMaker.makeAssignment(
-                ExpressionMaker.makeIdent(varName),
-                expression);
+        return ExpressionMaker.makeExpressionStatement(
+                ExpressionMaker.makeAssignment(ExpressionMaker.makeIdent(varName), expression)
+        );
     }
 
     private JCTree.JCExpression wrapInNonNullElse(JCTree.JCExpression expression, String varName) {

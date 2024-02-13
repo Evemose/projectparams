@@ -86,8 +86,12 @@ public class ExpressionMaker {
         );
     }
 
-    public static JCTree.JCStatement makeAssignment(JCTree.JCExpression variable, JCTree.JCExpression expression) {
-        return treeMaker.Exec(treeMaker.Assign(variable, expression));
+    public static JCTree.JCAssign makeAssignment(JCTree.JCExpression variable, JCTree.JCExpression expression) {
+        return treeMaker.Assign(variable, expression);
+    }
+
+    public static JCTree.JCStatement makeExpressionStatement(JCTree.JCExpression expression) {
+        return treeMaker.Exec(expression);
     }
 
     public static JCTree.JCBlock makeBlock(java.util.List<JCTree.JCStatement> statements) {
