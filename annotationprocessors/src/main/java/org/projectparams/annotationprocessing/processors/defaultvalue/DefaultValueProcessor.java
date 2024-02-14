@@ -6,6 +6,7 @@ import org.projectparams.annotationprocessing.astcommons.invocabletree.Invocable
 import org.projectparams.annotationprocessing.astcommons.visitors.*;
 import org.projectparams.annotationprocessing.processors.GlobalAnnotationProcessor;
 import org.projectparams.annotationprocessing.processors.defaultvalue.argumentsuppliers.DefaultArgumentSupplier;
+import org.projectparams.annotationprocessing.processors.defaultvalue.visitors.MemberRefsToLambdasVisitor;
 import org.projectparams.annotationprocessing.processors.defaultvalue.visitors.MethodCallModifierVisitor;
 import org.projectparams.annotations.DefaultValue;
 
@@ -42,6 +43,9 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
                 new DefaultValueInjector(methodInfo).inject();
             }
         });
+
+        var memberRefsToLambdasVisitor = new MemberRefsToLambdasVisitor(trees, messager);
+        packageTree.accept(memberRefsToLambdasVisitor, null);
 
         var reevaluateTreePositionsVisitor = new ReevaluateTreePositionsVisitor();
         packageTree.accept(reevaluateTreePositionsVisitor, null);

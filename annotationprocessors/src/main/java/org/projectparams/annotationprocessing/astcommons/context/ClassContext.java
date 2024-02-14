@@ -37,6 +37,9 @@ public record ClassContext(
     }
 
     public static ClassContext of(TreePath classPath) {
+        if (!(classPath.getLeaf() instanceof com.sun.source.tree.ClassTree)) {
+            throw new IllegalArgumentException("Expected class, got " + classPath.getLeaf().getKind());
+        }
         var cuContext = CUContext.from(classPath.getCompilationUnit());
         var methods = ContextUtils.getMethodsInClass(classPath);
         var fields = ContextUtils.getFieldsInClass(classPath);

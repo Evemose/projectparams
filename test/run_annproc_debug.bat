@@ -1,1 +1,0 @@
-Start-Process -NoNewWindow -FilePath "cmd" -ArgumentList "/C", "gradle clean compileJava" | Out-Null

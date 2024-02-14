@@ -3,6 +3,8 @@ package org.projectparams.test;
 import org.projectparams.annotations.DefaultValue;
 
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static org.projectparams.test.Abobus.Dodus;
 
@@ -28,11 +30,26 @@ public class Main {
         System.out.println(" " + doubleBibus);
         System.out.println(" " + sucus.bibus());
         System.out.println(sucus.bibus() + " " + sucus.bibus());
+        System.out.println(samovar());
+        System.out.println(newnew());
+        Main.<String>params();
+    }
+
+    private static class Tororos {
+        private static final int someVar = 3;
     }
 
 
     private static float bibus(@DefaultValue("0f") float someVar) {
         return 3.4f;
+    }
+
+    private static <T> T bibonus() {
+        return null;
+    }
+
+    public static <T> void params(@DefaultValue("Main::<T>bibonus") Supplier<T> t) {
+        System.out.println(" " + t.get());
     }
 
     public static void rovarus(@DefaultValue("new org.projectparams.test.Sucus().mains[Sucus.mains[1].getZero()]." +
@@ -46,6 +63,17 @@ public class Main {
 
     public static void bokak(@DefaultValue("new int[][][]{{{0}, {2, 4}}, {{}}, {}}") int[][][] someVar) {
         System.out.println("bibus " + Arrays.deepToString(someVar));
+    }
+    private static String temp() {
+        return "temp";
+    }
+
+    private static String newnew(@DefaultValue("Tororos::new") Supplier<Tororos> sup) {
+        return String.valueOf(sup.get());
+    }
+
+    private static String samovar(@DefaultValue("Main::temp") Supplier<String> someVar) {
+        return someVar.get();
     }
 
 

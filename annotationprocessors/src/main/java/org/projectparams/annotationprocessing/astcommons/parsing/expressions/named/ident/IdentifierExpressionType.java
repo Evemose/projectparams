@@ -30,11 +30,13 @@ public class IdentifierExpressionType extends AbstractExpressionType {
         //         && !MethodInvocationExpressionType.getInstance().matches(expression)
         //         && !NewClassExpressionType.getInstance().matches(expression)
         //         && !NewArrayExpressionType.getInstance().matches(expression)
+        //         && !MemberReferenceExpressionType.getInstance().matches(expression)
         return !ParsingUtils.containsTopLevelDot(expression)
                 && !expression.endsWith("]")
                 && !expression.endsWith(")")
                 && !expression.endsWith("}")
-                && !expression.startsWith("(");
+                && !expression.startsWith("(")
+                && !expression.contains(":");
     }
 
     @Override

@@ -1,15 +1,14 @@
 package org.projectparams.annotationprocessing.astcommons.parsing.utils;
 
-import com.sun.source.tree.StatementTree;
-import com.sun.tools.javac.code.Type;
+import com.sun.source.tree.MemberReferenceTree;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.List;
+import com.sun.tools.javac.util.Name;
 import com.sun.tools.javac.util.Names;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 
-import javax.annotation.processing.Messager;
 import java.util.Objects;
 
 public class ExpressionMaker {
@@ -45,13 +44,13 @@ public class ExpressionMaker {
 
 
     public static JCTree.JCFieldAccess makeFieldAccess(JCTree.JCExpression owner, String name) {
-        return treeMaker.Select(owner, names.fromString(name));
+        return treeMaker.Select(owner, makeName(name));
     }
 
     // may be JCIdent or JCFieldAccess
     public static JCTree.JCExpression makeIdent(String name) {
         if (!name.contains(".")) {
-            return treeMaker.Ident(names.fromString(name));
+            return treeMaker.Ident(makeName(name));
         } else {
             var expressionParts = name.split("\\.");
             var owner = makeIdent(expressionParts[0]);
@@ -67,7 +66,7 @@ public class ExpressionMaker {
             java.util.List<JCTree.JCExpression> typeArgs,
             JCTree.JCExpression... args) {
         return treeMaker.Apply(
-                List.from(typeArgs),
+                typeArgs == null ? null : List.from(typeArgs),
                 methodSelect,
                 List.from(args)
         );
@@ -79,7 +78,7 @@ public class ExpressionMaker {
                                                  JCTree.JCExpression... args) {
         return treeMaker.NewClass(
                 enclosing,
-                List.from(typeArgs),
+                typeArgs == null ? null : List.from(typeArgs),
                 makeIdent(className),
                 List.from(args),
                 null
@@ -94,12 +93,20 @@ public class ExpressionMaker {
         return treeMaker.Exec(expression);
     }
 
+    public static Name makeName(String name) {
+        return names.fromString(name);
+    }
+
     public static JCTree.JCBlock makeBlock(java.util.List<JCTree.JCStatement> statements) {
         return treeMaker.Block(0, List.from(statements));
     }
 
-    public static JCTree.JCStatement makeStatement(JCTree.JCExpression expression) {
-        return treeMaker.Exec(expression);
+    public static JCTree.JCMemberReference makeMemberReference(
+            MemberReferenceTree.ReferenceMode mode,
+            JCTree.JCExpression expression,
+            String name,
+            java.util.List<JCTree.JCExpression> typeArgs) {
+        return treeMaker.Reference(mode, makeName(name), expression, typeArgs == null ? null : List.from(typeArgs));
     }
 
     public static JCTree.JCConditional makeConditional(JCTree.JCExpression condition,
@@ -137,7 +144,7 @@ public class ExpressionMaker {
             case "double" -> treeMaker.TypeIdent(TypeTag.DOUBLE);
             case "long" -> treeMaker.TypeIdent(TypeTag.LONG);
             case "int" -> treeMaker.TypeIdent(TypeTag.INT);
-            default -> treeMaker.Ident(names.fromString(typeName));
+            default -> treeMaker.Ident(makeName(typeName));
         };
     }
 
@@ -157,5 +164,11 @@ public class ExpressionMaker {
                 dimensions.stream().allMatch(Objects::isNull) ? List.nil() : List.from(dimensions),
                 initializers == null ? null : List.from(initializers)
         );
+    }
+
+    public static JCTree.JCLambda makeLambda(
+            java.util.List<JCTree.JCVariableDecl> parameters,
+            JCTree body) {
+        return treeMaker.Lambda(List.from(parameters), body);
     }
 }

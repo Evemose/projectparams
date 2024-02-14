@@ -10,6 +10,7 @@ import org.projectparams.annotationprocessing.astcommons.parsing.expressions.con
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.literal.LiteralExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.ident.IdentifierExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.fieldaccess.FieldAccessExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.fieldaccess.memberref.MemberReferenceExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.invocable.methodinvocation.MethodInvocationExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.invocable.newclass.NewClassExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.newarray.NewArrayExpressionType;
@@ -34,7 +35,8 @@ public class ExpressionUtils {
             CastExpressionType.getInstance(),
             ParenthesizedExpressionType.getInstance(),
             ConditionalExpressionType.getInstance(),
-            LiteralExpressionType.getInstance()
+            LiteralExpressionType.getInstance(),
+            MemberReferenceExpressionType.getInstance()
     );
 
     public static ExpressionType getType(CreateExpressionParams createParams) {

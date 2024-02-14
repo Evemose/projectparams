@@ -76,7 +76,9 @@ public class ReevaluateTreePositionsVisitor extends TreePathScanner<Void, Void> 
     public Void visitMemberReference(MemberReferenceTree tree, Void aVoid) {
         var parentPos = getPos(tree);
         parentPos = updatePositions(parentPos, setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree.getQualifierExpression()));
-        updatePositions(parentPos, setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree.getTypeArguments().stream().map(Tree.class::cast).toArray(Tree[]::new)));
+        if (tree.getTypeArguments() != null) {
+            updatePositions(parentPos, setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree.getTypeArguments().stream().map(Tree.class::cast).toArray(Tree[]::new)));
+        }
         return super.visitMemberReference(tree, aVoid);
     }
 
