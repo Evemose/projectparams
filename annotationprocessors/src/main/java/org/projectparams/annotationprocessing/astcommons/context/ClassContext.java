@@ -1,12 +1,16 @@
 package org.projectparams.annotationprocessing.astcommons.context;
 
+import com.sun.source.tree.ClassTree;
 import com.sun.source.util.TreePath;
+import org.projectparams.annotationprocessing.utils.ElementUtils;
 
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.TypeElement;
 import java.util.Optional;
 import java.util.Set;
 
 public record ClassContext(
+        TreePath classPath,
         CUContext cuContext,
         Set<Method> methods,
         Set<Field> fields
@@ -43,7 +47,11 @@ public record ClassContext(
         var cuContext = CUContext.from(classPath.getCompilationUnit());
         var methods = ContextUtils.getMethodsInClass(classPath);
         var fields = ContextUtils.getFieldsInClass(classPath);
-        return new ClassContext(cuContext, methods, fields);
+        return new ClassContext(classPath, cuContext, methods, fields);
+    }
+
+    public String getClassName() {
+        return ((TypeElement)ElementUtils.getClassByPath(classPath)).getQualifiedName().toString();
     }
 
     public Optional<Method> getMatchingMethod(String methodName) {

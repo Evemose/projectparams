@@ -24,7 +24,7 @@ public class NewClassExpression extends InvocableExpression {
                 name,
                 typeParameters.stream().map(Expression::toJcExpression).toList(),
                 arguments.stream().map(Expression::toJcExpression).toArray(JCTree.JCExpression[]::new));
-        TypeUtils.attributeExpression(expr, enclosingInvocationPath);
+        TypeUtils.attributeExpression(expr, new TreePath(enclosingInvocationPath, expr));
         return expr;
     }
 }

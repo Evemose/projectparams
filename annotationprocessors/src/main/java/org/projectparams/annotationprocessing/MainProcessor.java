@@ -7,6 +7,7 @@ import com.sun.tools.javac.comp.Attr;
 import com.sun.tools.javac.comp.Enter;
 import com.sun.tools.javac.comp.MemberEnter;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
+import com.sun.tools.javac.tree.TreeInfo;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Names;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
@@ -76,7 +77,7 @@ public class MainProcessor extends AbstractProcessor {
             if (roundEnv.processingOver()) return false;
             if (rootPackage == null) {
                 rootPackage = ProcessingUtils.getRootPackage(roundEnv);
-                ElementUtils.init(processingEnv.getElementUtils(), (PackageElement) rootPackage);
+                ElementUtils.init(processingEnv.getElementUtils(), (PackageElement) rootPackage, trees);
                 this.processorsManager =
                         new DefaultProcessorsManager(trees, treeMaker,
                                 (PackageElement) rootPackage, processingEnv.getMessager());

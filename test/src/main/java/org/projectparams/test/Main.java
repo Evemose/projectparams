@@ -4,6 +4,7 @@ import org.projectparams.annotations.DefaultValue;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static org.projectparams.test.Abobus.Dodus;
@@ -33,6 +34,7 @@ public class Main {
         System.out.println(samovar());
         System.out.println(newnew());
         Main.<String>params();
+        //List.of(1, 2, 3).forEach(Main::somavarus);
     }
 
     private static class Tororos {
@@ -64,7 +66,9 @@ public class Main {
     public static void bokak(@DefaultValue("new int[][][]{{{0}, {2, 4}}, {{}}, {}}") int[][][] someVar) {
         System.out.println("bibus " + Arrays.deepToString(someVar));
     }
-    private static String temp() {
+
+    // function
+    private static String temp(Integer i, @DefaultValue("Main::getZero") Supplier<Integer> someVar) {
         return "temp";
     }
 
@@ -72,10 +76,9 @@ public class Main {
         return String.valueOf(sup.get());
     }
 
-    private static String samovar(@DefaultValue("Main::temp") Supplier<String> someVar) {
-        return someVar.get();
+    private static String samovar(@DefaultValue("Main::temp") Function<Integer, String> someVar) {
+        return someVar.apply(5);
     }
-
 
     public enum Akakus {
         A, B, C
@@ -85,8 +88,8 @@ public class Main {
         System.out.println(" " + someVar);
     }
 
-    private static void somavarus(@DefaultValue("5 + 3.4d") double someVar) {
-        System.out.println(" " + someVar);
+    private static void somavarus(@DefaultValue("5 + 3.4d") Double someVar, @DefaultValue("4") int someInt) {
+        System.out.println(" " + someVar + " " + someInt);
     }
 
     public static <T> List<T> akakus(T t) {

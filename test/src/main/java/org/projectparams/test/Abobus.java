@@ -2,6 +2,8 @@ package org.projectparams.test;
 
 import org.projectparams.annotations.DefaultValue;
 
+import java.util.function.Supplier;
+
 @SuppressWarnings("all")
 public class Abobus {
     private static final Float someFloat = 3.4f;

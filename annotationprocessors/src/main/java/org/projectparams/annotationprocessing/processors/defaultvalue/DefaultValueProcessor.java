@@ -44,9 +44,6 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
             }
         });
 
-        var memberRefsToLambdasVisitor = new MemberRefsToLambdasVisitor(trees, messager);
-        packageTree.accept(memberRefsToLambdasVisitor, null);
-
         var reevaluateTreePositionsVisitor = new ReevaluateTreePositionsVisitor();
         packageTree.accept(reevaluateTreePositionsVisitor, null);
 
@@ -56,6 +53,9 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
             allFixedMethods.addAll(fixedMethodsInIteration);
             fixedMethodsInIteration.clear();
             invocablePool.forEach(methodInfo -> {
+                var memberRefsToLambdasVisitor = new MemberRefsToLambdasVisitor(trees, messager);
+                packageTree.accept(memberRefsToLambdasVisitor, null);
+
                 var modifier = new MethodCallModifierVisitor(fixedMethodsInIteration,
                         trees,
                         argumentSupplier,

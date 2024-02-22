@@ -24,6 +24,17 @@ public class PathUtils {
         return path;
     }
 
+    public static TreePath getEnclosingMethodPath(TreePath path) {
+        path = path.getParentPath();
+        while (path != null && !(path.getLeaf() instanceof MethodTree)) {
+            path = path.getParentPath();
+        }
+        if (path == null) {
+            throw new IllegalArgumentException("Path is not enclosed in class");
+        }
+        return path;
+    }
+
     public static TreePath getElementPath(Element method) {
         return trees.getPath(method);
     }

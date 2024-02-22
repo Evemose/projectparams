@@ -1,6 +1,7 @@
 package org.projectparams.annotationprocessing.astcommons.parsing.utils;
 
 import com.sun.source.tree.MemberReferenceTree;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -9,6 +10,7 @@ import com.sun.tools.javac.util.Name;
 import com.sun.tools.javac.util.Names;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class ExpressionMaker {
@@ -47,17 +49,14 @@ public class ExpressionMaker {
         return treeMaker.Select(owner, makeName(name));
     }
 
-    // may be JCIdent or JCFieldAccess
     public static JCTree.JCExpression makeIdent(String name) {
-        if (!name.contains(".")) {
-            return treeMaker.Ident(makeName(name));
+        var topLevelDotIndex = ParsingUtils.getMatchingTopLevelSymbolLastIndex(name,
+                ParsingUtils.equalsSymbolPredicate('.'));
+        if (topLevelDotIndex != -1) {
+            return treeMaker.Select(makeIdent(name.substring(0, topLevelDotIndex)),
+                    makeName(name.substring(topLevelDotIndex + 1)));
         } else {
-            var expressionParts = name.split("\\.");
-            var owner = makeIdent(expressionParts[0]);
-            for (int i = 1; i < expressionParts.length - 1; i++) {
-                owner = makeFieldAccess(owner, expressionParts[i]);
-            }
-            return makeFieldAccess(owner, expressionParts[expressionParts.length - 1]);
+            return treeMaker.Ident(makeName(name));
         }
     }
 
@@ -170,5 +169,10 @@ public class ExpressionMaker {
             java.util.List<JCTree.JCVariableDecl> parameters,
             JCTree body) {
         return treeMaker.Lambda(List.from(parameters), body);
+    }
+
+    public static JCTree.JCVariableDecl makeVariableDecl(String string, @Nullable Type type) {
+        return treeMaker.VarDef(treeMaker.Modifiers(0), makeName(string),
+                type == null ? null : makeIdent(type.toString()), null);
     }
 }

@@ -11,6 +11,7 @@ import com.sun.tools.javac.comp.Enter;
 import com.sun.tools.javac.comp.MemberEnter;
 import com.sun.tools.javac.model.JavacTypes;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.TreeInfo;
 import org.projectparams.annotationprocessing.astcommons.context.CUContext;
 
 
@@ -153,8 +154,8 @@ public class TypeUtils {
                 });
     }
 
-    @SuppressWarnings("unused")
-    public static void attributeExpression(JCTree expression, TreePath methodTreePath) {
+    @SuppressWarnings("all")
+    private static void attributeExpression(JCTree expression, TreePath methodTreePath, boolean ignored) {
         var env = memberEnter.getMethodEnv(
                 (JCTree.JCMethodDecl) methodTreePath.getLeaf(),
                 enter.getClassEnv(((JCTree.JCClassDecl) PathUtils.getEnclosingClassPath(methodTreePath).getLeaf()).sym)
@@ -162,11 +163,22 @@ public class TypeUtils {
         attr.attribExpr(expression, env);
     }
 
-    public static void attributeExpression(JCTree expression, Tree classTree) {
+    private static void attributeExpression(JCTree expression, Tree classTree) {
         var env = enter.getClassEnv(
                 ((JCTree.JCClassDecl) classTree).sym
         );
         attr.attribExpr(expression, env);
+    }
+
+    public static void attributeExpression(JCTree expression, TreePath exprToAttribute) {
+        TreePath encl;
+        try {
+            encl = PathUtils.getEnclosingMethodPath(exprToAttribute);
+            attributeExpression(expression, encl, false);
+        } catch (IllegalArgumentException e) {
+            encl = PathUtils.getEnclosingClassPath(exprToAttribute);
+            attributeExpression(expression, encl.getLeaf());
+        }
     }
 
     private static String getOwnerNameFromMemberSelect(MemberSelectTree memberSelectTree, TreePath path) {
@@ -221,6 +233,9 @@ public class TypeUtils {
     }
 
     public static boolean isAssignable(Type toType, Type fromType) {
+        if (toType == null || fromType == null) {
+            return false;
+        }
         return types.isAssignable(toType, fromType);
     }
 

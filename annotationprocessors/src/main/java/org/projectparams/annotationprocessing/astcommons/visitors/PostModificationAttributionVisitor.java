@@ -25,7 +25,10 @@ public class PostModificationAttributionVisitor extends AbstractVisitor<Void, Vo
         if (TypeUtils.getTypeKind(getCurrentPath()) == TypeKind.ERROR){
             messager.printMessage(Diagnostic.Kind.NOTE, "Error var: " + variable);
             var asJC = (JCTree.JCVariableDecl) variable;
-            TypeUtils.attributeExpression(asJC, PathUtils.getEnclosingClassPath(getCurrentPath()).getLeaf());
+            if (asJC.init == null) {
+                return super.visitVariable(variable, ignored);
+            }
+            TypeUtils.attributeExpression(asJC, getCurrentPath());
             asJC.vartype = treeMaker.Type(((JCTree.JCMethodInvocation) variable.getInitializer()).type);
             asJC.type = asJC.vartype.type;
             messager.printMessage(Diagnostic.Kind.NOTE, "Fixed var: " + variable + " " +
