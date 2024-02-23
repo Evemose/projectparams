@@ -19,6 +19,9 @@ public class Main {
         var sucus = new Sucus();
         var classBibus = abobus.new Bibus().new UltimaPopus(new Sucus(), 3.4f).ororos(56f);
         classBibus.bitoto();
+        classBibus.bitoto();
+        classBibus.bitoto();
+        classBibus.bitoto();
         var bibus4 = abobus.bibus();
         var bibus = Abobus.abobus().bibus();
         var bibus2 = new Dodus().bibus();
@@ -35,6 +38,23 @@ public class Main {
         System.out.println(newnew());
         Main.<String>params();
         //List.of(1, 2, 3).forEach(Main::somavarus);
+    }
+
+    public Main() {
+    }
+
+    public Main(int i) {
+        var m = new org.projectparams.test.Main(Main::getOne);
+    }
+
+    public Main(Function<Integer, Integer> someVar) {
+    }
+
+    private static int getOne(int i, @DefaultValue("Main::getZero") Supplier<Integer> someVar) {
+        return 1;
+    }
+
+    private static void t(@DefaultValue("Main::new") Function<Integer, Main> someVar) {
     }
 
     private static class Tororos {

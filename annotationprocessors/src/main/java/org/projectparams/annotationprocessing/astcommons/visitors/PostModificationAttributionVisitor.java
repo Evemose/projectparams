@@ -29,10 +29,10 @@ public class PostModificationAttributionVisitor extends AbstractVisitor<Void, Vo
                 return super.visitVariable(variable, ignored);
             }
             TypeUtils.attributeExpression(asJC, getCurrentPath());
-            asJC.vartype = treeMaker.Type(((JCTree.JCMethodInvocation) variable.getInitializer()).type);
+            asJC.vartype = treeMaker.Type(TypeUtils.getActualType(variable.getInitializer()));
             asJC.type = asJC.vartype.type;
             messager.printMessage(Diagnostic.Kind.NOTE, "Fixed var: " + variable + " " +
-                    ((JCTree.JCMethodInvocation) variable.getInitializer()).type);
+                    TypeUtils.getActualType(variable.getInitializer()));
         }
         return super.visitVariable(variable, ignored);
     }
