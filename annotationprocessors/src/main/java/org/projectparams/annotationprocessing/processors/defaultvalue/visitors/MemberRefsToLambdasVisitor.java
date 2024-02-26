@@ -45,7 +45,9 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
                 temp.set(temp.indexOf(node), lambda);
                 ((JCTree.JCNewClass) parent).args = com.sun.tools.javac.util.List.from(temp);
             }
-            case JCTree.JCVariableDecl varDecl -> {/*pass for now*/}
+            case JCTree.JCVariableDecl varDecl -> {
+                varDecl.init = lambda;
+            }
             default -> {/*pass*/}
         }
         messager.printMessage(Diagnostic.Kind.NOTE, "Replaced member reference with lambda in : " + parent);
@@ -96,6 +98,32 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
 
 
     private List<JCTree.JCVariableDecl> getPassedArgs(JCTree parent, JCTree.JCMemberReference memberReference) {
+        if (parent instanceof JCTree.JCVariableDecl varDecl) {
+            return getPassedArgsFromVariableDecl(varDecl, memberReference);
+        } else {
+            return getPassedArgsFromInvocableParent(parent, memberReference);
+        }
+    }
+
+    private List<JCTree.JCVariableDecl> getPassedArgsFromVariableDecl(JCTree.JCVariableDecl varDecl, JCTree.JCMemberReference memberReference) {
+        varDecl.init = null;
+        var typeArgs = Objects.requireNonNullElseGet(varDecl.vartype.type,
+                () -> {
+                    TypeUtils.attributeExpression(varDecl, getCurrentPath());
+                    return varDecl.vartype.type;
+                }).getTypeArguments();
+        var funcMethod = getFuncMethod(varDecl.vartype.type.tsym, Collections.emptyMap());
+        List<Type> expectedArgs = new ArrayList<>(Objects.requireNonNull(funcMethod).params().map(param -> param.type));
+        expectedArgs.replaceAll(type -> type.tsym instanceof Symbol.TypeVariableSymbol
+                ? typeArgs.get(getTypeParams(funcMethod).indexOf(type))
+                : type);
+        return expectedArgs.stream().map(type -> ExpressionMaker.makeVariableDecl(
+                "arg" + type.toString().hashCode() + "UNIQUEENDING",
+                type
+        )).toList();
+    }
+
+    private List<JCTree.JCVariableDecl> getPassedArgsFromInvocableParent(JCTree parent, JCTree.JCMemberReference memberReference) {
         var parentInfo = getParentInfo(parent);
         if (parentInfo.possibleMethods().size() == 1) {
             return getPassedArgsInner(memberReference, parentInfo);
@@ -129,10 +157,6 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
         return switch (parent) {
             case JCTree.JCMethodInvocation meth -> getParentInfoFromMeth(meth);
             case JCTree.JCNewClass cl -> getParentInfoFromNewClass(cl);
-            case JCTree.JCVariableDecl varDecl -> {
-                throw new IllegalStateException("Not implemented for variable declaration: " + varDecl);
-                // pass
-            }
             case null, default -> throw new IllegalStateException("Unexpected parent: " + parent);
         };
     }

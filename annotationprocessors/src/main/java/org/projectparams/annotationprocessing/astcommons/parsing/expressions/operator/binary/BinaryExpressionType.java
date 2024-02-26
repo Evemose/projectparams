@@ -5,6 +5,7 @@ import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Cre
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.lambda.LambdaExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
 public class BinaryExpressionType extends AbstractExpressionType {
@@ -109,6 +110,11 @@ public class BinaryExpressionType extends AbstractExpressionType {
                         .withExpressionAndNullTag(expression.substring(operatorIndex + 1).strip())),
                 extractBinaryOperator(expression, operatorIndex)
         );
+    }
+
+    @Override
+    protected boolean isCovered(String expression) {
+        return LambdaExpressionType.getInstance().matches(expression);
     }
 
     public static BinaryExpressionType getInstance() {

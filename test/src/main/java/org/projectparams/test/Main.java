@@ -38,9 +38,15 @@ public class Main {
         System.out.println(newnew());
         Main.<String>params();
         //List.of(1, 2, 3).forEach(Main::somavarus);
+        Function<Integer, Integer> someVar = Main::getOne;
+        lambda();
     }
 
     public Main() {
+    }
+
+    private static void lambda(@DefaultValue("() -> 1") Supplier<Integer> someVar) {
+        System.out.println(" " + someVar.get());
     }
 
     public Main(int i) {

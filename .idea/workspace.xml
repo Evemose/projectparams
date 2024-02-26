@@ -4,10 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="implemented passed args detection if meth owner is field access">
+    <list default="true" id="627f71a0-2c20-4907-a4a2-250e68072d8b" name="Changes" comment="implemented passed args detection for constructor parent">
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/lambda/LambdaExpression.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/lambda/LambdaExpressionType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/annotationprocessors/src/test/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/lambda/LambdaExpressionTypeTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/TypeUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/TypeUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors/PostModificationAttributionVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/visitors/PostModificationAttributionVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/AbstractExpressionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/AbstractExpressionType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/cast/CastExpressionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/cast/CastExpressionType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/operator/binary/BinaryExpressionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/expressions/operator/binary/BinaryExpressionType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/utils/ExpressionUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/astcommons/parsing/utils/ExpressionUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/visitors/MemberRefsToLambdasVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/annotationprocessors/src/main/java/org/projectparams/annotationprocessing/processors/defaultvalue/visitors/MemberRefsToLambdasVisitor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/src/main/java/org/projectparams/test/Main.java" afterDir="false" />
     </list>
@@ -126,6 +131,7 @@
     "Gradle.FieldAccessExpressionTypeTest.executor": "Run",
     "Gradle.IdentifierExpressionTypeTest.executor": "Run",
     "Gradle.IdentifierExpressionTypeTest.shouldMatchValidIdentifiers.executor": "Run",
+    "Gradle.LambdaExpressionTypeTest.executor": "Run",
     "Gradle.LiteralExpressionTypeTest.executor": "Run",
     "Gradle.LiteralExpressionTypeTest.testMatchesInner_expectFalse.executor": "Run",
     "Gradle.MethodCallArgumentsInspectorTest.testVisitMethod.executor": "Run",
@@ -226,6 +232,7 @@
       <recent name="org.projectparams.annotationprocessing.processors.defaultvalue.visitors" />
     </key>
     <key name="CreateTestDialog.RecentsKey">
+      <recent name="org.projectparams.annotationprocessing.astcommons.parsing.expressions.lambda" />
       <recent name="org.projectparams.annotationprocessing.processors.defaultvalue.visitors" />
     </key>
   </component>
@@ -253,7 +260,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="MethodInvocationExpressionTypeTest.testMatch" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+    <configuration name="LambdaExpressionTypeTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -266,7 +273,7 @@
           <list>
             <option value=":annotationprocessors:test" />
             <option value="--tests" />
-            <option value="&quot;org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.invocable.methodinvocation.MethodInvocationExpressionTypeTest.testMatch&quot;" />
+            <option value="&quot;org.projectparams.annotationprocessing.astcommons.parsing.expressions.lambda.LambdaExpressionTypeTest&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -376,20 +383,20 @@
     </configuration>
     <list>
       <item itemvalue="Application.Main" />
+      <item itemvalue="Gradle.LambdaExpressionTypeTest" />
       <item itemvalue="Gradle.projectparams:test [build]" />
       <item itemvalue="Gradle.projectparams:test [clean]" />
-      <item itemvalue="Gradle.MethodInvocationExpressionTypeTest.testMatch" />
       <item itemvalue="Gradle.Tests in 'org.projectparams.annotationprocessing.astcommons.parsing'" />
       <item itemvalue="Remote JVM Debug.APT" />
       <item itemvalue="Shell Script.Unnamed" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.LambdaExpressionTypeTest" />
         <item itemvalue="Gradle.projectparams:test [build]" />
         <item itemvalue="Gradle.projectparams:test [clean]" />
         <item itemvalue="Application.Main" />
         <item itemvalue="Gradle.Tests in 'org.projectparams.annotationprocessing.astcommons.parsing'" />
-        <item itemvalue="Gradle.MethodInvocationExpressionTypeTest.testMatch" />
       </list>
     </recent_temporary>
   </component>
@@ -556,15 +563,11 @@
       <workItem from="1708655580912" duration="88000" />
       <workItem from="1708657352955" duration="65000" />
       <workItem from="1708657753718" duration="2844000" />
-      <workItem from="1708662293165" duration="9177000" />
-    </task>
-    <task id="LOCAL-00018" summary="fixed issue with type inference by moving cleanup invocation to the end of methods modification process. Still have to discover why some methods matched earlier then should">
-      <option name="closed" value="true" />
-      <created>1706042445192</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1706042445192</updated>
+      <workItem from="1708662293165" duration="9293000" />
+      <workItem from="1708841501742" duration="59000" />
+      <workItem from="1708842973394" duration="730000" />
+      <workItem from="1708962764465" duration="51000" />
+      <workItem from="1708962826505" duration="4148000" />
     </task>
     <task id="LOCAL-00019" summary="fixed issue with type inference by moving cleanup invocation to the end of methods modification process. Still have to discover why some methods matched earlier then should">
       <option name="closed" value="true" />
@@ -950,7 +953,15 @@
       <option name="project" value="LOCAL" />
       <updated>1708566361729</updated>
     </task>
-    <option name="localTasksCounter" value="67" />
+    <task id="LOCAL-00067" summary="implemented passed args detection for constructor parent">
+      <option name="closed" value="true" />
+      <created>1708672303495</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1708672303495</updated>
+    </task>
+    <option name="localTasksCounter" value="68" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -987,7 +998,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="implemented method invokes as params, need to add default value support in it though" />
     <MESSAGE value="implemented implicit this and static methods calls" />
     <MESSAGE value="Implemented NewClass as method default" />
     <MESSAGE value="implemented enums as defaults" />
@@ -1012,7 +1022,8 @@
     <MESSAGE value="implemented expression default values for constructors" />
     <MESSAGE value="implemented converting method refs to lambdas to inject defaults, but need to implement retrieving amount of passed args to lambda" />
     <MESSAGE value="implemented passed args detection if meth owner is field access" />
-    <option name="LAST_COMMIT_MESSAGE" value="implemented passed args detection if meth owner is field access" />
+    <MESSAGE value="implemented passed args detection for constructor parent" />
+    <option name="LAST_COMMIT_MESSAGE" value="implemented passed args detection for constructor parent" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

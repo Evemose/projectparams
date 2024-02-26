@@ -4,12 +4,21 @@ import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Cre
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.conditional.ConditionalExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.lambda.LambdaExpression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.lambda.LambdaExpressionType;
 
 public class CastExpressionType extends AbstractExpressionType {
     private static final CastExpressionType INSTANCE = new CastExpressionType();
     @Override
     protected boolean matchesInner(String expression) {
         return expression.strip().matches("\\(([a-zA-Z_][\\w.$]*(\\s*\\.\\s*)?)+\\).+");
+    }
+
+    @Override
+    protected boolean isCovered(String expression) {
+        return ConditionalExpressionType.getInstance().matches(expression)
+                || LambdaExpressionType.getInstance().matches(expression);
     }
 
     @Override

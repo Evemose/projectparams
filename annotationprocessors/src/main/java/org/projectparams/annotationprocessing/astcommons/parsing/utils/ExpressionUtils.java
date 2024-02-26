@@ -7,6 +7,7 @@ import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Exp
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.arrayaccess.ArrayAccessExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.cast.CastExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.conditional.ConditionalExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.lambda.LambdaExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.literal.LiteralExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.ident.IdentifierExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.fieldaccess.FieldAccessExpressionType;
@@ -36,7 +37,8 @@ public class ExpressionUtils {
             ParenthesizedExpressionType.getInstance(),
             ConditionalExpressionType.getInstance(),
             LiteralExpressionType.getInstance(),
-            MemberReferenceExpressionType.getInstance()
+            MemberReferenceExpressionType.getInstance(),
+            LambdaExpressionType.getInstance()
     );
 
     public static ExpressionType getType(CreateExpressionParams createParams) {
