@@ -206,7 +206,6 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
         if (meth.meth instanceof JCTree.JCFieldAccess fieldAccess) {
             parentOwner = fieldAccess.selected;
         } else {
-            // TODO: implement for other cases
             parentOwner = ClassContext.of(PathUtils.getEnclosingClassPath(getCurrentPath()))
                     .getMatchingMethod(meth.meth.toString())
                     .map(m -> ExpressionMaker.makeIdent(m.className()))

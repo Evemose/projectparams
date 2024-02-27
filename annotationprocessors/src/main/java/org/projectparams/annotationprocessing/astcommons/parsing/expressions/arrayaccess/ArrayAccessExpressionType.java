@@ -27,13 +27,15 @@ public class ArrayAccessExpressionType extends AbstractExpressionType {
 
     @Override
     protected boolean matchesInner(String expression) {
-        return expression.matches(".*[a-zA-Z_][\\w.$]*\\s*(\\[.*])+$");
+        return expression.strip().matches(".*[a-zA-Z_][\\w.$]*\\s*(\\[.*])+$");
     }
 
-    // TODO: add validation for array access expression
     @Override
     public Expression parse(CreateExpressionParams createParams) {
-        var expression = createParams.expression();
+        var expression = createParams.expression().strip();
+        if (!matches(expression)) {
+            throw new IllegalArgumentException("Expression " + expression + " is not an array access expression");
+        }
         var openingBracketIndex = ParsingUtils.getArrayIndexStartIndex(expression);
         var array = expression.substring(0, openingBracketIndex);
         var index = expression.substring(openingBracketIndex + 1, expression.length() - 1);
