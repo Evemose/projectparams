@@ -82,8 +82,4 @@ public class ElementUtils {
     public static Element getClassByPath(TreePath classPath) {
         return trees.getElement(classPath);
     }
-
-    public static TreePath getPath(ExecutableElement method) {
-        return trees.getPath(method);
-    }
 }

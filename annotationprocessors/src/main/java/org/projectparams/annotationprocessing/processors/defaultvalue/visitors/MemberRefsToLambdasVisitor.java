@@ -48,9 +48,7 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
                 temp.set(temp.indexOf(node), lambda);
                 ((JCTree.JCNewClass) parent).args = com.sun.tools.javac.util.List.from(temp);
             }
-            case JCTree.JCVariableDecl varDecl -> {
-                varDecl.init = lambda;
-            }
+            case JCTree.JCVariableDecl varDecl -> varDecl.init = lambda;
             default -> {/*pass*/}
         }
         messager.printMessage(Diagnostic.Kind.NOTE, "Replaced member reference with lambda in : " + parent);
@@ -102,13 +100,13 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
 
     private List<JCTree.JCVariableDecl> getPassedArgs(JCTree parent, JCTree.JCMemberReference memberReference) {
         if (parent instanceof JCTree.JCVariableDecl varDecl) {
-            return getPassedArgsFromVariableDecl(varDecl, memberReference);
+            return getPassedArgsFromVariableDecl(varDecl);
         } else {
             return getPassedArgsFromInvocableParent(parent, memberReference);
         }
     }
 
-    private List<JCTree.JCVariableDecl> getPassedArgsFromVariableDecl(JCTree.JCVariableDecl varDecl, JCTree.JCMemberReference memberReference) {
+    private List<JCTree.JCVariableDecl> getPassedArgsFromVariableDecl(JCTree.JCVariableDecl varDecl) {
         varDecl.init = null;
         var typeArgs = Objects.requireNonNullElseGet(varDecl.vartype.type,
                 () -> {
