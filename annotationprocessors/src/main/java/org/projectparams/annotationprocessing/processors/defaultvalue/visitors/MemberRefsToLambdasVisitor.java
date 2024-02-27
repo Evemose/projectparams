@@ -7,7 +7,10 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeInfo;
 import com.sun.tools.javac.util.Name;
+import org.projectparams.annotationprocessing.astcommons.PathUtils;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
+import org.projectparams.annotationprocessing.astcommons.context.CUContext;
+import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
 import org.projectparams.annotationprocessing.astcommons.visitors.AbstractVisitor;
 
@@ -177,7 +180,10 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
             parentOwner = fieldAccess.selected;
         } else {
             // TODO: implement for other cases
-            parentOwner = null;
+            parentOwner = ClassContext.of(PathUtils.getEnclosingClassPath(getCurrentPath()))
+                    .getMatchingMethod(meth.meth.toString())
+                    .map(m -> ExpressionMaker.makeIdent(m.className()))
+                    .orElseThrow();
         }
         var genericTypes = new AtomicReference<>(meth.typeargs.stream().collect(Collectors.toMap(
                 MemberRefsToLambdasVisitor::getName,
@@ -317,7 +323,10 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
             TypeUtils.attributeExpression(parentOwner, getCurrentPath());
             parentSym = TreeInfo.symbol(parentOwner);
         }
-        parentSym = TypeUtils.getTypeByName(parentSym.getQualifiedName().toString()).tsym;
+        var className = CUContext.from(getCurrentPath().getCompilationUnit())
+                .getMatchingImportedOrStaticClass(parentSym.getQualifiedName().toString())
+                .orElse(parentSym.getQualifiedName().toString());
+        parentSym = TypeUtils.getTypeByName(className).tsym;
         parentSym.complete();
         if (parentSym instanceof Symbol.ClassSymbol parentClass) {
             return StreamSupport.stream(parentClass.members().getSymbolsByName(methName).spliterator(), false)

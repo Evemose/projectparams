@@ -20,7 +20,7 @@ public class DefaultArgumentSupplier implements ArgumentSupplier {
                                                           InvocableInfo invocableInfo,
                                                           TreePath path)
             throws UnsupportedSignatureException {
-        var args = new ArrayList<>(invocation.getArguments().stream().map(arg -> (JCTree.JCExpression) arg).toList());
+        var args = new ArrayList<>(invocation.getArguments().stream().map(JCTree.JCExpression.class::cast).toList());
         for (var i = invocation.getArguments().size(); i < invocableInfo.parameters().size(); i++) {
             var defaultValue = invocableInfo.parameters().get(i).defaultValue();
             if (defaultValue == null) {

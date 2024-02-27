@@ -5,7 +5,6 @@ import com.sun.source.tree.NewClassTree;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.List;
-import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.MethodInvocableTree;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.NewClassInvocableTree;
@@ -33,9 +32,9 @@ public class MethodCallModifierVisitor extends AbstractVisitor<Void, InvocableIn
         this.argumentSupplier = argumentSupplier;
     }
 
-    private void fixMethod(InvocableInfo invocableInfo,
-                           InvocableTree call,
-                           List<JCTree.JCExpression> args) {
+    private void fixInvoc(InvocableInfo invocableInfo,
+                          InvocableTree call,
+                          List<JCTree.JCExpression> args) {
         call.setArguments(args.toArray(new JCTree.JCExpression[0]));
         call.setReturnType(invocableInfo.returnTypeQualifiedName());
     }
@@ -47,7 +46,6 @@ public class MethodCallModifierVisitor extends AbstractVisitor<Void, InvocableIn
     }
 
     private void visitInvocable(InvocableTree invocation, InvocableInfo invocableInfo) {
-        //messager.printMessage(Diagnostic.Kind.NOTE, "Visiting invocation: " + invocation);
 
         if (!allFixedMethods.contains(invocation) &&
                 invocableInfo.matches(invocation)) {
@@ -58,7 +56,7 @@ public class MethodCallModifierVisitor extends AbstractVisitor<Void, InvocableIn
                 messager.printMessage(Diagnostic.Kind.ERROR, e.getMessage());
                 throw new RuntimeException(e);
             }
-            fixMethod(invocableInfo, invocation, args);
+            fixInvoc(invocableInfo, invocation, args);
             fixedMethodsInIteration.add(invocation);
             messager.printMessage(Diagnostic.Kind.NOTE, "Fixed invocation: " + invocation);
         }

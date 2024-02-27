@@ -3,9 +3,10 @@ package org.projectparams.test;
 import org.projectparams.annotations.DefaultValue;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
+import static java.util.Objects.requireNonNullElse;
 
 import static org.projectparams.test.Abobus.Dodus;
 
@@ -45,7 +46,8 @@ public class Main {
     public Main() {
     }
 
-    private static void lambda(@DefaultValue("() -> 1") Supplier<Integer> someVar) {
+    private static void lambda(@DefaultValue("() -> getOne(2)") Supplier<Integer> someVar,
+                               @DefaultValue("(param) -> someVar") Predicate<Integer> someVar2) {
         System.out.println(" " + someVar.get());
     }
 
@@ -57,6 +59,8 @@ public class Main {
     }
 
     private static int getOne(int i, @DefaultValue("Main::getZero") Supplier<Integer> someVar) {
+        Objects.requireNonNullElse(someVar, Main::getZero);
+        requireNonNullElse(someVar, Main::getZero);
         return 1;
     }
 
