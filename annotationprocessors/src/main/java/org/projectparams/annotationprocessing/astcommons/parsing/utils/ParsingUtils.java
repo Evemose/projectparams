@@ -211,13 +211,14 @@ public class ParsingUtils {
         boolean mutated;
         var couldBeChecked = false;
         var newKeywordEnclState = new HashSet<>(enclosersCount.entrySet());
+        var lambdaEnclState = new HashSet<>(enclosersCount.entrySet());
         Integer capture = null;
         for (var i = 0; i < expression.length(); i++) {
             couldBeChecked = couldBeChecked || updateCouldBeChecked(fromIndex, direction, i);
             if (mayUpdateCapture(direction, capture)) {
                 capture = updateCapture(expression, symbolPredicate, couldBeChecked, enclosersCount, i).orElse(capture);
             }
-            mutated = updateEnclosers(expression, i, enclosersCount, newKeywordEnclState);
+            mutated = updateEnclosers(expression, i, enclosersCount, newKeywordEnclState, lambdaEnclState);
             if (enclosersCount.values().stream().anyMatch(val -> val < 0)) {
                 throw new IllegalArgumentException("Unbalanced parentheses in " + expression);
             }
@@ -241,7 +242,8 @@ public class ParsingUtils {
     private static boolean updateEnclosers(String expression,
                                            int i,
                                            HashMap<Character, Integer> enclosersCount,
-                                           Set<Map.Entry<Character, Integer>> newKeywordEnclState) {
+                                           Set<Map.Entry<Character, Integer>> newKeywordEnclState,
+                                           Set<Map.Entry<Character, Integer>> lambdaEnclState) {
         var c = expression.charAt(i);
         var mutated = false;
         if (isOpeningPar(c) && (c != '<' || isTypeArgsBracket(expression, i)) || c == '?') {
@@ -258,11 +260,16 @@ public class ParsingUtils {
             enclosersCount.merge('(', -1, Integer::sum);
             mutated = true;
             updateNewKeywordEnclCount(enclosersCount, newKeywordEnclState);
-        } else if (c == '>' && isTypeArgsBracket(expression, i)) {
-            enclosersCount.merge('<', -1, Integer::sum);
-            mutated = true;
+        } else if (c == '>') {
+            if (isTypeArgsBracket(expression, i)) {
+                enclosersCount.merge('<', -1, Integer::sum);
+                mutated = true;
+            } else if (expression.charAt(i - 1) != '-') {
+                enclosersCount.merge('l', 1, Integer::sum);
+                mutated = true;
+            }
         } else if (c == ':') {
-            mutated = updateConditionalEnclCount(expression, i, enclosersCount, mutated);
+            mutated = updateConditionalEnclCount(expression, i, enclosersCount);
         } else if (expression.matches(".{" + i + "}new\\s.*") && enclosersCount.get('n') == 0) {
             enclosersCount.merge('n', 1, Integer::sum);
             newKeywordEnclState.clear();
@@ -277,18 +284,25 @@ public class ParsingUtils {
                 }
                 mutated = true;
             }
+        } else if (c == ',' && isNotEnclosed(enclosersCount)) {
+            if (enclosersCount.get('l') > 0) {
+                enclosersCount.merge('l', -1, Integer::sum);
+                lambdaEnclState.clear();
+                lambdaEnclState.addAll(enclosersCount.entrySet());
+                mutated = true;
+            }
         }
         return mutated;
     }
 
-    private static boolean updateConditionalEnclCount(String expression, int i, HashMap<Character, Integer> enclosersCount, boolean mutated) {
+    private static boolean updateConditionalEnclCount(String expression, int i, HashMap<Character, Integer> enclosersCount) {
         if (i == 0 || i == expression.length() - 1) {
             throw new IllegalArgumentException("Dangling colon in " + expression);
         } else if (expression.charAt(i - 1) != ':' && expression.charAt(i + 1) != ':') { // exclude :: operator
             enclosersCount.merge('?', -1, Integer::sum);
-            mutated = true;
+            return true;
         }
-        return mutated;
+        return false;
     }
 
     private static void updateNewKeywordEnclCount(HashMap<Character, Integer> enclosersCount, Set<Map.Entry<Character, Integer>> newKeywordEnclState) {
@@ -305,7 +319,8 @@ public class ParsingUtils {
                 '<', 0,
                 '"', 0,
                 '?', 0, // conditional expression
-                'n', 0 // new keyword
+                'n', 0, // new keyword
+                'l', 0 // lambda
         ));
     }
 

@@ -6,6 +6,7 @@ import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Exp
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class LambdaExpressionType extends AbstractExpressionType {
@@ -25,9 +26,9 @@ public class LambdaExpressionType extends AbstractExpressionType {
             throw new IllegalArgumentException("Invalid lambda expression: " + expression);
         }
         return new LambdaExpression(
-                expression.startsWith("(") ? Arrays.stream(
-                                expression.substring(1, expression.indexOf(')')).split(","))
-                        .filter(s -> !s.isBlank()).toList() :
+                expression.startsWith("(") ?
+                        expression.matches("\\(\\s*\\).*") ? Collections.emptyList() :
+                                Arrays.asList(expression.substring(1, expression.indexOf(')')).split(",")) :
                         List.of(expression.substring(0, expression.indexOf("->")).strip()),
                 ExpressionFactory.createExpression(
                         createParams.withExpressionAndNullTag(

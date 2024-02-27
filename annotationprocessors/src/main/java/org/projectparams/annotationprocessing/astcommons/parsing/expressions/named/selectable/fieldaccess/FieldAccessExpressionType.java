@@ -6,6 +6,7 @@ import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Exp
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.arrayaccess.ArrayAccessExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.cast.CastExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.lambda.LambdaExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.literal.LiteralExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionUtils;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
@@ -30,7 +31,8 @@ public class FieldAccessExpressionType extends AbstractExpressionType {
     protected boolean isCovered(String expression) {
         return CastExpressionType.getInstance().matches(expression)
                 || ArrayAccessExpressionType.getInstance().matches(expression)
-                || LiteralExpressionType.getInstance().matches(expression);
+                || LiteralExpressionType.getInstance().matches(expression)
+                || LambdaExpressionType.getInstance().matches(expression);
     }
 
     @Override

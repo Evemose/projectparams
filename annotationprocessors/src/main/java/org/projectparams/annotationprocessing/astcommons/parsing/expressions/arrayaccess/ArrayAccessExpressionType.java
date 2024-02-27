@@ -3,6 +3,8 @@ package org.projectparams.annotationprocessing.astcommons.parsing.expressions.ar
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.conditional.ConditionalExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.lambda.LambdaExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
 import static org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory.createExpression;
@@ -15,6 +17,12 @@ public class ArrayAccessExpressionType extends AbstractExpressionType {
 
     public static ArrayAccessExpressionType getInstance() {
         return INSTANCE;
+    }
+
+    @Override
+    protected boolean isCovered(String expression) {
+        return LambdaExpressionType.getInstance().matches(expression)
+                || ConditionalExpressionType.getInstance().matches(expression);
     }
 
     @Override

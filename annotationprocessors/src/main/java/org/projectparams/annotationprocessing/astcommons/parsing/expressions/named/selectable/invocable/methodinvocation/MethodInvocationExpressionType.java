@@ -5,6 +5,7 @@ import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Cre
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.cast.CastExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.conditional.ConditionalExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.lambda.LambdaExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.invocable.newclass.NewClassExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.parenthezied.ParenthesizedExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionUtils;
@@ -32,7 +33,8 @@ public class MethodInvocationExpressionType extends AbstractExpressionType {
         return ParenthesizedExpressionType.getInstance().matches(expression)
                 || CastExpressionType.getInstance().matches(expression)
                 || ConditionalExpressionType.getInstance().matches(expression)
-                || NewClassExpressionType.getInstance().matches(expression);
+                || NewClassExpressionType.getInstance().matches(expression)
+                || LambdaExpressionType.getInstance().matches(expression);
     }
 
     @Override

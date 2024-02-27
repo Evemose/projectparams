@@ -6,6 +6,7 @@ import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Cre
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.conditional.ConditionalExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.lambda.LambdaExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
 public class UnaryExpressionType extends AbstractExpressionType {
@@ -55,7 +56,8 @@ public class UnaryExpressionType extends AbstractExpressionType {
 
     @Override
     protected boolean isCovered(String expression) {
-        return ConditionalExpressionType.getInstance().matches(expression);
+        return ConditionalExpressionType.getInstance().matches(expression)
+                || LambdaExpressionType.getInstance().matches(expression);
     }
 
     @Override

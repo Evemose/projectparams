@@ -46,9 +46,10 @@ public class Main {
     public Main() {
     }
 
-    private static void lambda(@DefaultValue("() -> getOne(2)") Supplier<Integer> someVar,
-                               @DefaultValue("(param) -> someVar") Predicate<Integer> someVar2) {
-        System.out.println(" " + someVar.get());
+    private static void lambda(@DefaultValue("par -> getOne(par)") Function<Integer, Integer> someVar,
+                               @DefaultValue("(param) -> someVar") Predicate<Integer> someVar2,
+                               @DefaultValue("() -> Main.getZero()") Supplier<Integer> someVar3) {
+        System.out.println(" " + someVar.apply(5));
     }
 
     public Main(int i) {

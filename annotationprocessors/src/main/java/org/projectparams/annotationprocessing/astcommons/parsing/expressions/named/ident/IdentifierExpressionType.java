@@ -4,6 +4,7 @@ import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Abs
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.conditional.ConditionalExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.lambda.LambdaExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.literal.LiteralExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.binary.BinaryExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.unary.UnaryExpressionType;
@@ -45,7 +46,8 @@ public class IdentifierExpressionType extends AbstractExpressionType {
         return ConditionalExpressionType.getInstance().matches(expression)
                 || BinaryExpressionType.getInstance().matches(expression)
                 || UnaryExpressionType.getInstance().matches(expression)
-                || LiteralExpressionType.getInstance().matches(expression);
+                || LiteralExpressionType.getInstance().matches(expression)
+                || LambdaExpressionType.getInstance().matches(expression);
     }
 
     @Override
