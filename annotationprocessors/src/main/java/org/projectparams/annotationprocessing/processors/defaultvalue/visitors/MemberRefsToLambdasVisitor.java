@@ -29,6 +29,66 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
         super(trees, messager);
     }
 
+    private static JCTree.JCExpression getBodyExpr(JCTree.JCMemberReference memberReference, List<JCTree.JCVariableDecl> args) {
+        if (memberReference.mode == MemberReferenceTree.ReferenceMode.INVOKE) {
+            return ExpressionMaker.makeMethodInvocation(
+                    ExpressionMaker.makeFieldAccess(
+                            memberReference.expr,
+                            memberReference.name.toString()
+                    ),
+                    memberReference.typeargs,
+                    varDeclsToArgs(args)
+            );
+        } else {
+            return ExpressionMaker.makeNewClass(
+                    null,
+                    memberReference.expr.toString(),
+                    memberReference.typeargs,
+                    varDeclsToArgs(args)
+            );
+        }
+    }
+
+    private static JCTree.JCExpression[] varDeclsToArgs(List<JCTree.JCVariableDecl> args) {
+        return args.stream().map(MemberRefsToLambdasVisitor::toArg).toArray(JCTree.JCExpression[]::new);
+    }
+
+    private static JCTree.JCExpression toArg(JCTree.JCVariableDecl varDecl) {
+        var arg = ExpressionMaker.makeIdent(varDecl.name.toString());
+        arg.type = varDecl.type;
+        return arg;
+    }
+
+    private static Type getInferredType(ParentInfo parentInfo, int argIndex, Symbol.MethodSymbol lambdaMethSym) {
+        var definitionArgs = parentInfo.possibleMethods().getFirst().params();
+        var actualType = definitionArgs.get(argIndex).type.tsym instanceof Symbol.TypeVariableSymbol
+                ? parentInfo.genericTypes().get().get(definitionArgs.get(argIndex).type.tsym.name)
+                : definitionArgs.get(argIndex).type;
+        if (actualType.tsym instanceof Symbol.ClassSymbol classSymbol
+                && classSymbol.isInterface()) {
+            return actualType.allparams().get(
+                    getTypeParams(lambdaMethSym).indexOf(
+                            lambdaMethSym.params().get(argIndex).type
+                    )
+            );
+        }
+        throw new IllegalStateException("Unexpected type: " + actualType);
+    }
+
+    private static List<Type> getTypeParams(Symbol lambdaMethSym) {
+        var res = new ArrayList<>(lambdaMethSym.type.getTypeArguments());
+        res.addAll(lambdaMethSym.owner.type.getTypeArguments());
+        return res;
+    }
+
+    private static Name getName(JCTree.JCExpression expr) {
+        return switch (expr) {
+            case JCTree.JCIdent ident -> ident.name;
+            case JCTree.JCFieldAccess fieldAccess -> fieldAccess.name;
+            default -> throw new IllegalStateException("Unexpected type argument: " + expr);
+        };
+    }
+
     @Override
     public Void visitMemberReference(com.sun.source.tree.MemberReferenceTree node, Void ignored) {
         var parent = getCurrentPath().getParentPath().getLeaf();
@@ -66,37 +126,6 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
             return null;
         }
     }
-
-    private static JCTree.JCExpression getBodyExpr(JCTree.JCMemberReference memberReference, List<JCTree.JCVariableDecl> args) {
-        if (memberReference.mode == MemberReferenceTree.ReferenceMode.INVOKE) {
-            return ExpressionMaker.makeMethodInvocation(
-                    ExpressionMaker.makeFieldAccess(
-                            memberReference.expr,
-                            memberReference.name.toString()
-                    ),
-                    memberReference.typeargs,
-                    varDeclsToArgs(args)
-            );
-        } else {
-            return ExpressionMaker.makeNewClass(
-                    null,
-                    memberReference.expr.toString(),
-                    memberReference.typeargs,
-                    varDeclsToArgs(args)
-            );
-        }
-    }
-
-    private static JCTree.JCExpression[] varDeclsToArgs(List<JCTree.JCVariableDecl> args) {
-        return args.stream().map(MemberRefsToLambdasVisitor::toArg).toArray(JCTree.JCExpression[]::new);
-    }
-
-    private static JCTree.JCExpression toArg(JCTree.JCVariableDecl varDecl) {
-        var arg = ExpressionMaker.makeIdent(varDecl.name.toString());
-        arg.type = varDecl.type;
-        return arg;
-    }
-
 
     private List<JCTree.JCVariableDecl> getPassedArgs(JCTree parent, JCTree.JCMemberReference memberReference) {
         if (parent instanceof JCTree.JCVariableDecl varDecl) {
@@ -192,33 +221,6 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
                 genericTypes);
     }
 
-    private record ParentInfo(com.sun.tools.javac.util.List<JCTree.JCExpression> args,
-                              List<Symbol.MethodSymbol> possibleMethods,
-                              AtomicReference<Map<Name, Type>> genericTypes) {
-    }
-
-    private static Type getInferredType(ParentInfo parentInfo, int argIndex, Symbol.MethodSymbol lambdaMethSym) {
-        var definitionArgs = parentInfo.possibleMethods().getFirst().params();
-        var actualType = definitionArgs.get(argIndex).type.tsym instanceof Symbol.TypeVariableSymbol
-                ? parentInfo.genericTypes().get().get(definitionArgs.get(argIndex).type.tsym.name)
-                : definitionArgs.get(argIndex).type;
-        if (actualType.tsym instanceof Symbol.ClassSymbol classSymbol
-                && classSymbol.isInterface()) {
-            return actualType.allparams().get(
-                    getTypeParams(lambdaMethSym).indexOf(
-                            lambdaMethSym.params().get(argIndex).type
-                    )
-            );
-        }
-        throw new IllegalStateException("Unexpected type: " + actualType);
-    }
-
-    private static List<Type> getTypeParams(Symbol lambdaMethSym) {
-        var res = new ArrayList<>(lambdaMethSym.type.getTypeArguments());
-        res.addAll(lambdaMethSym.owner.type.getTypeArguments());
-        return res;
-    }
-
     private boolean isRefAssignableTo(JCTree.JCMemberReference ref,
                                       Symbol.MethodSymbol lambdaMethSym,
                                       Map<Name, Type> generics,
@@ -240,28 +242,28 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
                 && lambdaMethSym instanceof Symbol.MethodSymbol lambdaMeth) {
             var refMethParams = refMethSym.params();
             var lambdaMethParams = lambdaMeth.params();
-            return  lambdaMethParams.size() <= refMethParams.size() &&
+            return lambdaMethParams.size() <= refMethParams.size() &&
                     IntStream.range(0, lambdaMethParams.size()).allMatch(argIndex -> {
-                        if (TypeUtils.isAssignable(
-                                TypeUtils.getBoxedType(lambdaMethParams.get(argIndex).type),
-                                TypeUtils.getBoxedType(refMethParams.get(argIndex).type))) {
-                            return true;
-                        }
-                        var genType = getTypeParams(reqArgSym).get(
-                                getTypeParams(lambdaMethSym).indexOf(
-                                        lambdaMethParams.get(argIndex).type
-                                )
-                        );
-                        return reqArgSym.type.tsym instanceof Symbol.TypeVariableSymbol ?
-                                TypeUtils.isAssignable(
-                                        generics.get(reqArgSym.type.tsym.name),
+                                if (TypeUtils.isAssignable(
+                                        TypeUtils.getBoxedType(lambdaMethParams.get(argIndex).type),
+                                        TypeUtils.getBoxedType(refMethParams.get(argIndex).type))) {
+                                    return true;
+                                }
+                                var genType = getTypeParams(reqArgSym).get(
+                                        getTypeParams(lambdaMethSym).indexOf(
+                                                lambdaMethParams.get(argIndex).type
+                                        )
+                                );
+                                return reqArgSym.type.tsym instanceof Symbol.TypeVariableSymbol ?
+                                        TypeUtils.isAssignable(
+                                                generics.get(reqArgSym.type.tsym.name),
+                                                TypeUtils.getBoxedType(refMethParams.get(argIndex).type)
+                                        ) : TypeUtils.isAssignable(
+                                        genType,
                                         TypeUtils.getBoxedType(refMethParams.get(argIndex).type)
-                                ) : TypeUtils.isAssignable(
-                                genType,
-                                TypeUtils.getBoxedType(refMethParams.get(argIndex).type)
-                        );
-                    }
-            );
+                                );
+                            }
+                    );
         }
         return false;
     }
@@ -366,11 +368,8 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
                 || generics.containsKey(ExpressionMaker.makeName(reqArg.type.toString()));
     }
 
-    private static Name getName(JCTree.JCExpression expr) {
-        return switch (expr) {
-            case JCTree.JCIdent ident -> ident.name;
-            case JCTree.JCFieldAccess fieldAccess -> fieldAccess.name;
-            default -> throw new IllegalStateException("Unexpected type argument: " + expr);
-        };
+    private record ParentInfo(com.sun.tools.javac.util.List<JCTree.JCExpression> args,
+                              List<Symbol.MethodSymbol> possibleMethods,
+                              AtomicReference<Map<Name, Type>> genericTypes) {
     }
 }

@@ -6,13 +6,14 @@ import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
 
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ExecutableElement;
 
 public class PathUtils {
     private static Trees trees;
+
     public static void init(Trees trees) {
         PathUtils.trees = trees;
     }
+
     public static TreePath getEnclosingClassPath(TreePath path) {
         path = path.getParentPath();
         while (path != null && !(path.getLeaf() instanceof ClassTree)) {

@@ -46,7 +46,7 @@ public class ExpressionUtils {
         var types = TYPES.stream().filter(type -> type.matches(expression)).toList();
         if (types.size() > 1) {
             throw new IllegalStateException("Ambiguous expression type: " + createParams.expression()
-            + " matches " + types.stream().map(ExpressionType::getClass).map(Class::getSimpleName).toList());
+                    + " matches " + types.stream().map(ExpressionType::getClass).map(Class::getSimpleName).toList());
         }
         if (types.isEmpty()) {
             throw new IllegalStateException("Cannot determine expression type: " + createParams.expression());

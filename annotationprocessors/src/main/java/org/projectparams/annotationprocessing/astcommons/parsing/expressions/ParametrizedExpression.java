@@ -9,6 +9,7 @@ import java.util.List;
 public class ParametrizedExpression implements Expression {
     private final List<Expression> typeArguments;
     private final ParameterizableObjectExpression plainExpression;
+
     public ParametrizedExpression(List<Expression> typeArguments, ParameterizableObjectExpression plainExpression) {
         this.typeArguments = typeArguments;
         this.plainExpression = plainExpression;

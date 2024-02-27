@@ -1,8 +1,8 @@
 package org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.ident;
 
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.conditional.ConditionalExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.literal.LiteralExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.binary.BinaryExpressionType;
@@ -14,11 +14,12 @@ import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUt
 public class IdentifierExpressionType extends AbstractExpressionType {
     private static final IdentifierExpressionType INSTANCE = new IdentifierExpressionType();
 
+    private IdentifierExpressionType() {
+    }
+
     public static IdentifierExpressionType getInstance() {
         return INSTANCE;
     }
-
-    private IdentifierExpressionType() {}
 
     @Override
     protected boolean matchesInner(String expression) {

@@ -11,6 +11,7 @@ import java.util.List;
 public class MemberReferenceExpression extends FieldAccessExpression {
     private final MemberReferenceTree.ReferenceMode mode;
     private final List<Expression> typeArgs;
+
     public MemberReferenceExpression(MemberReferenceTree.ReferenceMode mode, String name, Expression owner, List<Expression> typeArgs) {
         super(name, owner);
         this.mode = mode;

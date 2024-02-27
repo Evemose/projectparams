@@ -1,16 +1,18 @@
 package org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.unary;
 
 import com.sun.tools.javac.tree.JCTree;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.conditional.ConditionalExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
 public class UnaryExpressionType extends AbstractExpressionType {
     private static final UnaryExpressionType INSTANCE = new UnaryExpressionType();
-    private UnaryExpressionType() {}
+
+    private UnaryExpressionType() {
+    }
 
     public static JCTree.Tag extractUnaryOperator(String expression) {
         expression = expression.strip();
@@ -41,6 +43,10 @@ public class UnaryExpressionType extends AbstractExpressionType {
         throw new IllegalArgumentException("Unknown unary operator in " + expression);
     }
 
+    public static UnaryExpressionType getInstance() {
+        return INSTANCE;
+    }
+
     @Override
     protected boolean matchesInner(String expression) {
         return expression.matches("(\\+|-|!|~|\\+\\+|--)\\s*[^+-].*")
@@ -66,9 +72,5 @@ public class UnaryExpressionType extends AbstractExpressionType {
         }
         return new UnaryExpression(ExpressionFactory.createExpression(createParams
                 .withExpressionAndNullTag(operand)), operator);
-    }
-
-    public static UnaryExpressionType getInstance() {
-        return INSTANCE;
     }
 }

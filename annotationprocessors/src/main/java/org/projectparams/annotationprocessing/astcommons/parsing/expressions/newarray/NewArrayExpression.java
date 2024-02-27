@@ -7,8 +7,6 @@ import org.projectparams.annotationprocessing.astcommons.parsing.utils.Expressio
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Predicate;
 
 public class NewArrayExpression implements Expression {
     private final String type;

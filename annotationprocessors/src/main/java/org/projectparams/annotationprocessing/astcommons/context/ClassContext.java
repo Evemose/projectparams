@@ -1,6 +1,5 @@
 package org.projectparams.annotationprocessing.astcommons.context;
 
-import com.sun.source.tree.ClassTree;
 import com.sun.source.util.TreePath;
 import org.projectparams.annotationprocessing.utils.ElementUtils;
 
@@ -15,23 +14,6 @@ public record ClassContext(
         Set<Method> methods,
         Set<Field> fields
 ) {
-    public interface ClassMember {
-        String name();
-        String className();
-        boolean isStatic();
-    }
-    public record Method (
-            String name,
-            String className,
-            boolean isStatic
-    ) implements ClassMember {}
-
-    public record Field(
-            String name,
-            String className,
-            boolean isStatic
-    ) implements ClassMember {}
-
     public static ClassMember of(String name, String className, boolean isStatic, ElementKind kind) {
         return switch (kind) {
             case METHOD -> new Method(name, className, isStatic);
@@ -51,7 +33,7 @@ public record ClassContext(
     }
 
     public String getClassName() {
-        return ((TypeElement)ElementUtils.getClassByPath(classPath)).getQualifiedName().toString();
+        return ((TypeElement) ElementUtils.getClassByPath(classPath)).getQualifiedName().toString();
     }
 
     public Optional<Method> getMatchingMethod(String methodName) {
@@ -72,5 +54,27 @@ public record ClassContext(
         return fields.stream()
                 .filter(field -> field.name.equals(fieldName))
                 .findAny();
+    }
+
+    public interface ClassMember {
+        String name();
+
+        String className();
+
+        boolean isStatic();
+    }
+
+    public record Method(
+            String name,
+            String className,
+            boolean isStatic
+    ) implements ClassMember {
+    }
+
+    public record Field(
+            String name,
+            String className,
+            boolean isStatic
+    ) implements ClassMember {
     }
 }

@@ -3,18 +3,16 @@ package org.projectparams.annotationprocessing.astcommons;
 import com.sun.source.tree.*;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
-import com.sun.tools.javac.code.*;
+import com.sun.tools.javac.code.Symtab;
+import com.sun.tools.javac.code.Type;
+import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.comp.Attr;
 import com.sun.tools.javac.comp.Enter;
 import com.sun.tools.javac.comp.MemberEnter;
 import com.sun.tools.javac.model.JavacTypes;
 import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.tree.TreeInfo;
 import org.projectparams.annotationprocessing.astcommons.context.CUContext;
-import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
 
-
-import javax.lang.model.element.Name;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.Elements;
 import java.util.IdentityHashMap;

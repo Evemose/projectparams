@@ -116,7 +116,7 @@ public class ParsingUtils {
     }
 
     public static List<String> getArgStrings(String expression, char openingPar, char closingPar) {
-        return getArgStringsFromIndex(expression, openingPar, closingPar, expression.length()-1);
+        return getArgStringsFromIndex(expression, openingPar, closingPar, expression.length() - 1);
     }
 
     public static List<String> getTypeArgStrings(String expression) {
@@ -149,7 +149,7 @@ public class ParsingUtils {
     }
 
     private static boolean isNotPartOfLiteral(String expr, int idx) {
-        return idx > 0 && !expr.matches(".{"+idx+"}\\.(\\d|[fFdD])\\d*[fFdD]?.*");
+        return idx > 0 && !expr.matches(".{" + idx + "}\\.(\\d|[fFdD])\\d*[fFdD]?.*");
     }
 
     public static List<String> getArrayDimensions(String expression) {
@@ -176,7 +176,7 @@ public class ParsingUtils {
             if (i == expression.length()) {
                 throw new IllegalArgumentException("Unbalanced parentheses in " + expression);
             }
-            dimensionsStartIndex = expression.indexOf('[', i+1);
+            dimensionsStartIndex = expression.indexOf('[', i + 1);
         } while (dimensionsStartIndex != -1);
         return dimensions;
     }
@@ -203,7 +203,7 @@ public class ParsingUtils {
      * @param direction       the direction to search in, true for forward, false for backward
      * @return the index of the matching top-level symbol, or -1 if no match is found
      * @throws IndexOutOfBoundsException if the starting index is out of bounds for the expression
-     * @throws IllegalArgumentException if the parentheses in the expression are unbalanced
+     * @throws IllegalArgumentException  if the parentheses in the expression are unbalanced
      */
     private static int getMatchingTopLevelSymbolIndex(String expression, BiPredicate<String, Integer> symbolPredicate, int fromIndex, boolean direction) {
         validateFromIndex(expression, fromIndex);
@@ -263,7 +263,7 @@ public class ParsingUtils {
             mutated = true;
         } else if (c == ':') {
             mutated = updateConditionalEnclCount(expression, i, enclosersCount, mutated);
-        } else if (expression.matches(".{"+i+"}new\\s.*") && enclosersCount.get('n') == 0) {
+        } else if (expression.matches(".{" + i + "}new\\s.*") && enclosersCount.get('n') == 0) {
             enclosersCount.merge('n', 1, Integer::sum);
             newKeywordEnclState.clear();
             newKeywordEnclState.addAll(enclosersCount.entrySet());
@@ -282,9 +282,9 @@ public class ParsingUtils {
     }
 
     private static boolean updateConditionalEnclCount(String expression, int i, HashMap<Character, Integer> enclosersCount, boolean mutated) {
-        if (i == 0 || i == expression.length() - 1){
+        if (i == 0 || i == expression.length() - 1) {
             throw new IllegalArgumentException("Dangling colon in " + expression);
-        } else if (expression.charAt(i -1) != ':' && expression.charAt(i +1) != ':') { // exclude :: operator
+        } else if (expression.charAt(i - 1) != ':' && expression.charAt(i + 1) != ':') { // exclude :: operator
             enclosersCount.merge('?', -1, Integer::sum);
             mutated = true;
         }
@@ -310,10 +310,10 @@ public class ParsingUtils {
     }
 
     private static Optional<Integer> updateCapture(String expression,
-                                         BiPredicate<String, Integer> symbolPredicate,
-                                         boolean couldBeChecked,
-                                         HashMap<Character, Integer> enclosersCount,
-                                         int i) {
+                                                   BiPredicate<String, Integer> symbolPredicate,
+                                                   boolean couldBeChecked,
+                                                   HashMap<Character, Integer> enclosersCount,
+                                                   int i) {
         if (couldBeChecked && isNotEnclosed(enclosersCount) && symbolPredicate.test(expression, i)) {
             return Optional.of(i);
         }
@@ -350,12 +350,12 @@ public class ParsingUtils {
      * The method searches for the first matching symbol from the specified index to the end of the expression.
      * The method should only be invoked for strings where any of listed above enclosers must be balanced.
      *
-     * @param expression       the expression to search in
-     * @param symbolPredicate  the predicate that determines if a symbol matches
-     * @param fromIndex        the index to start the search from (inclusive)
+     * @param expression      the expression to search in
+     * @param symbolPredicate the predicate that determines if a symbol matches
+     * @param fromIndex       the index to start the search from (inclusive)
      * @return the index of the matching top-level symbol, or -1 if no match is found
      * @throws IndexOutOfBoundsException if the starting index is out of bounds for the expression
-     * @throws IllegalArgumentException if the parentheses in the expression are unbalanced
+     * @throws IllegalArgumentException  if the parentheses in the expression are unbalanced
      */
     public static int getMatchingTopLevelSymbolIndex(String expression, BiPredicate<String, Integer> symbolPredicate, int fromIndex) {
         return getMatchingTopLevelSymbolIndex(expression, symbolPredicate, fromIndex, true);
@@ -371,7 +371,7 @@ public class ParsingUtils {
      * @param symbolPredicate the predicate that determines if a symbol matches
      * @return the index of the matching top-level symbol, or -1 if no match is found
      * @throws IndexOutOfBoundsException if the starting index is out of bounds for the expression
-     * @throws IllegalArgumentException if the parentheses in the expression are unbalanced
+     * @throws IllegalArgumentException  if the parentheses in the expression are unbalanced
      */
     public static int getMatchingTopLevelSymbolIndex(String expression, BiPredicate<String, Integer> symbolPredicate) {
         return getMatchingTopLevelSymbolIndex(expression, symbolPredicate, 0, true);
@@ -387,10 +387,10 @@ public class ParsingUtils {
      * @param symbolPredicate the predicate that determines if a symbol matches
      * @return the index of the matching top-level symbol, or -1 if no match is found
      * @throws IndexOutOfBoundsException if the starting index is out of bounds for the expression
-     * @throws IllegalArgumentException if the parentheses in the expression are unbalanced
+     * @throws IllegalArgumentException  if the parentheses in the expression are unbalanced
      */
     public static int getMatchingTopLevelSymbolLastIndex(String expression, BiPredicate<String, Integer> symbolPredicate) {
-        return getMatchingTopLevelSymbolIndex(expression, symbolPredicate, expression.length()-1, false);
+        return getMatchingTopLevelSymbolIndex(expression, symbolPredicate, expression.length() - 1, false);
     }
 
     public static int countMatchingTopLevelSymbols(String expression, BiPredicate<String, Integer> symbolPredicate) {

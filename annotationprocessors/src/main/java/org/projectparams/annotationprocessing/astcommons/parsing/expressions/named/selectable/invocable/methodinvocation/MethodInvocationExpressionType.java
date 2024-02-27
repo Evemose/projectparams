@@ -1,8 +1,8 @@
 package org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.invocable.methodinvocation;
 
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.cast.CastExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.conditional.ConditionalExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.invocable.newclass.NewClassExpressionType;
@@ -13,10 +13,18 @@ import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUt
 public class MethodInvocationExpressionType extends AbstractExpressionType {
 
     private static final MethodInvocationExpressionType INSTANCE = new MethodInvocationExpressionType();
+
+    private MethodInvocationExpressionType() {
+    }
+
+    public static MethodInvocationExpressionType getInstance() {
+        return INSTANCE;
+    }
+
     @Override
     protected boolean matchesInner(String expression) {
-        return expression.matches(".{"+(ParsingUtils.getOwnerSeparatorIndex(expression)+1)
-                +"}\\s*(<.*>)?\\s*[a-zA-Z_]([\\w$](\\s*\\.\\s*)?)*\\(.*\\)$");
+        return expression.matches(".{" + (ParsingUtils.getOwnerSeparatorIndex(expression) + 1)
+                + "}\\s*(<.*>)?\\s*[a-zA-Z_]([\\w$](\\s*\\.\\s*)?)*\\(.*\\)$");
     }
 
     @Override
@@ -39,11 +47,5 @@ public class MethodInvocationExpressionType extends AbstractExpressionType {
                 ExpressionUtils.getArgs(createParams),
                 createParams.parsingContextPath(),
                 ExpressionUtils.getTypeArgs(createParams));
-    }
-
-    private MethodInvocationExpressionType() {}
-
-    public static MethodInvocationExpressionType getInstance() {
-        return INSTANCE;
     }
 }

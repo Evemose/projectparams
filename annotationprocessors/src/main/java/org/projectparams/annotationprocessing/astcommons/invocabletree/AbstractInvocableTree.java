@@ -7,7 +7,6 @@ import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractInvocableTree<T extends ExpressionTree> implements InvocableTree {

@@ -1,9 +1,9 @@
 package org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.fieldaccess;
 
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.arrayaccess.ArrayAccessExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.cast.CastExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.literal.LiteralExpressionType;
@@ -14,11 +14,12 @@ public class FieldAccessExpressionType extends AbstractExpressionType {
 
     private static final FieldAccessExpressionType INSTANCE = new FieldAccessExpressionType();
 
+    private FieldAccessExpressionType() {
+    }
+
     public static FieldAccessExpressionType getInstance() {
         return INSTANCE;
     }
-
-    private FieldAccessExpressionType() {}
 
     @Override
     protected boolean matchesInner(String expression) {

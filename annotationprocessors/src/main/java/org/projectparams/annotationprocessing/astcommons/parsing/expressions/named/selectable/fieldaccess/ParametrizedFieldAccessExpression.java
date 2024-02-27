@@ -10,6 +10,7 @@ import java.util.List;
 
 public class ParametrizedFieldAccessExpression extends FieldAccessExpression implements ParameterizableObjectExpression {
     private final ParametrizedExpression parametrizedExpression;
+
     public ParametrizedFieldAccessExpression(String name, Expression owner, List<Expression> typeArguments) {
         super(name, owner);
         this.parametrizedExpression = new ParametrizedExpression(typeArguments, this);

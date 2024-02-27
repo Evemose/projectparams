@@ -1,17 +1,22 @@
 package org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.binary;
 
 import com.sun.tools.javac.tree.JCTree;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.lambda.LambdaExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
 public class BinaryExpressionType extends AbstractExpressionType {
     private static final BinaryExpressionType INSTANCE = new BinaryExpressionType();
 
-    private BinaryExpressionType() {}
+    private BinaryExpressionType() {
+    }
+
+    public static BinaryExpressionType getInstance() {
+        return INSTANCE;
+    }
 
     private JCTree.Tag extractBinaryOperator(String expression, int operatorIndex) {
         expression = expression.strip();
@@ -86,7 +91,7 @@ public class BinaryExpressionType extends AbstractExpressionType {
 
     private boolean isOperator(String expression, int startIndex) {
         var checkedChar = expression.charAt(startIndex);
-        return startIndex != 0 && startIndex != expression.length()-1 && (checkedChar == '*' || checkedChar == '/'
+        return startIndex != 0 && startIndex != expression.length() - 1 && (checkedChar == '*' || checkedChar == '/'
                 || checkedChar == '%' || checkedChar == '&'
                 || checkedChar == '|' || checkedChar == '^'
                 || checkedChar == '='
@@ -115,9 +120,5 @@ public class BinaryExpressionType extends AbstractExpressionType {
     @Override
     protected boolean isCovered(String expression) {
         return LambdaExpressionType.getInstance().matches(expression);
-    }
-
-    public static BinaryExpressionType getInstance() {
-        return INSTANCE;
     }
 }

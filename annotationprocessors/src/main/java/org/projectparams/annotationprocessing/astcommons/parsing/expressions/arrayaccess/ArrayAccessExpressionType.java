@@ -1,14 +1,22 @@
 package org.projectparams.annotationprocessing.astcommons.parsing.expressions.arrayaccess;
 
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
 import static org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory.createExpression;
 
 public class ArrayAccessExpressionType extends AbstractExpressionType {
     private static final ArrayAccessExpressionType INSTANCE = new ArrayAccessExpressionType();
+
+    private ArrayAccessExpressionType() {
+    }
+
+    public static ArrayAccessExpressionType getInstance() {
+        return INSTANCE;
+    }
+
     @Override
     protected boolean matchesInner(String expression) {
         return expression.matches(".*[a-zA-Z_][\\w.$]*\\s*(\\[.*])+$");
@@ -25,11 +33,5 @@ public class ArrayAccessExpressionType extends AbstractExpressionType {
                 createExpression(createParams.withExpressionAndNullTag(array)),
                 createExpression(createParams.withExpressionAndNullTag(index))
         );
-    }
-
-    private ArrayAccessExpressionType() {}
-
-    public static ArrayAccessExpressionType getInstance() {
-        return INSTANCE;
     }
 }

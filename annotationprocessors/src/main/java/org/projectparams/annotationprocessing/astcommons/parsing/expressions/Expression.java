@@ -5,5 +5,6 @@ import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
 
 public interface Expression {
     JCTree.JCExpression toJcExpression();
+
     void convertInnerIdentifiersToQualified(ClassContext classContext);
 }

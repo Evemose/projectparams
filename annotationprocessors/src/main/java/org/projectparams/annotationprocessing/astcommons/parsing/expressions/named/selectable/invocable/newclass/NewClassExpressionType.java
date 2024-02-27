@@ -9,6 +9,14 @@ import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUt
 
 public class NewClassExpressionType extends AbstractExpressionType {
     private static final NewClassExpressionType INSTANCE = new NewClassExpressionType();
+
+    private NewClassExpressionType() {
+    }
+
+    public static NewClassExpressionType getInstance() {
+        return INSTANCE;
+    }
+
     @Override
     protected boolean matchesInner(String expression) {
         expression = expression.strip();
@@ -41,11 +49,5 @@ public class NewClassExpressionType extends AbstractExpressionType {
                 ExpressionUtils.getArgs(createParams),
                 createParams.parsingContextPath(),
                 ExpressionUtils.getTypeArgs(createParams));
-    }
-
-    private NewClassExpressionType() {}
-
-    public static NewClassExpressionType getInstance() {
-        return INSTANCE;
     }
 }

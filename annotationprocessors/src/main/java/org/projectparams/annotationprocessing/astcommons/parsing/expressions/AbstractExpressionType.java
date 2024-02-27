@@ -7,7 +7,9 @@ public abstract class AbstractExpressionType implements ExpressionType {
     public boolean matches(String expression) {
         return !isCovered(expression) && matchesInner(expression);
     }
+
     protected abstract boolean matchesInner(String expression);
+
     protected boolean isCovered(String expression) {
         return false;
     }

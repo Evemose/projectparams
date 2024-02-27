@@ -1,12 +1,9 @@
 package org.projectparams.annotationprocessing.astcommons.visitors;
 
-import com.sun.source.tree.AssignmentTree;
-import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
-import org.projectparams.annotationprocessing.astcommons.PathUtils;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 
 import javax.annotation.processing.Messager;
@@ -15,6 +12,7 @@ import javax.tools.Diagnostic;
 
 public class PostModificationAttributionVisitor extends AbstractVisitor<Void, Void> {
     private final TreeMaker treeMaker;
+
     public PostModificationAttributionVisitor(TreeMaker treeMaker, Trees trees, Messager messager) {
         super(trees, messager);
         this.treeMaker = treeMaker;
@@ -22,7 +20,7 @@ public class PostModificationAttributionVisitor extends AbstractVisitor<Void, Vo
 
     @Override
     public Void visitVariable(VariableTree variable, Void ignored) {
-        if (TypeUtils.getTypeKind(getCurrentPath()) == TypeKind.ERROR){
+        if (TypeUtils.getTypeKind(getCurrentPath()) == TypeKind.ERROR) {
             messager.printMessage(Diagnostic.Kind.NOTE, "Error var: " + variable);
             var asJC = (JCTree.JCVariableDecl) variable;
             if (asJC.init == null) {

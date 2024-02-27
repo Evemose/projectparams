@@ -10,11 +10,12 @@ import java.util.List;
 
 public class LambdaExpressionType extends AbstractExpressionType {
     private static final LambdaExpressionType INSTANCE = new LambdaExpressionType();
-    public static LambdaExpressionType getInstance() {
-        return INSTANCE;
-    }
 
     private LambdaExpressionType() {
+    }
+
+    public static LambdaExpressionType getInstance() {
+        return INSTANCE;
     }
 
     @Override

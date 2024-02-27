@@ -2,7 +2,10 @@ package org.projectparams.annotationprocessing.astcommons.context;
 
 import com.sun.source.tree.CompilationUnitTree;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.Set;
 
 public record CUContext(
         Set<String> importedClassNames,

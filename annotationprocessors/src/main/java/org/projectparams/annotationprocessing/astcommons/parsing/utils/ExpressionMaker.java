@@ -17,12 +17,13 @@ public class ExpressionMaker {
 
     private static TreeMaker treeMaker;
     private static Names names;
+
     public static void init(TreeMaker treeMaker, Names names) {
         ExpressionMaker.treeMaker = treeMaker;
         ExpressionMaker.names = names;
     }
 
-    public static JCTree.JCExpression makeTypeApply(JCTree.JCExpression expression, JCTree.JCExpression ...typeArguments) {
+    public static JCTree.JCExpression makeTypeApply(JCTree.JCExpression expression, JCTree.JCExpression... typeArguments) {
         return treeMaker.TypeApply(expression, List.from(typeArguments));
     }
 
@@ -37,7 +38,7 @@ public class ExpressionMaker {
             return cast;
         }
         if (tag == TypeTag.BOOLEAN) {
-            value = (boolean)value ? 1 : 0;
+            value = (boolean) value ? 1 : 0;
         }
         var literal = treeMaker.Literal(tag, value);
         literal.type = TypeUtils.getTypeByName(tag == TypeTag.BOOLEAN ? "boolean" : value.getClass().getCanonicalName());
@@ -155,7 +156,7 @@ public class ExpressionMaker {
                                                  java.util.List<JCTree.JCExpression> dimensions,
                                                  java.util.List<JCTree.JCExpression> initializers) {
         var typeIdent = getTypeIdent(type);
-        for (int i = 0; i < dimensions.size()-1; i++) {
+        for (int i = 0; i < dimensions.size() - 1; i++) {
             typeIdent = treeMaker.TypeArray(typeIdent);
         }
         return treeMaker.NewArray(

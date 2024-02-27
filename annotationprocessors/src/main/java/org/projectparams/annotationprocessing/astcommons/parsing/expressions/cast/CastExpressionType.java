@@ -1,15 +1,22 @@
 package org.projectparams.annotationprocessing.astcommons.parsing.expressions.cast;
 
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.conditional.ConditionalExpressionType;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.lambda.LambdaExpression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.lambda.LambdaExpressionType;
 
 public class CastExpressionType extends AbstractExpressionType {
     private static final CastExpressionType INSTANCE = new CastExpressionType();
+
+    private CastExpressionType() {
+    }
+
+    public static CastExpressionType getInstance() {
+        return INSTANCE;
+    }
+
     @Override
     protected boolean matchesInner(String expression) {
         return expression.strip().matches("\\(([a-zA-Z_][\\w.$]*(\\s*\\.\\s*)?)+\\).+");
@@ -31,11 +38,5 @@ public class CastExpressionType extends AbstractExpressionType {
                 ExpressionFactory.createExpression(createParams
                         .withExpressionAndNullTag(expression.substring(expression.indexOf(')') + 1))),
                 expression.substring(expression.indexOf('(') + 1, expression.indexOf(')')));
-    }
-
-    private CastExpressionType() {}
-
-    public static CastExpressionType getInstance() {
-        return INSTANCE;
     }
 }

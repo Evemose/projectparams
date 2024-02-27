@@ -6,7 +6,6 @@ import org.projectparams.annotationprocessing.exceptions.ProcessingEnvironmentEx
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.PackageElement;
 import javax.tools.Diagnostic;

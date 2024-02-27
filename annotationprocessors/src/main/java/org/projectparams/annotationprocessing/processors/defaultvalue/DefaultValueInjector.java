@@ -1,6 +1,9 @@
 package org.projectparams.annotationprocessing.processors.defaultvalue;
 
-import com.sun.source.tree.*;
+import com.sun.source.tree.IdentifierTree;
+import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.StatementTree;
+import com.sun.source.tree.Tree;
 import com.sun.tools.javac.tree.JCTree;
 import org.projectparams.annotationprocessing.astcommons.PathUtils;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
@@ -8,7 +11,6 @@ import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.literal.LiteralExpression;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.invocable.methodinvocation.MethodInvocationExpression;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
 
 import javax.annotation.processing.Messager;
@@ -19,13 +21,21 @@ import java.util.Collections;
 import java.util.List;
 
 public class DefaultValueInjector {
+    public static Messager messager;
     private final ExecutableElement invocable;
     private final InvocableInfo invocableInfo;
-    public static Messager messager;
 
     public DefaultValueInjector(InvocableInfo invocableInfo) {
         this.invocableInfo = invocableInfo;
         this.invocable = invocableInfo.method();
+    }
+
+    private static String getVarName(StatementTree statement) {
+        return ((JCTree.JCIdent) ((JCTree.JCAssign) ((JCTree.JCExpressionStatement) statement).expr).lhs).name.toString();
+    }
+
+    private static JCTree.JCExpression getRhs(StatementTree statement) {
+        return ((JCTree.JCAssign) ((JCTree.JCExpressionStatement) statement).expr).rhs;
     }
 
     public void inject() {
@@ -58,7 +68,7 @@ public class DefaultValueInjector {
 
     }
 
-    private List<StatementTree> modifyConstructorBody(MethodTree methodTree, StatementTree ...statementsToInject) {
+    private List<StatementTree> modifyConstructorBody(MethodTree methodTree, StatementTree... statementsToInject) {
         var prevStatements = methodTree.getBody().getStatements();
         var newStatements = new ArrayList<StatementTree>();
         if (callsOtherConstructor(prevStatements)) {
@@ -84,7 +94,7 @@ public class DefaultValueInjector {
         if (!prevStatements.isEmpty()) {
             var firstStatement = prevStatements.getFirst();
             if (firstStatement instanceof JCTree.JCExpressionStatement statement
-            && statement.getExpression() instanceof JCTree.JCMethodInvocation methodInvocation) {
+                    && statement.getExpression() instanceof JCTree.JCMethodInvocation methodInvocation) {
                 return methodInvocation.getMethodSelect() instanceof IdentifierTree identifierTree
                         && (identifierTree.getName().contentEquals("this") || identifierTree.getName().contentEquals("super"));
             }
@@ -92,15 +102,7 @@ public class DefaultValueInjector {
         return false;
     }
 
-    private static String getVarName(StatementTree statement) {
-        return ((JCTree.JCIdent)((JCTree.JCAssign) ((JCTree.JCExpressionStatement) statement).expr).lhs).name.toString();
-    }
-
-    private static JCTree.JCExpression getRhs(StatementTree statement) {
-        return ((JCTree.JCAssign) ((JCTree.JCExpressionStatement) statement).expr).rhs;
-    }
-
-    private void modifyMethodBody(MethodTree methodTree, StatementTree ...statementsToInject) {
+    private void modifyMethodBody(MethodTree methodTree, StatementTree... statementsToInject) {
         List<StatementTree> newStatements = new ArrayList<>();
         if (methodTree.getName().contentEquals("<init>")) {
             newStatements = modifyConstructorBody(methodTree, statementsToInject);

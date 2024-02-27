@@ -8,6 +8,7 @@ import org.projectparams.annotationprocessing.astcommons.parsing.utils.Expressio
 public class ArrayAccessExpression implements Expression {
     private final Expression array;
     private final Expression index;
+
     public ArrayAccessExpression(Expression array, Expression index) {
         this.array = array;
         this.index = index;

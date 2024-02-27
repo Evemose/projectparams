@@ -15,6 +15,7 @@ public class LambdaExpression implements Expression {
         this.parameters = parameters;
         this.body = body;
     }
+
     @Override
     public JCTree.JCExpression toJcExpression() {
         return ExpressionMaker.makeLambda(

@@ -68,24 +68,6 @@ public record InvocableInfo(
         result.add(mainInvocable.withName("this"));
     }
 
-    public InvocableInfo withName(String name) {
-        return new InvocableInfo(
-                method,
-                name,
-                possibleOwnerQualifiedNames,
-                returnTypeQualifiedName,
-                parameters);
-    }
-
-    public InvocableInfo withPossibleOwnerQualifiedNames(Set<String> possibleOwnerQualifiedNames) {
-        return new InvocableInfo(
-                method,
-                name,
-                possibleOwnerQualifiedNames,
-                returnTypeQualifiedName,
-                parameters);
-    }
-
     private static Set<String> getPossibleOwnerQualifiedNames(ExecutableElement method) {
         var classElement = (TypeElement) method.getEnclosingElement();
         var result = new HashSet<>(Set.of(classElement.getQualifiedName().toString()));
@@ -122,11 +104,22 @@ public record InvocableInfo(
         }
     }
 
-    public record Expression(
-            Type type,
-            String expression
-    ) {
-        public static final Expression NULL = new Expression(Type.noType, null);
+    public InvocableInfo withName(String name) {
+        return new InvocableInfo(
+                method,
+                name,
+                possibleOwnerQualifiedNames,
+                returnTypeQualifiedName,
+                parameters);
+    }
+
+    public InvocableInfo withPossibleOwnerQualifiedNames(Set<String> possibleOwnerQualifiedNames) {
+        return new InvocableInfo(
+                method,
+                name,
+                possibleOwnerQualifiedNames,
+                returnTypeQualifiedName,
+                parameters);
     }
 
     public boolean matches(InvocableTree invocation) {
@@ -175,6 +168,13 @@ public record InvocableInfo(
         } else {
             return false;
         }
+    }
+
+    public record Expression(
+            Type type,
+            String expression
+    ) {
+        public static final Expression NULL = new Expression(Type.noType, null);
     }
 
     public record Parameter(

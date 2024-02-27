@@ -13,16 +13,17 @@ public class NewArrayExpressionType extends AbstractExpressionType {
 
     private static final NewArrayExpressionType INSTANCE = new NewArrayExpressionType();
 
+    private NewArrayExpressionType() {
+    }
+
     public static NewArrayExpressionType getInstance() {
         return INSTANCE;
     }
 
-    private NewArrayExpressionType() {}
-
     private static List<Expression> getInitializer(CreateExpressionParams createExpression,
-                                                  int initializerStartIndex,
-                                                  int dimsCount,
-                                                  String type) {
+                                                   int initializerStartIndex,
+                                                   int dimsCount,
+                                                   String type) {
         List<Expression> initializer = null;
         if (initializerStartIndex != -1) {
             initializer = ParsingUtils.getArrayInitializerExpressions(createExpression.expression())
@@ -35,7 +36,7 @@ public class NewArrayExpressionType extends AbstractExpressionType {
                                         + init + " in " + createExpression.expression());
                             }
                             return ExpressionFactory.createExpression(createExpression.withExpressionAndNullTag(
-                                    "new %s".formatted(type) + "[]".repeat(dimsCount-1) + init));
+                                    "new %s".formatted(type) + "[]".repeat(dimsCount - 1) + init));
                         }
                         return ExpressionFactory.createExpression(createExpression.withExpressionAndNullTag(init));
                     }).toList();

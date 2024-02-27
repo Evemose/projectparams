@@ -5,7 +5,10 @@ import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.Type;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 
-import javax.lang.model.element.*;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +37,7 @@ public class ElementUtils {
     public static List<TypeElement> getAllChildren(TypeElement typeElement) {
         return getAllClasses(typeElement).stream()
                 .filter(clazz -> TypeUtils.isAssignable((Type) clazz.asType(), (Type) typeElement.asType())
-                && !clazz.equals(typeElement))
+                        && !clazz.equals(typeElement))
                 .toList();
     }
 

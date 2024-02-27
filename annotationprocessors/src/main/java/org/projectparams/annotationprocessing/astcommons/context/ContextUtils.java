@@ -12,11 +12,20 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ContextUtils {
+    private static final Map<Class<?>, Set<ElementKind>> symbolTypeToElementKind = Map.of(
+            Symbol.ClassSymbol.class, Set.of(ElementKind.CLASS, ElementKind.ENUM, ElementKind.INTERFACE, ElementKind.ANNOTATION_TYPE),
+            Symbol.MethodSymbol.class, Set.of(ElementKind.METHOD),
+            Symbol.VarSymbol.class, Set.of(ElementKind.FIELD)
+    );
+
     public static List<String> getClassnamesInPackage(String packageName) {
         return ElementUtils.getPackageByName(packageName).getEnclosedElements().stream()
                 .filter(el -> el.getKind() == ElementKind.CLASS)
@@ -31,7 +40,7 @@ public class ContextUtils {
                 .toList();
     }
 
-    public static List<String> getStaticClassMembersNames(String className, ElementKind ...excludedKinds) {
+    public static List<String> getStaticClassMembersNames(String className, ElementKind... excludedKinds) {
         var excludedKindsSet = Set.of(excludedKinds);
         return getStaticClassMembers(className).stream()
                 .<String>mapMulti((el, consumer) -> {
@@ -73,13 +82,7 @@ public class ContextUtils {
         throw new UnsupportedOperationException("Unsupported import type: " + imp.getQualifiedIdentifier().getClass());
     }
 
-    private static final Map<Class<?>, Set<ElementKind>> symbolTypeToElementKind = Map.of(
-            Symbol.ClassSymbol.class, Set.of(ElementKind.CLASS, ElementKind.ENUM, ElementKind.INTERFACE, ElementKind.ANNOTATION_TYPE),
-            Symbol.MethodSymbol.class, Set.of(ElementKind.METHOD),
-            Symbol.VarSymbol.class, Set.of(ElementKind.FIELD)
-    );
-
-    private static Stream<String> mapStaticImportToImportedNames(ImportTree imp, Class<?> ...excludedSymbolTypes) {
+    private static Stream<String> mapStaticImportToImportedNames(ImportTree imp, Class<?>... excludedSymbolTypes) {
         var excludedSymbolTypesSet = Set.of(excludedSymbolTypes);
         if (imp.getQualifiedIdentifier() instanceof JCTree.JCFieldAccess fieldAccess) {
             if (fieldAccess.getIdentifier().contentEquals("*")) {
@@ -129,7 +132,7 @@ public class ContextUtils {
     public static Set<ClassContext.ClassMember> getMembersOfClass(TreePath classPath, ElementKind kind, boolean requireStatic) {
         var decl = (JCTree.JCClassDecl) classPath.getLeaf();
         var classSymbol = decl.sym;
-        var elements =  classSymbol.getEnclosedElements().stream()
+        var elements = classSymbol.getEnclosedElements().stream()
                 .filter(el -> el.getKind() == kind)
                 .filter(el -> !requireStatic || el.getModifiers().contains(Modifier.STATIC))
                 .map(el -> ClassContext.of(

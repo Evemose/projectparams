@@ -1,9 +1,6 @@
 package org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.selectable.fieldaccess.memberref;
 
 import com.sun.source.tree.MemberReferenceTree;
-import com.sun.tools.javac.tree.TreeInfo;
-import org.projectparams.annotationprocessing.astcommons.PathUtils;
-import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
@@ -12,13 +9,14 @@ import org.projectparams.annotationprocessing.astcommons.parsing.expressions.cas
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.conditional.ConditionalExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.binary.BinaryExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.operator.unary.UnaryExpressionType;
-import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionUtils;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
 public class MemberReferenceExpressionType extends AbstractExpressionType {
     private static final MemberReferenceExpressionType INSTANCE = new MemberReferenceExpressionType();
-    private MemberReferenceExpressionType() {}
+
+    private MemberReferenceExpressionType() {
+    }
 
     public static MemberReferenceExpressionType getInstance() {
         return INSTANCE;

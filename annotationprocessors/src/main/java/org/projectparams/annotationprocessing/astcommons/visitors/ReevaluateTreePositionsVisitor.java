@@ -2,10 +2,8 @@ package org.projectparams.annotationprocessing.astcommons.visitors;
 
 import com.sun.source.tree.*;
 import com.sun.source.util.TreePathScanner;
-import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.JCTree;
 
-import javax.annotation.processing.Messager;
 import java.util.*;
 
 public class ReevaluateTreePositionsVisitor extends TreePathScanner<Void, Void> {
@@ -169,7 +167,7 @@ public class ReevaluateTreePositionsVisitor extends TreePathScanner<Void, Void> 
         }
         return parentPosition;
     }
-    
+
     @SafeVarargs
     private <T> Set<? extends T> setOfIgnoreNullsPreserveOrderExcludeParent(T parent, T... trees) {
         return Arrays.stream(trees).filter(Objects::nonNull).filter(tree -> tree != parent).<Set<T>>collect(

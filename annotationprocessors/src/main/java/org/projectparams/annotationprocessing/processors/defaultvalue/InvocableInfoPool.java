@@ -7,6 +7,12 @@ import java.util.function.Consumer;
 public class InvocableInfoPool {
     private final List<InvocableInfo> invocableInfos = new ArrayList<>();
 
+    public static InvocableInfoPool of(InvocableInfo... invocableInfos) {
+        var pool = new InvocableInfoPool();
+        pool.addAll(List.of(invocableInfos));
+        return pool;
+    }
+
     public void add(InvocableInfo invocableInfo) {
         invocableInfos.add(invocableInfo);
     }
@@ -17,12 +23,6 @@ public class InvocableInfoPool {
 
     public void forEach(Consumer<InvocableInfo> consumer) {
         invocableInfos.forEach(consumer);
-    }
-
-    public static InvocableInfoPool of(InvocableInfo... invocableInfos) {
-        var pool = new InvocableInfoPool();
-        pool.addAll(List.of(invocableInfos));
-        return pool;
     }
 
     @Override

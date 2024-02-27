@@ -1,13 +1,18 @@
 package org.projectparams.annotationprocessing.astcommons.parsing.expressions.parenthezied;
 
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.AbstractExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ParsingUtils;
 
 public class ParenthesizedExpressionType extends AbstractExpressionType {
     private static final ParenthesizedExpressionType INSTANCE = new ParenthesizedExpressionType();
+
+    public static ParenthesizedExpressionType getInstance() {
+        return INSTANCE;
+    }
+
     @Override
     protected boolean matchesInner(String expression) {
         expression = expression.strip();
@@ -26,9 +31,5 @@ public class ParenthesizedExpressionType extends AbstractExpressionType {
                 ExpressionFactory.createExpression(createParams
                         .withExpressionAndNullTag(expression.substring(1, expression.length() - 1)))
         );
-    }
-
-    public static ParenthesizedExpressionType getInstance() {
-        return INSTANCE;
     }
 }
