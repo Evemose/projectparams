@@ -2,10 +2,12 @@ package org.projectparams.annotationprocessing.astcommons.parsing.expressions.pa
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ParenthesizedExpressionTypeTest {
-    
+
     private static final ParenthesizedExpressionType pet = ParenthesizedExpressionType.getInstance();
 
     @ParameterizedTest(name = "testMatches {index} with expression {0}")

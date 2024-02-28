@@ -9,17 +9,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ParsingUtilsTest {
 
-    
+
     @ParameterizedTest
     @CsvSource({
-        "'abc.def', '.', 3", 
-        "'abcdefgh', '.', -1", 
-        "'abc.def.ghi', '.', 3",
-        "'ab.cde.f', '.', 2",
-        "'aa(bb)', '(', 2",
-        "'{xyz}', '{', 0",
-        "'aa[bb]cc[dd]', '[', 2",
-        "'boolean ? true : false', '?', 8"
+            "'abc.def', '.', 3",
+            "'abcdefgh', '.', -1",
+            "'abc.def.ghi', '.', 3",
+            "'ab.cde.f', '.', 2",
+            "'aa(bb)', '(', 2",
+            "'{xyz}', '{', 0",
+            "'aa[bb]cc[dd]', '[', 2",
+            "'boolean ? true : false', '?', 8"
     })
     public void testGetMatchingTopLevelSymbolIndex(String expression, char symbol, int expectedResult) {
         assertEquals(expectedResult, ParsingUtils.getMatchingTopLevelSymbolIndex(expression, ParsingUtils.equalsSymbolPredicate(symbol)));
@@ -27,14 +27,14 @@ public class ParsingUtilsTest {
 
     @ParameterizedTest
     @CsvSource({
-        "'abc.def', '.', 2, 3", 
-        "'abcdefgh', '.', 2, -1",
-        "'abc.def.ghi', '.', 5, 7",
-        "'ab.cde.f', '.', 6, 6",
-        "'aa(bb,cc)', '(', 4, -1",
-        "'[[{xyz}]]', '{', 2, -1",
-        "'aa[bb]cc[dd]', '[', 8, 8",
-        "'boolean ? true : false', '?', 10, -1"
+            "'abc.def', '.', 2, 3",
+            "'abcdefgh', '.', 2, -1",
+            "'abc.def.ghi', '.', 5, 7",
+            "'ab.cde.f', '.', 6, 6",
+            "'aa(bb,cc)', '(', 4, -1",
+            "'[[{xyz}]]', '{', 2, -1",
+            "'aa[bb]cc[dd]', '[', 8, 8",
+            "'boolean ? true : false', '?', 10, -1"
     })
     public void testGetMatchingTopLevelSymbolIndex_WithFromIndex(String expression, char symbol, int fromIndex, int expectedResult) {
         assertEquals(expectedResult, ParsingUtils.getMatchingTopLevelSymbolIndex(expression, ParsingUtils.equalsSymbolPredicate(symbol), fromIndex));
@@ -60,7 +60,7 @@ public class ParsingUtilsTest {
     @Test
     public void whenUnbalancedBracketsExist_getMatchingTopLevelSymbolLastIndex_ThrowsException() {
         assertThrows(IllegalArgumentException.class, () ->
-                ParsingUtils.getMatchingTopLevelSymbolLastIndex("((Hello)", ParsingUtils.equalsSymbolPredicate('(')) );
+                ParsingUtils.getMatchingTopLevelSymbolLastIndex("((Hello)", ParsingUtils.equalsSymbolPredicate('(')));
     }
 
     @ParameterizedTest

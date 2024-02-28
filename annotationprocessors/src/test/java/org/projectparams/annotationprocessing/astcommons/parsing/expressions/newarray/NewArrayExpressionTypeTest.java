@@ -1,6 +1,5 @@
 package org.projectparams.annotationprocessing.astcommons.parsing.expressions.newarray;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -20,7 +19,7 @@ public class NewArrayExpressionTypeTest {
             "new String[5][6]",
             "new SomeClass5[6]",
             "new   float [ ][ ]  { { 1.1f , 2.2f } , { 3.3f , 4.4f } }",
-            "new String [] [    ] { { \"Hello\" , \"World\" } , { \"Foo\" , \"Bar\" } }" 
+            "new String [] [    ] { { \"Hello\" , \"World\" } , { \"Foo\" , \"Bar\" } }"
     })
     public void testMatches(String expression) {
         assertTrue(instance.matches(expression));

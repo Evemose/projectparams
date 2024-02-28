@@ -22,7 +22,7 @@ public class ArrayAccessExpressionTypeTest {
             "numbers[getindex()[4]]",
             "myArray[someMethod(param1[3], param2[2])]"
     })
-    public void parametrizedTestMatchesTrue(String input){
+    public void parametrizedTestMatchesTrue(String input) {
         assertTrue(arrayAccessType.matches(input));
     }
 
@@ -35,7 +35,7 @@ public class ArrayAccessExpressionTypeTest {
             "new Object(arr[3])",
             "method(param1, param2)"
     })
-    public void parametrizedTestMatchesFalse(String input){
+    public void parametrizedTestMatchesFalse(String input) {
         assertFalse(arrayAccessType.matches(input));
     }
 }

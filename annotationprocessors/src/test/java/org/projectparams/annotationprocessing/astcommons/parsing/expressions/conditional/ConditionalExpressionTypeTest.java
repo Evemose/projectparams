@@ -2,8 +2,9 @@ package org.projectparams.annotationprocessing.astcommons.parsing.expressions.co
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ConditionalExpressionTypeTest {
     private static final ConditionalExpressionType conditionalExpressionType = new ConditionalExpressionType();
@@ -19,7 +20,7 @@ public class ConditionalExpressionTypeTest {
             "a ? ((b && c) ? d : e) : f",
             "g ? (h ? (i ? j : k) : l) : m",
             "new org.projectparams.test.Sucus().mains[Sucus.mains[1].getZero()]." +
-            "<Map<Integer, List<Float>>>akakus(Map.of(3, List.of((float)(double)6.d))).isEmpty() ? " +
+                    "<Map<Integer, List<Float>>>akakus(Map.of(3, List.of((float)(double)6.d))).isEmpty() ? " +
                     "!(true ? false : true) ? akakus() : List.of(new HashMap<>(Map.of(3, List.of((float)(double)6.d))))" +
                     ": List.of(new HashMap<>(Map.of(3, List.of((float)(double)6.d))))"
     })

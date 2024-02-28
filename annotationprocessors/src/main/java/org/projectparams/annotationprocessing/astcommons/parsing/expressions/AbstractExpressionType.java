@@ -8,6 +8,7 @@ import java.util.Map;
 public abstract class AbstractExpressionType implements ExpressionType {
     private final Map<String, Boolean> matchesCache = new HashMap<>();
     protected boolean canMatchNulls = false;
+
     @Override
     public boolean matches(String expression) {
         if (matchesCache.containsKey(expression)) {

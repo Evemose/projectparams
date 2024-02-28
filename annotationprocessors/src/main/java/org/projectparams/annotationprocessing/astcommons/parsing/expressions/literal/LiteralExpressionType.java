@@ -8,6 +8,7 @@ import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Exp
 public class LiteralExpressionType extends AbstractExpressionType {
 
     private static final LiteralExpressionType INSTANCE = new LiteralExpressionType();
+
     {
         canMatchNulls = true;
     }
