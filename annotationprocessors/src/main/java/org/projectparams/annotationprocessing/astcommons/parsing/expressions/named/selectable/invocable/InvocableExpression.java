@@ -20,8 +20,8 @@ public abstract class InvocableExpression extends SelectableExpression {
     }
 
     @Override
-    public void convertInnerIdentifiersToQualified(ClassContext classContext) {
-        super.convertInnerIdentifiersToQualified(classContext);
-        arguments.forEach(arg -> arg.convertInnerIdentifiersToQualified(classContext));
+    public void convertIdentsToQualified(ClassContext classContext) {
+        super.convertIdentsToQualified(classContext);
+        arguments.forEach(arg -> arg.convertIdentsToQualified(classContext));
     }
 }

@@ -16,7 +16,7 @@ public class IdentifierExpression extends NamedExpression {
     }
 
     @Override
-    public void convertInnerIdentifiersToQualified(ClassContext classContext) {
+    public void convertIdentsToQualified(ClassContext classContext) {
         var matchingField = classContext.getMatchingField(name);
         if (matchingField.isPresent()) {
             name = (matchingField.get().isStatic() ? matchingField.get().className() + '.' : "this.") + name;

@@ -36,7 +36,7 @@ public class LiteralExpression implements Expression {
     }
 
     @Override
-    public void convertInnerIdentifiersToQualified(ClassContext classContext) {
+    public void convertIdentsToQualified(ClassContext classContext) {
         // Do nothing
     }
 }

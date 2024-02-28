@@ -22,7 +22,7 @@ public class ParametrizedExpression implements Expression {
     }
 
     @Override
-    public void convertInnerIdentifiersToQualified(ClassContext classContext) {
-        typeArguments.forEach(typeArgument -> typeArgument.convertInnerIdentifiersToQualified(classContext));
+    public void convertIdentsToQualified(ClassContext classContext) {
+        typeArguments.forEach(typeArgument -> typeArgument.convertIdentsToQualified(classContext));
     }
 }

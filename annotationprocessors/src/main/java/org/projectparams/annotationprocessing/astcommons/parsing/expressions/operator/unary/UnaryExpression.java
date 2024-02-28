@@ -20,7 +20,7 @@ public class UnaryExpression extends OperatorExpression {
     }
 
     @Override
-    public void convertInnerIdentifiersToQualified(ClassContext classContext) {
-        expression.convertInnerIdentifiersToQualified(classContext);
+    public void convertIdentsToQualified(ClassContext classContext) {
+        expression.convertIdentsToQualified(classContext);
     }
 }

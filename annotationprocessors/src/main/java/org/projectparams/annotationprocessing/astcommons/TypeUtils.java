@@ -280,7 +280,19 @@ public class TypeUtils {
             case FLOAT -> Float.parseFloat(literalAsString);
             case DOUBLE -> Double.parseDouble(literalAsString);
             case BOOLEAN -> Boolean.parseBoolean(literalAsString);
-            case CHAR -> literalAsString.charAt(1);
+            case CHAR -> switch (literalAsString.length()) {
+                case 1 -> literalAsString.charAt(0);
+                case 2 -> switch (literalAsString.charAt(1)) {
+                    case 'n' -> '\n';
+                    case 't' -> '\t';
+                    case 'r' -> '\r';
+                    case 'b' -> '\b';
+                    case 'f' -> '\f';
+                    default -> throw new IllegalArgumentException("Unsupported escape sequence: " + literalAsString);
+                };
+                case 3 -> literalAsString.charAt(1);
+                default -> throw new IllegalArgumentException("Unsupported literal: " + literalAsString);
+            };
             case CLASS -> {
                 if (literalAsString.matches("\".*\"")) {
                     yield literalAsString.substring(1, literalAsString.length() - 1);
@@ -307,6 +319,16 @@ public class TypeUtils {
             case "java.lang.Character", "char" -> TypeTag.CHAR;
             case null -> TypeTag.BOT;
             default -> TypeTag.CLASS;
+        };
+    }
+
+    public static boolean isPrimitiveOrBoxedType(Type type) {
+        return switch (type.toString()) {
+            case "int", "java.lang.Integer", "long", "java.lang.Long", "float", "java.lang.Float",
+                    "double", "java.lang.Double", "boolean", "java.lang.Boolean",
+                    "byte", "java.lang.Byte", "short", "java.lang.Short", "char", "java.lang.Character",
+                    "java.lang.String" -> true;
+            default -> false;
         };
     }
 }

@@ -40,6 +40,12 @@ public class ExpressionMaker {
         if (tag == TypeTag.BOOLEAN) {
             value = (boolean) value ? 1 : 0;
         }
+        if (tag == TypeTag.CHAR) {
+            value = (int) (char) value;
+            var cast = treeMaker.TypeCast(treeMaker.TypeIdent(TypeTag.CHAR), treeMaker.Literal(TypeTag.INT, value));
+            cast.type = TypeUtils.getTypeByName(value.getClass().getCanonicalName());
+            return cast;
+        }
         var literal = treeMaker.Literal(tag, value);
         literal.type = TypeUtils.getTypeByName(tag == TypeTag.BOOLEAN ? "boolean" : value.getClass().getCanonicalName());
         return literal;

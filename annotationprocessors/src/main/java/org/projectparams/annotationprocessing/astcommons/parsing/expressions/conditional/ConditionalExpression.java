@@ -26,9 +26,9 @@ public class ConditionalExpression implements Expression {
     }
 
     @Override
-    public void convertInnerIdentifiersToQualified(ClassContext classContext) {
-        condition.convertInnerIdentifiersToQualified(classContext);
-        ifTrue.convertInnerIdentifiersToQualified(classContext);
-        ifFalse.convertInnerIdentifiersToQualified(classContext);
+    public void convertIdentsToQualified(ClassContext classContext) {
+        condition.convertIdentsToQualified(classContext);
+        ifTrue.convertIdentsToQualified(classContext);
+        ifFalse.convertIdentsToQualified(classContext);
     }
 }

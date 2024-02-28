@@ -1,6 +1,7 @@
 package org.projectparams.annotationprocessing.processors.defaultvalue.argumentsuppliers;
 
 import com.sun.source.util.TreePath;
+import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.List;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
@@ -8,6 +9,7 @@ import org.projectparams.annotationprocessing.astcommons.invocabletree.Invocable
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.literal.LiteralExpression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.literal.LiteralExpressionType;
 import org.projectparams.annotationprocessing.exceptions.UnsupportedSignatureException;
 import org.projectparams.annotationprocessing.processors.defaultvalue.InvocableInfo;
 
@@ -26,15 +28,21 @@ public class DefaultArgumentSupplier implements ArgumentSupplier {
             if (defaultValue == null) {
                 throw new UnsupportedSignatureException(invocableInfo.parameters().get(i).name(), i, invocableInfo);
             }
-            var expression = ExpressionFactory.createExpression(
-                    new CreateExpressionParams(
-                            defaultValue.expression(),
-                            TypeUtils.getUnboxedTypeTag(defaultValue.type()),
-                            path
-                    ));
-            if (expression instanceof LiteralExpression) {
-                args.add(expression.toJcExpression());
-            } else {
+            if (defaultValue.expression() != null && defaultValue.expression().equals("c")) {
+                var a = 1;
+            }
+            if (!TypeUtils.isPrimitiveOrBoxedType(defaultValue.type())) {
+                args.add(LiteralExpression.NULL.toJcExpression());
+                continue;
+            }
+            try {
+                args.add(LiteralExpressionType.getInstance().parse(
+                        new CreateExpressionParams(
+                                defaultValue.expression(),
+                                TypeUtils.getUnboxedTypeTag(defaultValue.type()),
+                                path
+                        )).toJcExpression());
+            } catch (Exception e) {
                 args.add(LiteralExpression.NULL.toJcExpression());
             }
         }

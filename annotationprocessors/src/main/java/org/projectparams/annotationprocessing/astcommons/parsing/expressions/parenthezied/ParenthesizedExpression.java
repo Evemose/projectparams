@@ -18,7 +18,7 @@ public class ParenthesizedExpression implements Expression {
     }
 
     @Override
-    public void convertInnerIdentifiersToQualified(ClassContext classContext) {
-        expression.convertInnerIdentifiersToQualified(classContext);
+    public void convertIdentsToQualified(ClassContext classContext) {
+        expression.convertIdentsToQualified(classContext);
     }
 }

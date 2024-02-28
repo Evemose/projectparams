@@ -20,8 +20,8 @@ public class ArrayAccessExpression implements Expression {
     }
 
     @Override
-    public void convertInnerIdentifiersToQualified(ClassContext classContext) {
-        array.convertInnerIdentifiersToQualified(classContext);
-        index.convertInnerIdentifiersToQualified(classContext);
+    public void convertIdentsToQualified(ClassContext classContext) {
+        array.convertIdentsToQualified(classContext);
+        index.convertIdentsToQualified(classContext);
     }
 }

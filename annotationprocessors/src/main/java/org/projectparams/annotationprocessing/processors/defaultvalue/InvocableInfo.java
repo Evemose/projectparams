@@ -24,7 +24,7 @@ public record InvocableInfo(
         String returnTypeQualifiedName,
         List<Parameter> parameters) {
 
-    public static final String NULL = "superSecretDefaultValuePlaceholder";
+    private static final String NULL = "superSecretDefaultValuePlaceholder";
 
     public static List<InvocableInfo> from(ExecutableElement method) {
         var mainInvocable = new InvocableInfo(
@@ -53,7 +53,8 @@ public record InvocableInfo(
         }
         return new Parameter(parameter.getSimpleName().toString(),
                 (Type) parameter.asType(),
-                defaultValue);
+                defaultValue
+        );
     }
 
     private static void addThisAndSuperInvocable(ArrayList<InvocableInfo> result, ExecutableElement method, InvocableInfo mainInvocable) {
@@ -125,10 +126,12 @@ public record InvocableInfo(
     public boolean matches(InvocableTree invocation) {
         var methodName = invocation.getSelfName();
         var ownerQualifiedName = invocation.getOwnerTypeQualifiedName();
+        if (ownerQualifiedName == null) {
+            return false;
+        }
         return possibleOwnerQualifiedNames.contains(ownerQualifiedName)
                 && methodName.equals(name)
                 && doesExistingArgsMatch(invocation.getArguments());
-        // for now not considering return type
     }
 
     private boolean doesExistingArgsMatch(List<? extends ExpressionTree> args) {

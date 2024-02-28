@@ -41,6 +41,7 @@ public class Main {
         //List.of(1, 2, 3).forEach(Main::somavarus);
         Function<Integer, Integer> someVar = Main::getOne;
         lambda();
+        bibo();
     }
 
     public Main() {
@@ -111,6 +112,10 @@ public class Main {
         return someVar.apply(5);
     }
 
+    private static void bibo(@DefaultValue("c") char c) {
+        System.out.println(c);
+    }
+
     public enum Akakus {
         A, B, C
     }
@@ -124,6 +129,7 @@ public class Main {
     }
 
     public static <T> List<T> akakus(T t) {
+        var a = 3;
         return new ArrayList<T>(List.of(t));
     }
 

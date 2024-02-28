@@ -22,8 +22,8 @@ public class BinaryExpression extends OperatorExpression {
     }
 
     @Override
-    public void convertInnerIdentifiersToQualified(ClassContext classContext) {
-        left.convertInnerIdentifiersToQualified(classContext);
-        right.convertInnerIdentifiersToQualified(classContext);
+    public void convertIdentsToQualified(ClassContext classContext) {
+        left.convertIdentsToQualified(classContext);
+        right.convertIdentsToQualified(classContext);
     }
 }

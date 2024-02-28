@@ -22,9 +22,9 @@ public class ParametrizedIdentifierExpression extends IdentifierExpression imple
     }
 
     @Override
-    public void convertInnerIdentifiersToQualified(ClassContext classContext) {
-        super.convertInnerIdentifiersToQualified(classContext);
-        parametrizedExpression.convertInnerIdentifiersToQualified(classContext);
+    public void convertIdentsToQualified(ClassContext classContext) {
+        super.convertIdentsToQualified(classContext);
+        parametrizedExpression.convertIdentsToQualified(classContext);
     }
 
     @Override

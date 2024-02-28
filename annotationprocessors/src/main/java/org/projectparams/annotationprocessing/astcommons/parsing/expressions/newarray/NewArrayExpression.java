@@ -29,10 +29,10 @@ public class NewArrayExpression implements Expression {
     }
 
     @Override
-    public void convertInnerIdentifiersToQualified(ClassContext classContext) {
-        dimensions.stream().filter(Objects::nonNull).forEach(expr -> expr.convertInnerIdentifiersToQualified(classContext));
+    public void convertIdentsToQualified(ClassContext classContext) {
+        dimensions.stream().filter(Objects::nonNull).forEach(expr -> expr.convertIdentsToQualified(classContext));
         if (initializers != null) {
-            initializers.forEach(expr -> expr.convertInnerIdentifiersToQualified(classContext));
+            initializers.forEach(expr -> expr.convertIdentsToQualified(classContext));
         }
     }
 }

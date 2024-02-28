@@ -25,7 +25,7 @@ public class LambdaExpression implements Expression {
     }
 
     @Override
-    public void convertInnerIdentifiersToQualified(ClassContext classContext) {
-        body.convertInnerIdentifiersToQualified(classContext);
+    public void convertIdentsToQualified(ClassContext classContext) {
+        body.convertIdentsToQualified(classContext);
     }
 }

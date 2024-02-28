@@ -10,7 +10,8 @@ import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.ExpressionFactory;
-import org.projectparams.annotationprocessing.astcommons.parsing.expressions.literal.LiteralExpression;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.literal.LiteralExpressionType;
+import org.projectparams.annotationprocessing.astcommons.parsing.expressions.named.ident.IdentifierExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
 
 import javax.annotation.processing.Messager;
@@ -45,19 +46,19 @@ public class DefaultValueInjector {
             if (defaultValue == null) {
                 continue;
             }
+            if (LiteralExpressionType.getInstance().matches(defaultValue.expression())
+                    || TypeUtils.isPrimitiveOrBoxedType(defaultValue.type())) {
+                continue;
+            }
             var expression = ExpressionFactory.createExpression(
                     new CreateExpressionParams(
                             defaultValue.expression(),
                             TypeUtils.getUnboxedTypeTag(defaultValue.type()),
                             PathUtils.getElementPath(invocable)
                     ));
-            if (expression instanceof LiteralExpression) {
-                continue;
-            }
-            expression.convertInnerIdentifiersToQualified(ClassContext.of(PathUtils
+            expression.convertIdentsToQualified(ClassContext.of(PathUtils
                     .getElementPath(invocableInfo.method().getEnclosingElement())));
-            var expressionAsJC = expression.toJcExpression();
-            statementsToInject.add(assignToVar(wrapInNonNullElse(expressionAsJC, param.name()), param.name()));
+            statementsToInject.add(assignToVar(wrapInNonNullElse(expression.toJcExpression(), param.name()), param.name()));
         }
         var element = PathUtils.getElementPath(invocable).getLeaf();
         if (element instanceof MethodTree methodTree) {

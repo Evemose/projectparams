@@ -8,6 +8,9 @@ import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Exp
 public class LiteralExpressionType extends AbstractExpressionType {
 
     private static final LiteralExpressionType INSTANCE = new LiteralExpressionType();
+    {
+        canMatchNulls = true;
+    }
 
     private LiteralExpressionType() {
     }
@@ -18,7 +21,7 @@ public class LiteralExpressionType extends AbstractExpressionType {
 
     @Override
     public Expression parse(CreateExpressionParams createParams) {
-        var expression = createParams.expression().trim();
+        var expression = createParams.expression().strip();
         var typeTag = createParams.typeTag();
         if (typeTag == null) {
             typeTag = TypeUtils.geLiteralTypeTag(expression);
@@ -29,8 +32,10 @@ public class LiteralExpressionType extends AbstractExpressionType {
 
     @Override
     protected boolean matchesInner(String expression) {
-        expression = expression.strip();
-        return expression.matches("(?s)(((\\d+(\\.\\d*)?)|(\\.\\d*))([fdlFDL]|([eE][+-]?\\d+[fdFD]?))?)" +
+        if (expression == null) {
+            return true;
+        }
+        return expression.strip().matches("(?s)(((\\d+(\\.\\d*)?)|(\\.\\d*))([fdlFDL]|([eE][+-]?\\d+[fdFD]?))?)" +
                 "|(true|false)|('.')|(\".*\")|((0[xX][0-9a-fA-F]+)|(0[bB][01]+)|(0[0-7]+)[dDlLfF]?)")
                 && !expression.matches("(\\d+\\.){2,}\\d+");
     }

@@ -20,7 +20,7 @@ public class CastExpression implements Expression {
     }
 
     @Override
-    public void convertInnerIdentifiersToQualified(ClassContext classContext) {
-        castedExpression.convertInnerIdentifiersToQualified(classContext);
+    public void convertIdentsToQualified(ClassContext classContext) {
+        castedExpression.convertIdentsToQualified(classContext);
     }
 }

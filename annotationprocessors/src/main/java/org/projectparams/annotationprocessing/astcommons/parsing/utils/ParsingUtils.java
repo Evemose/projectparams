@@ -264,7 +264,7 @@ public class ParsingUtils {
             if (isTypeArgsBracket(expression, i)) {
                 enclosersCount.merge('<', -1, Integer::sum);
                 mutated = true;
-            } else if (expression.charAt(i - 1) != '-') {
+            } else if (i > 0 && expression.charAt(i - 1) == '-') {
                 enclosersCount.merge('l', 1, Integer::sum);
                 mutated = true;
             }
@@ -434,6 +434,9 @@ public class ParsingUtils {
             var closeParIndex = expression.indexOf(')', charIndex);
             return closeParIndex == -1 || closeParIndex > closeBracketIndex;
         } else if (expression.charAt(charIndex) == '>') {
+            if (charIndex > 0 && expression.charAt(charIndex - 1) == '-') {
+                return false;
+            }
             var openBracketIndex = expression.lastIndexOf('<', charIndex);
             if (openBracketIndex == -1) {
                 return false;

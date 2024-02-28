@@ -13,9 +13,9 @@ public abstract class SelectableExpression extends NamedExpression {
     }
 
     @Override
-    public void convertInnerIdentifiersToQualified(ClassContext classContext) {
+    public void convertIdentsToQualified(ClassContext classContext) {
         if (owner != null) {
-            owner.convertInnerIdentifiersToQualified(classContext);
+            owner.convertIdentsToQualified(classContext);
         }
     }
 }
