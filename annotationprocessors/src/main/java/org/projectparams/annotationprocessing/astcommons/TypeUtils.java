@@ -3,9 +3,7 @@ package org.projectparams.annotationprocessing.astcommons;
 import com.sun.source.tree.*;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
-import com.sun.tools.javac.code.Symtab;
-import com.sun.tools.javac.code.Type;
-import com.sun.tools.javac.code.TypeTag;
+import com.sun.tools.javac.code.*;
 import com.sun.tools.javac.comp.Attr;
 import com.sun.tools.javac.comp.Enter;
 import com.sun.tools.javac.comp.MemberEnter;
@@ -28,7 +26,8 @@ public class TypeUtils {
     // and any attempt to resolve them manually results in an error, while attribution does not affect types at all
     private static final Map<NewClassTree, String> effectiveConstructorOwnerTypeNames = new IdentityHashMap<>();
     private static Trees trees;
-    private static JavacTypes types;
+    private static JavacTypes javacTypes;
+    private static Types types;
     private static Elements elements;
     private static Symtab symtab;
     private static Attr attr;
@@ -36,15 +35,16 @@ public class TypeUtils {
     private static MemberEnter memberEnter;
 
     // initialized in org.projectparams.annotationprocessing.MainProcessor
-    public static void init(Trees trees, JavacTypes types, Elements elements, Symtab symtab, Attr attr, Enter enter,
-                            MemberEnter memberEnter) {
+    public static void init(Trees trees, JavacTypes javacTypes, Elements elements, Symtab symtab, Attr attr, Enter enter,
+                            MemberEnter memberEnter, Types types) {
         TypeUtils.trees = trees;
-        TypeUtils.types = types;
+        TypeUtils.javacTypes = javacTypes;
         TypeUtils.elements = elements;
         TypeUtils.symtab = symtab;
         TypeUtils.attr = attr;
         TypeUtils.enter = enter;
         TypeUtils.memberEnter = memberEnter;
+        TypeUtils.types = types;
     }
 
     public static Type getTypeByName(String name) {
@@ -63,7 +63,7 @@ public class TypeUtils {
                 if (typeElement == null) {
                     yield Type.noType;
                 }
-                var type = types.getDeclaredType(typeElement);
+                var type = javacTypes.getDeclaredType(typeElement);
                 yield (Type) type;
             }
         };
@@ -234,7 +234,7 @@ public class TypeUtils {
         if (toType == null || fromType == null) {
             return false;
         }
-        return types.isAssignable(toType, fromType);
+        return javacTypes.isAssignable(toType, fromType);
     }
 
     public static TypeTag geLiteralTypeTag(String literalAsString) {
@@ -330,5 +330,9 @@ public class TypeUtils {
                     "java.lang.String" -> true;
             default -> false;
         };
+    }
+
+    public static boolean isAccessible(Symbol toAccess, Symbol from) {
+        return toAccess.isAccessibleIn(from, types);
     }
 }

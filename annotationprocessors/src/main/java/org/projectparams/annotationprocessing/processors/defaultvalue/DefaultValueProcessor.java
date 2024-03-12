@@ -8,7 +8,7 @@ import org.projectparams.annotationprocessing.astcommons.visitors.PostModificati
 import org.projectparams.annotationprocessing.astcommons.visitors.ReevaluateTreePositionsVisitor;
 import org.projectparams.annotationprocessing.processors.GlobalAnnotationProcessor;
 import org.projectparams.annotationprocessing.processors.defaultvalue.argumentsuppliers.DefaultArgumentSupplier;
-import org.projectparams.annotationprocessing.processors.defaultvalue.visitors.MemberRefsToLambdasVisitor;
+import org.projectparams.annotationprocessing.processors.defaultvalue.visitors.reftolambda.MemberRefsToLambdasVisitor;
 import org.projectparams.annotationprocessing.processors.defaultvalue.visitors.MethodCallModifierVisitor;
 import org.projectparams.annotations.DefaultValue;
 
@@ -46,17 +46,19 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
             }
         });
 
+        messager.printMessage(Diagnostic.Kind.NOTE, "Invocable pool: " + invocablePool + "\n\n\nStarting");
+
+        var memberRefsToLambdasVisitor = new MemberRefsToLambdasVisitor(trees, messager);
+        packageTree.accept(memberRefsToLambdasVisitor, null);
+
         var reevaluateTreePositionsVisitor = new ReevaluateTreePositionsVisitor();
         packageTree.accept(reevaluateTreePositionsVisitor, null);
-
-        messager.printMessage(Diagnostic.Kind.NOTE, "Invocable pool: " + invocablePool + "\n\n\nStarting");
 
         do {
             allFixedMethods.addAll(fixedMethodsInIteration);
             fixedMethodsInIteration.clear();
             invocablePool.forEach(methodInfo -> {
-                var memberRefsToLambdasVisitor = new MemberRefsToLambdasVisitor(trees, messager);
-                packageTree.accept(memberRefsToLambdasVisitor, null);
+                packageTree.accept(reevaluateTreePositionsVisitor, null);
 
                 var modifier = new MethodCallModifierVisitor(fixedMethodsInIteration,
                         trees,
@@ -72,6 +74,8 @@ public class DefaultValueProcessor extends GlobalAnnotationProcessor<DefaultValu
 
         var postModificationAttributionVisitor = new PostModificationAttributionVisitor(treeMaker, trees, messager);
         packageTree.accept(postModificationAttributionVisitor, null);
+
+        messager.printMessage(Diagnostic.Kind.NOTE, "Finished");
     }
 
     @Override

@@ -28,7 +28,6 @@ public class ContextUtils {
 
     public static List<String> getClassnamesInPackage(String packageName) {
         return ElementUtils.getPackageByName(packageName).getEnclosedElements().stream()
-                .filter(el -> el.getKind() == ElementKind.CLASS)
                 .map(el -> ((TypeElement) el).getQualifiedName().toString())
                 .toList();
     }
@@ -62,7 +61,6 @@ public class ContextUtils {
         // implicit imports are top-level classes in the same package as the compilation unit
         var implicitImports = ElementUtils.getPackageByName(compilationUnitTree.getPackageName().toString())
                 .getEnclosedElements().stream()
-                .filter(el -> el.getKind() == ElementKind.CLASS)
                 .map(el -> ((TypeElement) el).getQualifiedName().toString())
                 .toList();
         explicitImports.addAll(implicitImports);

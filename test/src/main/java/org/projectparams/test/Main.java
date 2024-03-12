@@ -3,6 +3,7 @@ package org.projectparams.test;
 import org.projectparams.annotations.DefaultValue;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -38,10 +39,21 @@ public class Main {
         System.out.println(samovar());
         System.out.println(newnew());
         Main.<String>params();
-        //List.of(1, 2, 3).forEach(Main::somavarus);
+        // List.of(1, 2, 3).forEach(Main::somavarus);
+        susu(3d, List.of(List.of(1)), Main::getoto);
         Function<Integer, Integer> someVar = Main::getOne;
         lambda();
         bibo();
+    }
+
+    private static <K, R> void susu(K k, List<List<R>> list, BiFunction<R, R, R> someVar) {
+        System.out.println(" " + someVar.apply(list.get(0).get(0), list.get(0).get(0)));
+    }
+
+    private static int getoto(double i,
+                              @DefaultValue("5") int someVar,
+                              @DefaultValue("Main::getZero") Supplier<Integer> someVar2) {
+        return 1;
     }
 
     public Main() {
@@ -54,7 +66,7 @@ public class Main {
     }
 
     public Main(int i) {
-        var m = new org.projectparams.test.Main(Main::getOne);
+        //var m = new org.projectparams.test.Main(Main::getOne);
     }
 
     public Main(Function<Integer, Integer> someVar) {
@@ -124,13 +136,13 @@ public class Main {
         System.out.println(" " + someVar);
     }
 
-    private static void somavarus(@DefaultValue("5 + 3.4d") Double someVar, @DefaultValue("4") int someInt) {
+    private static void somavarus(@DefaultValue("4") int someInt, @DefaultValue("5 + 3.4d") Double someVar) {
         System.out.println(" " + someVar + " " + someInt);
     }
 
     public static <T> List<T> akakus(T t) {
         var a = 3;
-        return new ArrayList<T>(List.of(t));
+        return new ArrayList(List.of(t));
     }
 
     public static class someVar{}

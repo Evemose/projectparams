@@ -180,6 +180,33 @@ public class ExpressionMaker {
 
     public static JCTree.JCVariableDecl makeVariableDecl(String string, @Nullable Type type) {
         return treeMaker.VarDef(treeMaker.Modifiers(0), makeName(string),
-                type == null ? null : makeIdent(type.toString()), null);
+                makeTypeIdent(type),
+                null);
+    }
+
+    private static JCTree.JCExpression makeTypeIdent(Type type) {
+        if (type == null) {
+            return null;
+        } else {
+            JCTree.JCExpression typeIdent;
+            if (!type.getTypeArguments().isEmpty()) {
+                typeIdent = makeTypeApply(
+                        makeIdent(type.toString().substring(0, type.toString().indexOf('<'))),
+                        type.getTypeArguments().stream()
+                                .map(ExpressionMaker::toVarType)
+                                .map(ExpressionMaker::makeTypeIdent)
+                                .toArray(JCTree.JCExpression[]::new));
+            } else {
+                typeIdent = makeIdent(type.toString());
+            }
+            return typeIdent;
+        }
+    }
+
+    private static Type toVarType(Type type) {
+        if (type instanceof Type.WildcardType wildcardType) {
+            return wildcardType.type;
+        }
+        return type;
     }
 }

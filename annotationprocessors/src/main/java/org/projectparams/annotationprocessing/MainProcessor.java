@@ -3,6 +3,7 @@ package org.projectparams.annotationprocessing;
 import com.google.auto.service.AutoService;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.Symtab;
+import com.sun.tools.javac.code.Types;
 import com.sun.tools.javac.comp.Attr;
 import com.sun.tools.javac.comp.Enter;
 import com.sun.tools.javac.comp.MemberEnter;
@@ -59,7 +60,8 @@ public class MainProcessor extends AbstractProcessor {
                     Symtab.instance(javacProcessingEnv.getContext()),
                     Attr.instance(javacProcessingEnv.getContext()),
                     Enter.instance(javacProcessingEnv.getContext()),
-                    MemberEnter.instance(javacProcessingEnv.getContext()));
+                    MemberEnter.instance(javacProcessingEnv.getContext()),
+                    Types.instance(javacProcessingEnv.getContext()));
             ExpressionMaker.init(treeMaker, Names.instance(javacProcessingEnv.getContext()));
             DefaultValueInjector.messager = processingEnv.getMessager();
             PathUtils.init(trees);
