@@ -58,15 +58,16 @@ public class TypeUtils {
             case "byte", "java.lang.Byte" -> symtab.byteType;
             case "short", "java.lang.Short" -> symtab.shortType;
             case "char", "java.lang.Character" -> symtab.charType;
-            default -> {
-                var typeElement = elements.getTypeElement(name);
-                if (typeElement == null) {
-                    yield Type.noType;
-                }
-                var type = javacTypes.getDeclaredType(typeElement);
-                yield (Type) type;
-            }
+            default -> getNonPrimitiveTypeByName(name);
         };
+    }
+
+    private static Type getNonPrimitiveTypeByName(String name) {
+        var typeElement = elements.getTypeElement(name);
+        if (typeElement == null) {
+            return Type.noType;
+        }
+        return (Type) javacTypes.getDeclaredType(typeElement);
     }
 
 
@@ -87,15 +88,15 @@ public class TypeUtils {
 
     public static Type getBoxedType(Type type) {
         return switch (type.getTag()) {
-            case INT -> getTypeByName("java.lang.Integer");
-            case LONG -> getTypeByName("java.lang.Long");
-            case FLOAT -> getTypeByName("java.lang.Float");
-            case DOUBLE -> getTypeByName("java.lang.Double");
-            case BOOLEAN -> getTypeByName("java.lang.Boolean");
-            case VOID -> getTypeByName("java.lang.Void");
-            case BYTE -> getTypeByName("java.lang.Byte");
-            case SHORT -> getTypeByName("java.lang.Short");
-            case CHAR -> getTypeByName("java.lang.Character");
+            case INT -> getNonPrimitiveTypeByName("java.lang.Integer");
+            case LONG -> getNonPrimitiveTypeByName("java.lang.Long");
+            case FLOAT -> getNonPrimitiveTypeByName("java.lang.Float");
+            case DOUBLE -> getNonPrimitiveTypeByName("java.lang.Double");
+            case BOOLEAN -> getNonPrimitiveTypeByName("java.lang.Boolean");
+            case VOID -> getNonPrimitiveTypeByName("java.lang.Void");
+            case BYTE -> getNonPrimitiveTypeByName("java.lang.Byte");
+            case SHORT -> getNonPrimitiveTypeByName("java.lang.Short");
+            case CHAR -> getNonPrimitiveTypeByName("java.lang.Character");
             default -> type;
         };
     }

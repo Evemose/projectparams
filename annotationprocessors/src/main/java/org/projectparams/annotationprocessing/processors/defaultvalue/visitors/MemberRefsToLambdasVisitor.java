@@ -1,4 +1,4 @@
-package org.projectparams.annotationprocessing.processors.defaultvalue.visitors.reftolambda;
+package org.projectparams.annotationprocessing.processors.defaultvalue.visitors;
 
 import com.sun.source.tree.MemberReferenceTree;
 import com.sun.source.util.Trees;
@@ -152,16 +152,16 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
     }
 
     private List<JCTree.JCVariableDecl> getPassedArgsInner(JCTree.JCMemberReference memberReference, ParentInfo parentInfo) {
-        var requiredLambdaMeth = replaceAllTypeVars(
+        var funcInterface = replaceAllTypeVars(
                 parentInfo.possibleMethods().getFirst().getParameters()
                         .get(parentInfo.passedArgs().indexOf(memberReference)).type,
                 parentInfo.genericTypes().get()
         );
         var lambdaMethSym = Objects.requireNonNull(
-                getFuncMethod(requiredLambdaMeth.tsym, parentInfo.genericTypes().get())
+                getFuncMethod(funcInterface.tsym, parentInfo.genericTypes().get())
         );
         if (getDeclArgSym(memberReference, parentInfo) instanceof Symbol.TypeVariableSymbol) {
-            return getArgsForLambdaAsGeneric(lambdaMethSym, requiredLambdaMeth);
+            return getArgsForLambdaAsGeneric(lambdaMethSym, funcInterface);
         }
         var typeArgsInParams = lambdaMethSym.params()
                 .stream()
@@ -169,7 +169,7 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
                 .map(param -> param.type)
                 .toList();
         var lambdaMethArgTypes = getConvertedLambdaMethodArgumentTypes(
-                typeArgsInParams, lambdaMethSym, requiredLambdaMeth
+                typeArgsInParams, lambdaMethSym, funcInterface
         );
         return IntStream.range(0, lambdaMethArgTypes.size())
                 .mapToObj(i -> {
@@ -178,7 +178,9 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
                             "arg" + Math.abs(type.toString().hashCode()) + "UNIQUEENDING" + i,
                             type instanceof Type.TypeVar
                                     ? parentInfo.genericTypes().get().get(type.tsym.name)
-                                    : type);
+                                    : type instanceof Type.WildcardType ?
+                                    ((Type.WildcardType) type).type :
+                                    type);
                 }).toList();
     }
 
@@ -188,11 +190,16 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
                 .map(param -> replaceAllTypeVars(param.type, conversionMap));
     }
 
-    private static Map<Name, Type> getGenericsConversionMap(List<Type> typeArgsInParams, Symbol.MethodSymbol lambdaMethSym, Type requiredLambdaMeth) {
+    private static Map<Name, Type> getGenericsConversionMap(
+            List<Type> typeArgsInParams,
+            Symbol.MethodSymbol lambdaMethSym,
+            Type requiredLambdaMeth) {
         return IntStream.range(0, typeArgsInParams.size())
                 .boxed()
                 .collect(Collectors.toMap(
-                        i -> typeArgsInParams.get(i).tsym.name,
+                        i -> typeArgsInParams.get(i) instanceof Type.WildcardType?
+                                ((Type.WildcardType) typeArgsInParams.get(i)).type.tsym.name :
+                                typeArgsInParams.get(i).tsym.name,
                         i -> {
                             var typeArgsOfFuncInterface = getTypeArgs(lambdaMethSym);
                             return requiredLambdaMeth.getTypeArguments().get(
@@ -202,12 +209,12 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
                 ));
     }
 
-    private static List<JCTree.JCVariableDecl> getArgsForLambdaAsGeneric(Symbol.MethodSymbol lambdaMethSym, Type requiredLambdaMeth) {
+    private static List<JCTree.JCVariableDecl> getArgsForLambdaAsGeneric(Symbol.MethodSymbol lambdaMethSym, Type fincInterface) {
         return lambdaMethSym.params().stream().map(param -> ExpressionMaker.makeVariableDecl(
                 "arg" + Math.abs(param.type.toString().hashCode())
                         + "UNIQUEENDING" + param.toString().hashCode(),
                 param.type instanceof Type.TypeVar
-                        ? requiredLambdaMeth.getTypeArguments().get(
+                        ? fincInterface.getTypeArguments().get(
                         getTypeArgs(lambdaMethSym).indexOf(param.type))
                         : param.type
         )).toList();
@@ -346,8 +353,8 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
                 .findFirst();
         if (index.isEmpty()) {
             return tryInferFromArgTypeArgs(symGeneric, parameters, args).orElse(
-                    tryInferFromMemberRefs(symGeneric, args)
-                            .orElse(null));
+                    tryInferFromMemberRefs(symGeneric, args, parameters)
+                            .orElseThrow(() -> new IllegalStateException("No passed type for generic: " + symGeneric)));
         }
         if (index.getAsInt() >= passedArgsTypes.size()) {
             throw new IllegalStateException("No passed type for generic: " + symGeneric);
@@ -355,8 +362,68 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
         return passedArgsTypes.get(index.getAsInt());
     }
 
-    private Optional<Type> tryInferFromMemberRefs(Symbol.TypeVariableSymbol symGeneric, List<JCTree.JCExpression> args) {
-        return Optional.empty();
+    private Optional<Type> tryInferFromMemberRefs(
+            Symbol.TypeVariableSymbol symGeneric,
+            List<JCTree.JCExpression> args,
+            com.sun.tools.javac.util.List<Symbol.VarSymbol> parameters
+    ) {
+        var memberRefsMap = getMemberRefsMap(args);
+        return memberRefsMap.entrySet().stream()
+                .map(entry -> {
+                    var index = args.indexOf(entry.getKey());
+                    var funcMethod = Objects.requireNonNull(
+                            getFuncMethod(parameters.get(index).type.tsym, Collections.emptyMap())
+                    );
+                    var lambdaParamTypes = funcMethod.params().map(param -> param.type);
+                    var conversionMap = getTypeArgs(funcMethod).stream()
+                            .collect(Collectors.toMap(
+                                    type -> {
+                                        var res = parameters.get(index).type.getTypeArguments().get(
+                                                getTypeArgs(funcMethod).indexOf(type)
+                                        );
+                                        return (res instanceof Type.WildcardType
+                                                ? ((Type.WildcardType) res).type
+                                                : res).tsym.name;
+                                    },
+                                    type -> type,
+                                    (a, b) -> a
+                            ));
+                    var inferredInLambda = lambdaParamTypes.stream()
+                            .collect(Collectors.toMap(
+                                    type -> type.tsym.name,
+                                    type -> entry.getValue().params().get(
+                                            IntStream.range(0, lambdaParamTypes.size())
+                                                    .filter(i -> Objects.equals(
+                                                            funcMethod.params().get(i).type, type
+                                                    ))
+                                                    .findFirst().orElseThrow(() -> new IllegalStateException(
+                                                            "No matching type for: " + type
+                                                    ))
+                                    ).type
+                            ));
+                    return TypeUtils.getBoxedType(inferredInLambda.get(conversionMap.getOrDefault(symGeneric.name,
+                            symGeneric.type).tsym.name));
+                }).filter(Objects::nonNull).findFirst();
+    }
+
+    private Map<JCTree.JCMemberReference, Symbol.MethodSymbol> getMemberRefsMap(
+            List<JCTree.JCExpression> args
+    ) {
+        return args.stream()
+                .filter(JCTree.JCMemberReference.class::isInstance)
+                .map(JCTree.JCMemberReference.class::cast)
+                .collect(Collectors.toMap(
+                        ref -> ref,
+                        ref -> getAllAccessibleMembers((Symbol.ClassSymbol) Objects.requireNonNullElseGet(
+                                ref.expr.type, () -> {
+                                    var temp = ExpressionMaker.makeFieldAccess(ref.expr, ref.name.toString());
+                                    TypeUtils.attributeExpression(temp, getCurrentPath());
+                                    return temp.selected.type;
+                                }).tsym, ref.getName(), null)
+                                .filter(Symbol.MethodSymbol.class::isInstance)
+                                .map(Symbol.MethodSymbol.class::cast)
+                                .findFirst().orElseThrow()
+                ));
     }
 
     private Optional<Type> tryInferFromArgTypeArgs(Symbol.TypeVariableSymbol symGeneric,
@@ -420,10 +487,6 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
                                                          JCTree.JCExpression parentOwner,
                                                          AtomicReference<Map<Name, Type>> genericTypes) {
         var parentSym = getParentSymbol(parentOwner);
-        var className = CUContext.from(getCurrentPath().getCompilationUnit())
-                .getMatchingImportedOrStaticClass(parentSym.getQualifiedName().toString())
-                .orElse(parentSym.getQualifiedName().toString());
-        parentSym = TypeUtils.getTypeByName(className).tsym;
         parentSym.complete();
         if (parentSym instanceof Symbol.ClassSymbol parentClass) {
             return getAllAccessibleMembers(parentClass, methName, null)
@@ -534,17 +597,20 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
     }
 
     private Symbol getParentSymbol(JCTree.JCExpression parentOwner) {
-        if (parentOwner instanceof JCTree.JCMethodInvocation meth) {
-            return getSymbol(switch (meth.meth) {
+        var parentSym = switch (parentOwner) {
+            case JCTree.JCMethodInvocation meth -> getSymbol(switch (meth.meth) {
                 case JCTree.JCFieldAccess fieldAccess -> fieldAccess.selected;
                 case JCTree.JCIdent ident -> ident;
                 default -> throw new IllegalStateException("Unexpected method invocation: " + meth);
             });
-        }
-        if (parentOwner instanceof JCTree.JCNewClass cl) {
-            return getSymbol(cl.clazz);
-        }
-        return getSymbol(parentOwner);
+            case JCTree.JCNewClass cl -> getSymbol(cl.clazz);
+            case JCTree.JCMemberReference jcMemberReference -> getSymbol(jcMemberReference.expr);
+            default -> getSymbol(parentOwner);
+        };
+        var className = CUContext.from(getCurrentPath().getCompilationUnit())
+                .getMatchingImportedOrStaticClass(parentSym.getQualifiedName().toString())
+                .orElse(parentSym.getQualifiedName().toString());
+        return TypeUtils.getTypeByName(className).tsym;
     }
 
     private Symbol getSymbol(JCTree.JCExpression parentOwner) {
@@ -612,8 +678,10 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
         var atomicCounter = new AtomicInteger(0);
         return methodSym.getParameters().get(argIndex).type.getTypeArguments().stream()
                 .collect(Collectors.toMap(
-                        typeArg -> typeArg.tsym.name,
-                        typeArg -> new ArrayList<>(
+                        type -> type instanceof Type.WildcardType
+                                ? ((Type.WildcardType) type).type.tsym.name
+                                : type.tsym.name,
+                        type -> new ArrayList<>(
                                 List.of(funcMethTypeArgs.get(atomicCounter.getAndIncrement()).tsym.name)
                         ),
                         (l1, l2) -> {

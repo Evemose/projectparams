@@ -8,7 +8,7 @@ import org.projectparams.annotationprocessing.astcommons.visitors.PostModificati
 import org.projectparams.annotationprocessing.astcommons.visitors.ReevaluateTreePositionsVisitor;
 import org.projectparams.annotationprocessing.processors.GlobalAnnotationProcessor;
 import org.projectparams.annotationprocessing.processors.defaultvalue.argumentsuppliers.DefaultArgumentSupplier;
-import org.projectparams.annotationprocessing.processors.defaultvalue.visitors.reftolambda.MemberRefsToLambdasVisitor;
+import org.projectparams.annotationprocessing.processors.defaultvalue.visitors.MemberRefsToLambdasVisitor;
 import org.projectparams.annotationprocessing.processors.defaultvalue.visitors.MethodCallModifierVisitor;
 import org.projectparams.annotations.DefaultValue;
 

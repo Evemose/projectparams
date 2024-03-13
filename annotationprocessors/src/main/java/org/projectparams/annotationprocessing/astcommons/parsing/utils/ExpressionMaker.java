@@ -197,7 +197,10 @@ public class ExpressionMaker {
                                 .map(ExpressionMaker::makeTypeIdent)
                                 .toArray(JCTree.JCExpression[]::new));
             } else {
-                typeIdent = makeIdent(type.toString());
+                typeIdent = type instanceof Type.WildcardType ?
+                        treeMaker.Wildcard(treeMaker.TypeBoundKind(((Type.WildcardType) type).kind),
+                                makeTypeIdent(((Type.WildcardType) type).type))
+                        : makeIdent(type.toString());
             }
             return typeIdent;
         }

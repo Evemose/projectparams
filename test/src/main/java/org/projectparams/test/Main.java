@@ -39,7 +39,7 @@ public class Main {
         System.out.println(samovar());
         System.out.println(newnew());
         Main.<String>params();
-        // List.of(1, 2, 3).forEach(Main::somavarus);
+        List.of(1, 2, 3).forEach(Main::somavarus);
         susu(3d, List.of(List.of(1)), Main::getoto);
         Function<Integer, Integer> someVar = Main::getOne;
         lambda();
@@ -50,9 +50,9 @@ public class Main {
         System.out.println(" " + someVar.apply(list.get(0).get(0), list.get(0).get(0)));
     }
 
-    private static int getoto(double i,
+    private static int getoto(int i,
                               @DefaultValue("5") int someVar,
-                              @DefaultValue("Main::getZero") Supplier<Integer> someVar2) {
+                              @DefaultValue("Main::getFive") Supplier<Integer> someVar2) {
         return 1;
     }
 
