@@ -401,8 +401,18 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
                                                     ))
                                     ).type
                             ));
-                    return TypeUtils.getBoxedType(inferredInLambda.get(conversionMap.getOrDefault(symGeneric.name,
-                            symGeneric.type).tsym.name));
+                    var inferred = inferredInLambda.get(conversionMap.getOrDefault(symGeneric.name,
+                            symGeneric.type).tsym.name);
+                    if (inferred == null) {
+                        return null;
+                    }
+                    return TypeUtils.getBoxedType(
+                            inferred instanceof Type.TypeVar
+                                    ? entry.getKey().getTypeArguments().get(
+                                    getTypeArgs(entry.getValue()).indexOf(inferred)
+                            ).type
+                                    : inferred
+                    );
                 }).filter(Objects::nonNull).findFirst();
     }
 
