@@ -33,4 +33,11 @@ public class LoggingVisitor extends AbstractVisitor<Void, Void> {
                 variableTree.getInitializer() + " and var type: " + asJC.vartype);
         return super.visitVariable(variableTree, aVoid);
     }
+
+    @Override
+    public Void visitAssignment(com.sun.source.tree.AssignmentTree assignmentTree, Void aVoid) {
+        var asJC = (JCTree.JCAssign) assignmentTree;
+        messager.printMessage(Diagnostic.Kind.NOTE, "Assignment: " + assignmentTree + " with type: " + asJC.type);
+        return super.visitAssignment(assignmentTree, aVoid);
+    }
 }

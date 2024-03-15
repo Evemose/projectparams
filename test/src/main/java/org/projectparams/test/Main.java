@@ -17,6 +17,8 @@ public class Main {
     private static boolean someVar = false;
 
     public static void main(String[] args) {
+        susu(3d, List.of(List.of(1)), Main::getoto);
+        List.of(1, 2, 3).forEach(Main::somavarus);
         var abobus = new Abobus();
         var sucus = new Sucus();
         var classBibus = abobus.new Bibus().new UltimaPopus(new Sucus(), 3.4f).ororos(56f);
@@ -39,19 +41,20 @@ public class Main {
         System.out.println(samovar());
         System.out.println(newnew());
         Main.<String>params();
-        List.of(1, 2, 3).forEach(Main::somavarus);
-        susu(3d, List.of(List.of(1)), Main::getoto);
         Function<Integer, Integer> someVar = Main::getOne;
         lambda();
         bibo();
     }
 
-    private static <K, R> void susu(K k, List<List<R>> list, BiFunction<R, R, R> someVar) {
-        System.out.println(" " + someVar.apply(list.get(0).get(0), list.get(0).get(0)));
+    private static <K, R> void susu(K k,
+                                    List<List<R>> list,
+                                    BiFunction<R, K, R> someVar,
+                                    @DefaultValue("Main::getFive") Supplier<Integer> someVar2) {
+        System.out.println(" " + someVar.apply(list.get(0).get(0), k));
     }
 
-    private static int getoto(int i,
-                              @DefaultValue("5") int someVar,
+    private static int getoto(Integer i,
+                              @DefaultValue("5") double someVar,
                               @DefaultValue("Main::getFive") Supplier<Integer> someVar2) {
         return 1;
     }

@@ -45,8 +45,7 @@ public class DefaultValueInjector {
             if (defaultValue == null) {
                 continue;
             }
-            if (LiteralExpressionType.getInstance().matches(defaultValue.expression())
-                    || TypeUtils.isPrimitiveOrBoxedType(defaultValue.type())) {
+            if (LiteralExpressionType.getInstance().matches(defaultValue.expression())) {
                 continue;
             }
             var expression = ExpressionFactory.createExpression(

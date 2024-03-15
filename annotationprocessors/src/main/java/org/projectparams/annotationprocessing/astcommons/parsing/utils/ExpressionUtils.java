@@ -1,5 +1,7 @@
 package org.projectparams.annotationprocessing.astcommons.parsing.utils;
 
+import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.util.Name;
 import org.projectparams.annotationprocessing.astcommons.parsing.ExpressionType;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.CreateExpressionParams;
 import org.projectparams.annotationprocessing.astcommons.parsing.expressions.Expression;
@@ -84,5 +86,13 @@ public class ExpressionUtils {
         return ParsingUtils.getArrayDimensions(dimensionsString)
                 .stream()
                 .map(dim -> ExpressionFactory.createExpression(createExpression.withExpressionAndNullTag(dim))).toList();
+    }
+
+    public static Name getName(JCTree.JCExpression expr) {
+        return switch (expr) {
+            case JCTree.JCIdent ident -> ident.name;
+            case JCTree.JCFieldAccess fieldAccess -> fieldAccess.name;
+            default -> throw new IllegalStateException("Unexpected type argument: " + expr);
+        };
     }
 }

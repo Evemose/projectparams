@@ -19,8 +19,8 @@ public abstract class AbstractInvocableTree<T extends ExpressionTree> implements
     }
 
     @Override
-    public T getWrapped() {
-        return wrapped;
+    public JCTree getWrapped() {
+        return (JCTree) wrapped;
     }
 
     @Override

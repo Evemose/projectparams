@@ -20,8 +20,8 @@ public class ProcessingUtils {
 
     public static JavacProcessingEnvironment getJavacProcessingEnvironment(Object procEnv)
             throws ProcessingEnvironmentException {
-        if (procEnv instanceof ProcessingEnvironment processingEnv) {
-            addOpensInModule(processingEnv);
+        if (procEnv instanceof ProcessingEnvironment) {
+            addOpensInModule();
         }
         if (procEnv instanceof JavacProcessingEnvironment jProcessingEnv) {
             return jProcessingEnv;
@@ -34,7 +34,7 @@ public class ProcessingUtils {
     /**
      * this method opens required packages in jdk.compiler module to the current module
      */
-    public static void addOpensInModule(ProcessingEnvironment processingEnv) {
+    public static void addOpensInModule() {
         Class<?> moduleClass;
         try {
             moduleClass = Class.forName("java.lang.Module");
@@ -51,7 +51,9 @@ public class ProcessingUtils {
                 "com.sun.tools.javac.tree",
                 "com.sun.tools.javac.util",
                 "com.sun.tools.javac.code",
-                "com.sun.tools.javac.comp"
+                "com.sun.tools.javac.comp",
+                "com.sun.tools.javac.api",
+                "com.sun.tools.javac.file"
         );
         try {
             // add required for project opens to jdk.compiler module
@@ -65,8 +67,7 @@ public class ProcessingUtils {
                 }
             });
         } catch (Exception e) {
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
-                    "Could not add opens to jdk.compiler module " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 

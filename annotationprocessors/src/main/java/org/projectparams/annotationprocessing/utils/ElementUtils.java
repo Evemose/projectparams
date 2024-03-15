@@ -5,10 +5,7 @@ import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.Type;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.PackageElement;
-import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.*;
 import javax.lang.model.util.Elements;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,5 +81,24 @@ public class ElementUtils {
 
     public static Element getClassByPath(TreePath classPath) {
         return trees.getElement(classPath);
+    }
+
+    public static List<String> getGenericTypeNames(ExecutableElement method) {
+        var params = method.getTypeParameters()
+                .stream().map(TypeParameterElement::getSimpleName).map(Name::toString).toList();
+        if (!method.getModifiers().contains(Modifier.STATIC)) {
+            getGenericTypeNames((TypeElement) method.getEnclosingElement()).forEach(params::addFirst);
+        }
+        return params;
+    }
+
+    public static List<String> getGenericTypeNames(TypeElement classElement) {
+        var params = classElement.getTypeParameters()
+                .stream().map(TypeParameterElement::getSimpleName).map(Name::toString).toList();
+        if (!classElement.getModifiers().contains(Modifier.STATIC)
+                && classElement.getEnclosingElement().getKind() != ElementKind.PACKAGE) {
+            getGenericTypeNames((TypeElement) classElement.getEnclosingElement()).forEach(params::addFirst);
+        }
+        return params;
     }
 }

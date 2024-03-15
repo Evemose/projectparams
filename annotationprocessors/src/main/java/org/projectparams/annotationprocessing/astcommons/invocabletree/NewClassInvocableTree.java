@@ -2,13 +2,19 @@ package org.projectparams.annotationprocessing.astcommons.invocabletree;
 
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.NewClassTree;
+import com.sun.source.tree.Tree;
 import com.sun.source.util.TreePath;
+import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.TreeInfo;
+import com.sun.tools.javac.util.Name;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
+import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class NewClassInvocableTree extends AbstractInvocableTree<NewClassTree> {
 
@@ -35,7 +41,7 @@ public class NewClassInvocableTree extends AbstractInvocableTree<NewClassTree> {
     public void setArguments(ExpressionTree... arguments) {
         var asJC = (JCTree.JCNewClass) wrapped;
         asJC.args = com.sun.tools.javac.util.List.from(
-                Arrays.stream(arguments).map(t -> (JCTree.JCExpression) t).toArray(JCTree.JCExpression[]::new));
+                Arrays.stream(arguments).map(JCTree.JCExpression.class::cast).toArray(JCTree.JCExpression[]::new));
     }
 
 
@@ -78,5 +84,27 @@ public class NewClassInvocableTree extends AbstractInvocableTree<NewClassTree> {
             throw new IllegalArgumentException("Cannot set return type of constructor to anything other than " +
                     "the owner type. Got: " + returnType + " for " + wrapped);
         }
+    }
+
+    @Override
+    public InvocableTree withActualTypes(Map<Name, Type> conversionMap) {
+        var asJC = (JCTree.JCNewClass) wrapped;
+        var newAsJc = ExpressionMaker.makeNewClass(
+                asJC.encl,
+                asJC.clazz.toString(),
+                asJC.typeargs,
+                asJC.args.toArray(new JCTree.JCExpression[0])
+        );
+        return new NewClassInvocableTree(newAsJc, pathToWrapped);
+    }
+
+    @Override
+    public List<JCTree> getTypeArguments() {
+        return wrapped.getTypeArguments().stream().map(JCTree.class::cast).toList();
+    }
+
+    @Override
+    public ExpressionTree getOwner() {
+        return ((JCTree.JCNewClass) wrapped).clazz;
     }
 }

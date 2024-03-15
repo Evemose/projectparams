@@ -5,9 +5,12 @@ import com.sun.source.tree.NewClassTree;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.List;
+import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.MethodInvocableTree;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.NewClassInvocableTree;
+import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
+import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionUtils;
 import org.projectparams.annotationprocessing.astcommons.visitors.AbstractVisitor;
 import org.projectparams.annotationprocessing.exceptions.UnsupportedSignatureException;
 import org.projectparams.annotationprocessing.processors.defaultvalue.InvocableInfo;
@@ -16,6 +19,9 @@ import org.projectparams.annotationprocessing.processors.defaultvalue.argumentsu
 import javax.annotation.processing.Messager;
 import javax.tools.Diagnostic;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class MethodCallModifierVisitor extends AbstractVisitor<Void, InvocableInfo> {
     private final Set<InvocableTree> fixedMethodsInIteration;
@@ -46,7 +52,6 @@ public class MethodCallModifierVisitor extends AbstractVisitor<Void, InvocableIn
     }
 
     private void visitInvocable(InvocableTree invocation, InvocableInfo invocableInfo) {
-
         if (!allFixedMethods.contains(invocation) &&
                 invocableInfo.matches(invocation)) {
             List<JCTree.JCExpression> args;
