@@ -678,9 +678,9 @@ public class TypeUtils {
 
     @SuppressWarnings("unchecked")
     private static boolean isRefAssignableTo(JCTree.JCMemberReference ref,
-                                      Symbol.MethodSymbol lambdaMethSym,
-                                      Map<Name, Type> generics,
-                                      Map<Name, ? extends List<Name>> genericsConversionMap,
+                                             Symbol.MethodSymbol lambdaMethSym,
+                                             Map<Name, Type> generics,
+                                             Map<Name, ? extends List<Name>> genericsConversionMap,
                                              TreePath currentPath) {
         if (lambdaMethSym == null) {
             return false;
@@ -706,7 +706,7 @@ public class TypeUtils {
                                             List.of(e.getKey())
                                     ).stream().map(name ->
                                             Map.entry(name, e.getValue())
-                            )).collect(Collectors.toMap(
+                                    )).collect(Collectors.toMap(
                                     Map.Entry::getKey,
                                     Map.Entry::getValue
                             )));

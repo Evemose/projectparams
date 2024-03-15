@@ -26,6 +26,42 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
         super(trees, messager);
     }
 
+    private static Map<Name, Type> getGenericsConversionMap(
+            List<Type> typeArgsInParams,
+            Symbol.MethodSymbol lambdaMethSym,
+            Type requiredLambdaMeth) {
+        return IntStream.range(0, typeArgsInParams.size())
+                .boxed()
+                .collect(Collectors.toMap(
+                        i -> typeArgsInParams.get(i) instanceof Type.WildcardType ?
+                                ((Type.WildcardType) typeArgsInParams.get(i)).type.tsym.name :
+                                typeArgsInParams.get(i).tsym.name,
+                        i -> {
+                            var typeArgsOfFuncInterface = TypeUtils.getTypeArgs(lambdaMethSym);
+                            return requiredLambdaMeth.getTypeArguments().get(
+                                    typeArgsOfFuncInterface.indexOf(typeArgsInParams.get(i))
+                            );
+                        }
+                ));
+    }
+
+    private static List<JCTree.JCVariableDecl> getArgsForLambdaAsGeneric(Symbol.MethodSymbol lambdaMethSym, Type fincInterface) {
+        return lambdaMethSym.params().stream().map(param -> ExpressionMaker.makeVariableDecl(
+                "arg" + Math.abs(param.type.toString().hashCode())
+                        + "UNIQUEENDING" + param.toString().hashCode(),
+                param.type instanceof Type.TypeVar
+                        ? fincInterface.getTypeArguments().get(
+                        TypeUtils.getTypeArgs(lambdaMethSym).indexOf(param.type))
+                        : param.type
+        )).toList();
+    }
+
+    private static Symbol.TypeSymbol getDeclArgSym(JCTree.JCMemberReference memberReference, ParentInfo parentInfo) {
+        return parentInfo.possibleMethods().getFirst().params().get(
+                parentInfo.passedArgs().indexOf(memberReference))
+                .type.tsym;
+    }
+
     private JCTree.JCExpression getBodyExpr(JCTree.JCMemberReference memberReference, List<JCTree.JCVariableDecl> args) {
         if (memberReference.mode == MemberReferenceTree.ReferenceMode.INVOKE) {
             return ExpressionMaker.makeMethodInvocation(
@@ -98,12 +134,6 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
         }
     }
 
-    private record LambdaInfo(
-            List<JCTree.JCVariableDecl> passedArgs,
-            Type lambdaType
-    ) {
-    }
-
     private LambdaInfo getLambdaInfo(JCTree parent, JCTree.JCMemberReference memberReference) {
         if (parent instanceof JCTree.JCVariableDecl varDecl) {
             return getLambdaInfoFromVariableDecl(varDecl);
@@ -127,7 +157,7 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
         var atomicCounter = new AtomicInteger(0);
         return new LambdaInfo(expectedArgs.stream().map(type ->
                 ExpressionMaker.makeVariableDecl(
-                "arg" + Math.abs(type.toString().hashCode()) + "UNIQUEENDING" + atomicCounter.getAndIncrement(),
+                        "arg" + Math.abs(type.toString().hashCode()) + "UNIQUEENDING" + atomicCounter.getAndIncrement(),
                         type
                 )).toList(),
                 varDecl.vartype.type
@@ -189,42 +219,6 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
                 .map(param -> TypeUtils.replaceAllTypeVars(param.type, conversionMap));
     }
 
-    private static Map<Name, Type> getGenericsConversionMap(
-            List<Type> typeArgsInParams,
-            Symbol.MethodSymbol lambdaMethSym,
-            Type requiredLambdaMeth) {
-        return IntStream.range(0, typeArgsInParams.size())
-                .boxed()
-                .collect(Collectors.toMap(
-                        i -> typeArgsInParams.get(i) instanceof Type.WildcardType?
-                                ((Type.WildcardType) typeArgsInParams.get(i)).type.tsym.name :
-                                typeArgsInParams.get(i).tsym.name,
-                        i -> {
-                            var typeArgsOfFuncInterface = TypeUtils.getTypeArgs(lambdaMethSym);
-                            return requiredLambdaMeth.getTypeArguments().get(
-                                    typeArgsOfFuncInterface.indexOf(typeArgsInParams.get(i))
-                            );
-                        }
-                ));
-    }
-
-    private static List<JCTree.JCVariableDecl> getArgsForLambdaAsGeneric(Symbol.MethodSymbol lambdaMethSym, Type fincInterface) {
-        return lambdaMethSym.params().stream().map(param -> ExpressionMaker.makeVariableDecl(
-                "arg" + Math.abs(param.type.toString().hashCode())
-                        + "UNIQUEENDING" + param.toString().hashCode(),
-                param.type instanceof Type.TypeVar
-                        ? fincInterface.getTypeArguments().get(
-                        TypeUtils.getTypeArgs(lambdaMethSym).indexOf(param.type))
-                        : param.type
-        )).toList();
-    }
-
-    private static Symbol.TypeSymbol getDeclArgSym(JCTree.JCMemberReference memberReference, ParentInfo parentInfo) {
-        return parentInfo.possibleMethods().getFirst().params().get(
-                parentInfo.passedArgs().indexOf(memberReference))
-                .type.tsym;
-    }
-
     private ParentInfo getParentInfo(JCTree parent) {
         return switch (parent) {
             case JCTree.JCMethodInvocation meth -> getParentInfoFromMeth(meth);
@@ -260,6 +254,12 @@ public class MemberRefsToLambdasVisitor extends AbstractVisitor<Void, Void> {
         return new ParentInfo(meth.args,
                 TypeUtils.getMatchingMethods(ExpressionUtils.getName(meth.meth), meth.args, parentOwner, genericTypes, getCurrentPath()),
                 genericTypes);
+    }
+
+    private record LambdaInfo(
+            List<JCTree.JCVariableDecl> passedArgs,
+            Type lambdaType
+    ) {
     }
 
     private record ParentInfo(com.sun.tools.javac.util.List<JCTree.JCExpression> passedArgs,

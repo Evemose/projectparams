@@ -21,7 +21,7 @@ public class ReevaluateTreePositionsVisitor extends TreePathScanner<Void, Void> 
 
     @Override
     public Void visitMethod(MethodTree tree, Void aVoid) {
-        
+
         updatePositions(tree.getParameters());
         updatePositions(tree.getBody().getStatements());
         return super.visitMethod(tree, aVoid);
@@ -29,7 +29,7 @@ public class ReevaluateTreePositionsVisitor extends TreePathScanner<Void, Void> 
 
     @Override
     public Void visitMethodInvocation(MethodInvocationTree tree, Void aVoid) {
-        
+
         updatePositions(setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree.getTypeArguments().stream().map(Tree.class::cast).toArray(Tree[]::new)));
         updatePositions(setOfIgnoreNullsPreserveOrderExcludeParent(tree,
                 tree.getArguments().stream().map(Tree.class::cast).toArray(Tree[]::new)));
@@ -65,7 +65,7 @@ public class ReevaluateTreePositionsVisitor extends TreePathScanner<Void, Void> 
 
     @Override
     public Void visitLambdaExpression(LambdaExpressionTree tree, Void aVoid) {
-        
+
         updatePositions(tree.getParameters());
         updatePositions(setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree.getBody()));
         return super.visitLambdaExpression(tree, aVoid);
@@ -73,7 +73,7 @@ public class ReevaluateTreePositionsVisitor extends TreePathScanner<Void, Void> 
 
     @Override
     public Void visitMemberReference(MemberReferenceTree tree, Void aVoid) {
-        
+
         updatePositions(setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree.getQualifierExpression()));
         if (tree.getTypeArguments() != null) {
             updatePositions(setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree.getTypeArguments().stream().map(Tree.class::cast).toArray(Tree[]::new)));
@@ -83,21 +83,21 @@ public class ReevaluateTreePositionsVisitor extends TreePathScanner<Void, Void> 
 
     @Override
     public Void visitMemberSelect(MemberSelectTree tree, Void aVoid) {
-        
+
         updatePositions(setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree.getExpression()));
         return super.visitMemberSelect(tree, aVoid);
     }
 
     @Override
     public Void visitParenthesized(ParenthesizedTree tree, Void aVoid) {
-        
+
         updatePositions(setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree.getExpression()));
         return super.visitParenthesized(tree, aVoid);
     }
 
     @Override
     public Void visitTypeCast(TypeCastTree tree, Void aVoid) {
-        
+
         updatePositions(setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree.getType()));
         updatePositions(setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree.getExpression()));
         return super.visitTypeCast(tree, aVoid);
@@ -105,7 +105,7 @@ public class ReevaluateTreePositionsVisitor extends TreePathScanner<Void, Void> 
 
     @Override
     public Void visitInstanceOf(InstanceOfTree tree, Void aVoid) {
-        
+
         updatePositions(setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree.getExpression(), tree.getType()));
         updatePositions(setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree.getType()));
         return super.visitInstanceOf(tree, aVoid);
@@ -113,14 +113,14 @@ public class ReevaluateTreePositionsVisitor extends TreePathScanner<Void, Void> 
 
     @Override
     public Void visitUnary(UnaryTree tree, Void aVoid) {
-        
+
         updatePositions(setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree.getExpression()));
         return super.visitUnary(tree, aVoid);
     }
 
     @Override
     public Void visitBinary(BinaryTree tree, Void aVoid) {
-        
+
         updatePositions(setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree.getLeftOperand()));
         updatePositions(setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree.getRightOperand()));
         return super.visitBinary(tree, aVoid);
@@ -128,7 +128,7 @@ public class ReevaluateTreePositionsVisitor extends TreePathScanner<Void, Void> 
 
     @Override
     public Void visitConditionalExpression(ConditionalExpressionTree tree, Void aVoid) {
-        
+
         updatePositions(setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree.getCondition()));
         updatePositions(setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree.getTrueExpression()));
         updatePositions(setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree.getFalseExpression()));
@@ -137,7 +137,7 @@ public class ReevaluateTreePositionsVisitor extends TreePathScanner<Void, Void> 
 
     @Override
     public Void visitAssignment(AssignmentTree tree, Void aVoid) {
-        
+
         updatePositions(setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree, tree.getVariable()));
         updatePositions(setOfIgnoreNullsPreserveOrderExcludeParent(tree, tree.getExpression()));
         return super.visitAssignment(tree, aVoid);

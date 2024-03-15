@@ -8,7 +8,6 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.PackageElement;
-import javax.tools.Diagnostic;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;

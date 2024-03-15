@@ -4,7 +4,6 @@ import com.sun.tools.javac.tree.JCTree;
 
 import java.util.*;
 import java.util.function.BiPredicate;
-import java.util.function.Predicate;
 
 // this class contains complex algorithmic logic and i strongly not recommend to try to optimize or refactor it
 // unless you are sure that you understand the logic and the purpose of the code

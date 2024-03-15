@@ -108,6 +108,24 @@ public record InvocableInfo(
         }
     }
 
+    private static List<Type> getGenericTypesIn(Type type) {
+        var result = new ArrayList<Type>();
+        switch (type) {
+            case Type.ClassType classType -> {
+                result.addAll(classType.getTypeArguments().map(InvocableInfo::getGenericTypesIn)
+                        .stream().flatMap(Collection::stream).toList());
+            }
+            case Type.TypeVar typeVar -> result.add(typeVar);
+            case Type.WildcardType wildcardType -> {
+                result.addAll(getGenericTypesIn(wildcardType.type));
+            }
+            case Type.ArrayType arrayType -> result.addAll(getGenericTypesIn(arrayType.getComponentType()));
+            default -> {
+            }
+        }
+        return result;
+    }
+
     public InvocableInfo withName(String name) {
         return new InvocableInfo(
                 method,
@@ -142,23 +160,6 @@ public record InvocableInfo(
     private boolean doesExistingArgsMatch(List<? extends ExpressionTree> args) {
         var currentArgs = args.stream().map(TypeUtils::getActualType).toArray(Type[]::new);
         return doesExistingArgsMatch(currentArgs);
-    }
-
-    private static List<Type> getGenericTypesIn(Type type) {
-        var result = new ArrayList<Type>();
-        switch (type) {
-            case Type.ClassType classType -> {
-                result.addAll(classType.getTypeArguments().map(InvocableInfo::getGenericTypesIn)
-                        .stream().flatMap(Collection::stream).toList());
-            }
-            case Type.TypeVar typeVar -> result.add(typeVar);
-            case Type.WildcardType wildcardType -> {
-                result.addAll(getGenericTypesIn(wildcardType.type));
-            }
-            case Type.ArrayType arrayType -> result.addAll(getGenericTypesIn(arrayType.getComponentType()));
-            default -> {}
-        }
-        return result;
     }
 
     private Optional<Type> extractActualType(Type source, Type genericOwner, Type genericType) {

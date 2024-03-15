@@ -2,12 +2,9 @@ package org.projectparams.annotationprocessing.astcommons.invocabletree;
 
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodInvocationTree;
-import com.sun.source.tree.Tree;
 import com.sun.source.util.TreePath;
-import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.tree.TreeInfo;
 import com.sun.tools.javac.util.Name;
 import org.projectparams.annotationprocessing.astcommons.PathUtils;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
@@ -17,7 +14,6 @@ import org.projectparams.annotationprocessing.astcommons.parsing.utils.Expressio
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class MethodInvocableTree extends AbstractInvocableTree<MethodInvocationTree> {
 

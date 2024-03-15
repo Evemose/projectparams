@@ -1,7 +1,6 @@
 package org.projectparams.annotationprocessing.astcommons.invocabletree;
 
 import com.sun.source.tree.ExpressionTree;
-import com.sun.source.tree.Tree;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Name;
@@ -32,7 +31,10 @@ public interface InvocableTree extends ExpressionTree {
     void setReturnType(String type);
 
     List<Type> getArgumentTypes();
+
     InvocableTree withActualTypes(Map<Name, Type> conversionMap);
+
     List<JCTree> getTypeArguments();
+
     ExpressionTree getOwner();
 }
