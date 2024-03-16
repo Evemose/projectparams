@@ -94,14 +94,4 @@ public class NewClassInvocableTree extends AbstractInvocableTree<NewClassTree> {
         );
         return new NewClassInvocableTree(newAsJc, pathToWrapped);
     }
-
-    @Override
-    public List<JCTree> getTypeArguments() {
-        return wrapped.getTypeArguments().stream().map(JCTree.class::cast).toList();
-    }
-
-    @Override
-    public ExpressionTree getOwner() {
-        return ((JCTree.JCNewClass) wrapped).clazz;
-    }
 }

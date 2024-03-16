@@ -1,11 +1,13 @@
 package org.projectparams.annotationprocessing.processors.defaultvalue;
 
 import com.sun.source.tree.ExpressionTree;
+import com.sun.source.util.TreePath;
+import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.code.Type;
+import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Name;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
 import org.projectparams.annotationprocessing.astcommons.invocabletree.InvocableTree;
-import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
 import org.projectparams.annotationprocessing.utils.ElementUtils;
 import org.projectparams.annotations.DefaultValue;
 
@@ -108,24 +110,6 @@ public record InvocableInfo(
         }
     }
 
-    private static List<Type> getGenericTypesIn(Type type) {
-        var result = new ArrayList<Type>();
-        switch (type) {
-            case Type.ClassType classType -> {
-                result.addAll(classType.getTypeArguments().map(InvocableInfo::getGenericTypesIn)
-                        .stream().flatMap(Collection::stream).toList());
-            }
-            case Type.TypeVar typeVar -> result.add(typeVar);
-            case Type.WildcardType wildcardType -> {
-                result.addAll(getGenericTypesIn(wildcardType.type));
-            }
-            case Type.ArrayType arrayType -> result.addAll(getGenericTypesIn(arrayType.getComponentType()));
-            default -> {
-            }
-        }
-        return result;
-    }
-
     public InvocableInfo withName(String name) {
         return new InvocableInfo(
                 method,
@@ -154,70 +138,34 @@ public record InvocableInfo(
         }
         return possibleOwnerQualifiedNames.contains(ownerQualifiedName)
                 && methodName.equals(name)
-                && doesExistingArgsMatch(invocation.getArguments());
+                && doesExistingArgsMatch(
+                invocation.getArguments(),
+                invocation.getPath()
+        );
     }
 
-    private boolean doesExistingArgsMatch(List<? extends ExpressionTree> args) {
-        var currentArgs = args.stream().map(TypeUtils::getActualType).toArray(Type[]::new);
-        return doesExistingArgsMatch(currentArgs);
-    }
-
-    private Optional<Type> extractActualType(Type source, Type genericOwner, Type genericType) {
-        return switch (source) {
-            case Type.ClassType classType -> {
-                if (genericOwner.equals(genericType)) {
-                    yield Optional.of(classType);
-                }
-                yield IntStream.range(0, classType.getTypeArguments().size())
-                        .mapToObj(i -> extractActualType(
-                                classType.getTypeArguments().get(i),
-                                genericOwner.getTypeArguments().get(i),
-                                genericType)
-                        ).filter(Optional::isPresent)
-                        .map(Optional::get)
-                        .findFirst();
-            }
-            case Type.TypeVar typeVar -> {
-                if (genericOwner.equals(genericType)) {
-                    yield Optional.of(typeVar);
-                } else {
-                    yield Optional.empty();
-                }
-            }
-            case Type.WildcardType wildcardType -> extractActualType(
-                    wildcardType.type,
-                    ((Type.WildcardType) genericOwner).type,
-                    genericType
+    private boolean doesExistingArgsMatch(
+            List<? extends ExpressionTree> args,
+            TreePath path
+    ) {
+        var argTypes = args.stream().map(arg -> ((JCTree.JCExpression) arg).type).toArray(Type[]::new);
+        var asSymbol = (Symbol.MethodSymbol) method;
+        Map<Name, Type> inferred;
+        try {
+            inferred = TypeUtils.inferGenerics(
+                    args.stream().map(JCTree.JCExpression.class::cast).toList(),
+                    asSymbol.getParameters(),
+                    TypeUtils.getTypeArgs(asSymbol),
+                    path
             );
-            case Type.ArrayType arrayType -> extractActualType(
-                    arrayType.getComponentType(),
-                    ((Type.ArrayType) genericOwner).getComponentType(),
-                    genericType
-            );
-            case Type.JCPrimitiveType primitiveType -> Optional.of(TypeUtils.getBoxedType(primitiveType));
-            default -> Optional.empty();
-        };
-    }
-
-    private boolean doesExistingArgsMatch(Type... argTypes) {
-        var genericMapping = new HashMap<Name, Type>();
+        } catch (IllegalStateException e) {
+            inferred = Collections.emptyMap();
+        }
+        var finalInferred = inferred;
         return IntStream.range(0, argTypes.length)
-                .peek(i ->
-                        getGenericTypesIn(parameters.get(i).type).forEach(genericType -> {
-                            if (genericTypeNames.contains(genericType.toString())) {
-                                genericMapping.putIfAbsent(
-                                        ExpressionMaker.makeName(genericType.toString()),
-                                        extractActualType(
-                                                argTypes[i],
-                                                parameters.get(i).type,
-                                                genericType
-                                        ).orElseThrow()
-                                );
-                            }
-                        }))
                 .allMatch(i -> TypeUtils.isAssignable(
                         TypeUtils.getBoxedType(argTypes[i]),
-                        TypeUtils.replaceAllTypeVars(parameters.get(i).type, genericMapping)
+                        TypeUtils.replaceAllTypeVars(parameters.get(i).type, finalInferred)
                 ));
     }
 

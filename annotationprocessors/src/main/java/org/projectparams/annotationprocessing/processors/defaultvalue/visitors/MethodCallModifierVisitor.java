@@ -41,6 +41,9 @@ public class MethodCallModifierVisitor extends AbstractVisitor<Void, InvocableIn
 
     @Override
     public Void visitMethodInvocation(MethodInvocationTree invocation, InvocableInfo invocableInfo) {
+        if (invocableInfo.name().equals("susu")) {
+            var a = 3;
+        }
         visitInvocable(new MethodInvocableTree(invocation, getCurrentPath()), invocableInfo);
         return super.visitMethodInvocation(invocation, invocableInfo);
     }

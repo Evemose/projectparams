@@ -74,4 +74,9 @@ public abstract class AbstractInvocableTree<T extends ExpressionTree> implements
         return getArguments().stream().map(TypeUtils::getActualType).toList();
     }
 
+    @Override
+    public TreePath getPath() {
+        return pathToWrapped;
+    }
+
 }

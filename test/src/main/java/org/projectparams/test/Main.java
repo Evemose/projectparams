@@ -46,9 +46,9 @@ public class Main {
         bibo();
     }
 
-    private static <K, R> void susu(K k,
+    private static <K, R, O> void susu(K k,
                                     List<List<R>> list,
-                                    BiFunction<R, K, R> someVar,
+                                    BiFunction<R, K, O> someVar,
                                     @DefaultValue("Main::getFive") Supplier<Integer> someVar2) {
         System.out.println(" " + someVar.apply(list.get(0).get(0), k));
     }
@@ -69,7 +69,7 @@ public class Main {
     }
 
     public Main(int i) {
-        //var m = new org.projectparams.test.Main(Main::getOne);
+        var m = new org.projectparams.test.Main(Main::getOne);
     }
 
     public Main(Function<Integer, Integer> someVar) {

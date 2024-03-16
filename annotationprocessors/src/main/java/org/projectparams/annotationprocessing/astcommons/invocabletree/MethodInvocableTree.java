@@ -6,9 +6,7 @@ import com.sun.source.util.TreePath;
 import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Name;
-import org.projectparams.annotationprocessing.astcommons.PathUtils;
 import org.projectparams.annotationprocessing.astcommons.TypeUtils;
-import org.projectparams.annotationprocessing.astcommons.context.ClassContext;
 import org.projectparams.annotationprocessing.astcommons.parsing.utils.ExpressionMaker;
 
 import java.util.Arrays;
@@ -74,24 +72,6 @@ public class MethodInvocableTree extends AbstractInvocableTree<MethodInvocationT
         );
         newAsJC.type = conversionMap.getOrDefault(asJC.type.tsym.name, asJC.type);
         return new MethodInvocableTree(newAsJC, pathToWrapped);
-    }
-
-    @Override
-    public List<JCTree> getTypeArguments() {
-        return wrapped.getTypeArguments().stream().map(JCTree.class::cast).toList();
-    }
-
-    @Override
-    public ExpressionTree getOwner() {
-        var meth = ((JCTree.JCMethodInvocation) wrapped).meth;
-        if (meth instanceof JCTree.JCFieldAccess fieldAccess) {
-            return fieldAccess.selected;
-        } else {
-            return ClassContext.of(PathUtils.getEnclosingClassPath(pathToWrapped))
-                    .getMatchingMethod(meth.toString())
-                    .map(m -> ExpressionMaker.makeIdent(m.className()))
-                    .orElseThrow();
-        }
     }
 
     @Override

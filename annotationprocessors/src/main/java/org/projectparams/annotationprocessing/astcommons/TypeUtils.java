@@ -409,7 +409,7 @@ public class TypeUtils {
                 .filter(i -> Objects.equals(parameters.get(i).type.tsym, symGeneric))
                 .findFirst();
         if (index.isEmpty()) {
-            return tryInferFromArgTypeArgs(symGeneric, parameters, args).orElse(
+            return tryInferFromArgTypeArgs(symGeneric, parameters, args).orElseGet(() ->
                     tryInferFromMemberRefs(symGeneric, args, parameters, currentPath)
                             .orElseThrow(() -> new IllegalStateException("No passed type for generic: " + symGeneric)));
         }
@@ -446,7 +446,15 @@ public class TypeUtils {
                                     type -> type,
                                     (a, b) -> a
                             ));
-                    var inferredInLambda = lambdaParamTypes.stream()
+                    Map<Name, Type> inferredInLambda = new HashMap<>();
+                    if (funcMethod.getReturnType() instanceof Type.TypeVar) {
+                        inferredInLambda.put(
+                                funcMethod.getReturnType().tsym.name,
+                                entry.getValue().getReturnType()
+                        );
+                    }
+                    inferredInLambda.putAll(lambdaParamTypes.stream()
+                            .filter(type -> !inferredInLambda.containsKey(type.tsym.name))
                             .collect(Collectors.toMap(
                                     type -> type.tsym.name,
                                     type -> entry.getValue().params().get(
@@ -455,10 +463,10 @@ public class TypeUtils {
                                                             funcMethod.params().get(i).type, type
                                                     ))
                                                     .findFirst().orElseThrow(() -> new IllegalStateException(
-                                                            "No matching type for: " + type
+                                                            "No matching parameter for type: " + type
                                                     ))
                                     ).type
-                            ));
+                            )));
                     var inferred = inferredInLambda.get(conversionMap.getOrDefault(symGeneric.name,
                             symGeneric.type).tsym.name);
                     if (inferred == null) {
@@ -498,7 +506,7 @@ public class TypeUtils {
     private static Optional<Type> tryInferFromArgTypeArgs(Symbol.TypeVariableSymbol symGeneric,
                                                           List<Symbol.VarSymbol> parameters,
                                                           List<JCTree.JCExpression> args) {
-        for (var i = 0; i < parameters.size(); i++) {
+        for (var i = 0; i < args.size(); i++) {
             var inferred = tryInferFromArgTypeArgsInner(symGeneric, parameters.get(i).type, args.get(i).type);
             if (inferred.isPresent()) {
                 return inferred;
@@ -685,31 +693,42 @@ public class TypeUtils {
         if (lambdaMethSym == null) {
             return false;
         }
-        var refSym = ref.sym;
-        if (refSym == null) {
+        Symbol refSym;
+        if (ref.sym == null) {
             var tree = ExpressionMaker.makeFieldAccess(ref.expr, ref.name.toString());
             attributeExpression(tree, currentPath);
             var ownerType = tree.selected.type;
             refSym = StreamSupport.stream(
                     ownerType.tsym.members().getSymbolsByName(ref.name, Symbol.MethodSymbol.class::isInstance).spliterator(), false
             ).findAny().orElseThrow();
+        } else {
+            refSym = ref.sym;
         }
         if (refSym instanceof Symbol.MethodSymbol refMethSym
                 && lambdaMethSym instanceof Symbol.MethodSymbol lambdaMeth) {
             var refMethParams = refMethSym.params();
             var lambdaMethParams = replaceAllTypeVars(
                     lambdaMeth.params(),
-                    generics.entrySet().stream()
-                            .flatMap(e ->
-                                    ((Map<Name, List<Name>>) genericsConversionMap).getOrDefault(
-                                            e.getKey(),
-                                            List.of(e.getKey())
-                                    ).stream().map(name ->
-                                            Map.entry(name, e.getValue())
-                                    )).collect(Collectors.toMap(
-                                    Map.Entry::getKey,
-                                    Map.Entry::getValue
-                            )));
+                    Stream.concat(
+                            generics.entrySet().stream()
+                                    .flatMap(e ->
+                                            ((Map<Name, List<Name>>) genericsConversionMap).getOrDefault(
+                                                    e.getKey(),
+                                                    List.of(e.getKey())
+                                            ).stream().map(name ->
+                                                    Map.entry(name, e.getValue())
+                                            )),
+                            genericsConversionMap.entrySet().stream()
+                                    .filter(e -> !generics.containsKey(e.getKey()))
+                                    .flatMap(e -> e.getValue().stream().map(name -> {
+                                        var ident = ExpressionMaker.makeIdent(e.getKey().toString());
+                                        attributeExpression(ident, PathUtils.getElementPath(refSym));
+                                        return Map.entry(name, ident.type);
+                                    }))
+                    ).collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue
+                    )));
             return lambdaMethParams.size() <= refMethParams.size() &&
                     IntStream.range(0, lambdaMethParams.size()).allMatch(argIndex ->
                             isAssignable(
@@ -738,7 +757,7 @@ public class TypeUtils {
         }
     }
 
-    public static Symbol getSymbol(JCTree.JCExpression parent, TreePath currentPath) {
+    private static Symbol getSymbol(JCTree.JCExpression parent, TreePath currentPath) {
         var parentSym = switch (parent) {
             case JCTree.JCMethodInvocation meth -> getSymbolInner(switch (meth.meth) {
                 case JCTree.JCFieldAccess fieldAccess -> fieldAccess.selected;
